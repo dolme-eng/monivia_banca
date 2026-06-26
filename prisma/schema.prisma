@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  hashedPassword String?
+  nome           String
+  cognome        String
+  role           UserRole  @default(USER)
+  accounts       Account[]
+  createdAt      DateTime  @default(now())
+}
+
+model Account {
+  id           String          @id @default(uuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id])
+  iban         String          @unique
+  balance      Float           @default(0)
+  currency     String          @default("EUR")
+  status       AccountStatus   @default(ACTIVE)
+  cards        Card[]
+  transactions Transaction[]
+  createdAt    DateTime        @default(now())
+}
+
+model Card {
+  id        String     @id @default(uuid())
+  accountId String
+  account   Account    @relation(fields: [accountId], references: [id])
+  number    String     @unique
+  cvv       String
+  expiry    String
+  holder    String
+  status    CardStatus @default(ACTIVE)
+  createdAt DateTime   @default(now())
+}
+
+model Transaction {
+  id          String            @id @default(uuid())
+  accountId   String
+  account     Account           @relation(fields: [accountId], references: [id])
+  type        TransactionType
+  amount      Float
+  description String
+  status      TransactionStatus @default(PENDING)
+  reference   String?           @unique
+  category    String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum AccountStatus {
+  ACTIVE
+  FROZEN
+  CLOSED
+}
+
+enum CardStatus {
+  ACTIVE
+  FROZEN
+  EXPIRED
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  TRANSFER_IN
+  TRANSFER_OUT
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
