@@ -17,6 +17,13 @@ build/
 .env.test.local
 .env.production.local
 
+# database
+*.db
+*.db-journal
+
+# test files
+test-prisma.js
+
 # debug
 npm-debug.log*
 yarn-debug.log*
