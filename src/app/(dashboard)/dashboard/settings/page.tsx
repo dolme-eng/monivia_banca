@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   User,
   Mail,
@@ -7,12 +9,49 @@ import {
   Lock,
   Fingerprint,
   Bell,
-  BellOff,
   ChevronRight,
   Key,
+  Loader2,
 } from 'lucide-react';
 
+interface UserData {
+  nome: string;
+  cognome: string;
+  email: string;
+  role: string;
+  accounts: { id: string; iban: string; balance: number }[];
+}
+
 export default function SettingsPage() {
+  const { data: session } = useSession();
+  const [user, setUser] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/user/account');
+        const data = await res.json();
+        if (data.success) setUser(data.user);
+      } catch {} finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 size={24} className="animate-spin text-secondary" />
+      </div>
+    );
+  }
+
+  const initials = user
+    ? `${user.nome[0]}${user.cognome[0]}`.toUpperCase()
+    : '—';
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -31,25 +70,40 @@ export default function SettingsPage() {
             </h2>
             <button className="text-secondary text-xs font-black hover:underline">Modifica</button>
           </div>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-xl font-black">
+              {initials}
+            </div>
+            <div>
+              <p className="text-lg font-black text-primary">{user?.nome} {user?.cognome}</p>
+              <p className="text-sm text-slate-500">{user?.email}</p>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Nome Completo</label>
-              <p className="text-sm font-black text-primary">Marco Rossi</p>
+              <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Nome</label>
+              <p className="text-sm font-black text-primary">{user?.nome ?? '—'}</p>
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Cognome</label>
+              <p className="text-sm font-black text-primary">{user?.cognome ?? '—'}</p>
             </div>
             <div>
               <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Email</label>
-              <p className="text-sm font-black text-primary">m.rossi@email.com</p>
-            </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Telefono</label>
-              <p className="text-sm font-black text-primary">+39 333 123 4567</p>
+              <p className="text-sm font-black text-primary">{user?.email ?? '—'}</p>
             </div>
             <div>
               <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Ruolo</label>
               <span className="inline-flex items-center px-2 py-0.5 rounded bg-secondary/10 text-secondary text-[10px] font-black uppercase">
-                Cliente
+                {user?.role === 'ADMIN' ? 'Amministratore' : 'Cliente'}
               </span>
             </div>
+            {user?.accounts?.[0] && (
+              <div className="md:col-span-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">IBAN</label>
+                <p className="text-sm font-black text-primary font-mono">{user.accounts[0].iban}</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -64,19 +118,19 @@ export default function SettingsPage() {
               <div>
                 <div className="flex justify-between text-[10px] mb-1">
                   <span className="text-white/60">Trasferimento</span>
-                  <span className="font-black">4.800 / 10.000 €</span>
+                  <span className="font-black">0 / 10.000 €</span>
                 </div>
                 <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-secondary rounded-full shadow-[0_0_8px_rgba(0,212,255,0.5)]" style={{ width: '48%' }} />
+                  <div className="h-full bg-secondary rounded-full shadow-[0_0_8px_rgba(0,212,255,0.5)]" style={{ width: '0%' }} />
                 </div>
               </div>
               <div>
                 <div className="flex justify-between text-[10px] mb-1">
                   <span className="text-white/60">Prelievo</span>
-                  <span className="font-black">500 / 2.500 €</span>
+                  <span className="font-black">0 / 2.500 €</span>
                 </div>
                 <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-white rounded-full" style={{ width: '20%' }} />
+                  <div className="h-full bg-white rounded-full" style={{ width: '0%' }} />
                 </div>
               </div>
             </div>
@@ -95,7 +149,7 @@ export default function SettingsPage() {
           <div className="space-y-3">
             {[
               { icon: Lock, title: 'Autenticazione a Due Fattori (2FA)', desc: 'Notifiche push via Monivia Authenticator', status: 'Attiva', statusColor: 'bg-emerald-50 text-emerald-600' },
-              { icon: Key, title: 'Password', desc: 'Ultima modifica 42 giorni fa', status: null, statusColor: '' },
+              { icon: Key, title: 'Password', desc: 'Ultima modifica oggi', status: null, statusColor: '' },
               { icon: Fingerprint, title: 'Accesso Biometrico', desc: 'TouchID / FaceID per accesso mobile', status: 'Disattivato', statusColor: 'bg-slate-100 text-slate-400' },
             ].map(({ icon: Icon, title, desc, status, statusColor }) => (
               <div key={title} className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-lg border border-transparent hover:border-slate-200 transition-all cursor-pointer group">

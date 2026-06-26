@@ -1,10 +1,8 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { SessionProvider } from 'next-auth/react';
 import '../globals.css';
 import AdminDashboardShell from '@/components/AdminDashboardShell';
-
-export const metadata: Metadata = {
-  title: 'Monivia Banca | Amministrazione',
-};
 
 export default function AdminLayout({
   children,
@@ -12,14 +10,17 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="it">
-      <head>
-        <meta name="msapplication-TileColor" content="#0f172a" />
-        <meta name="theme-color" content="#0f172a" />
-      </head>
-      <body className="bg-slate-50 text-slate-900 antialiased">
-        <AdminDashboardShell>{children}</AdminDashboardShell>
-      </body>
-    </html>
+    <SessionProvider>
+      <html lang="it">
+        <head>
+          <meta name="msapplication-TileColor" content="#0f172a" />
+          <meta name="theme-color" content="#0f172a" />
+          <title>Monivia Banca | Amministrazione</title>
+        </head>
+        <body className="bg-slate-50 text-slate-900 antialiased">
+          <AdminDashboardShell>{children}</AdminDashboardShell>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

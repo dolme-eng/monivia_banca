@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import {
   LayoutDashboard,
   UserPlus,
@@ -14,6 +15,7 @@ import {
   Menu,
   X,
   Clock,
+  LogOut,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -97,6 +99,15 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
           <Plus size={16} />
           Nuovo Provisioning
         </Link>
+
+        {/* Logout */}
+        <button
+          onClick={() => signOut({ callbackUrl: '/login' })}
+          className="w-full py-2.5 text-white/40 hover:text-white text-xs font-black flex items-center justify-center gap-2 transition-colors"
+        >
+          <LogOut size={14} />
+          Esci
+        </button>
       </aside>
 
       {/* ===== Mobile sidebar overlay ===== */}

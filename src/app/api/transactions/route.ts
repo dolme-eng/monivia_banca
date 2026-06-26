@@ -9,7 +9,7 @@ const transactionSchema = z.object({
   type: z.enum(['DEBIT', 'TRANSFER_OUT']),
   amount: z.number().positive(),
   description: z.string().min(1),
-  recipientIban: z.string().optional(),
+  toIban: z.string().optional(),
 });
 
 function checkOrigin(req: Request): boolean {

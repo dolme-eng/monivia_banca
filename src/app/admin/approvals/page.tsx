@@ -1,31 +1,55 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import Link from 'next/link';
+import {
+  CheckCircle2,
+  XCircle,
+  Send,
+  CreditCard,
+  Clock,
+  ArrowRight,
+  Loader2,
+  AlertTriangle,
+} from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 
+interface Transaction {
+  id: string;
+  type: string;
+  amount: number;
+  description: string;
+  status: string;
+  createdAt: string;
+  account: {
+    iban: string;
+    user: { nome: string; cognome: string; email: string };
+  };
+}
+
 export default function ApprovalsPage() {
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionId, setActionId] = useState<string | null>(null);
 
   const fetchTransactions = async () => {
-    setLoading(true);
     try {
       const res = await fetch('/api/admin/transactions');
       const data = await res.json();
-      setTransactions(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
+      setTransactions(Array.isArray(data) ? data : []);
+    } catch {} finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchTransactions();
+    const interval = setInterval(fetchTransactions, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleAction = async (transactionId: string, action: 'APPROVE' | 'REJECT') => {
+    setActionId(transactionId);
     try {
       const res = await csrfFetch('/api/admin/transactions', {
         method: 'POST',
@@ -34,86 +58,126 @@ export default function ApprovalsPage() {
       if (res.ok) {
         await fetchTransactions();
       }
-    } catch (err) {
-      console.error(err);
+    } catch {} finally {
+      setActionId(null);
     }
   };
 
-  return (
-    <section className="section-pad">
-      <div className="site-container">
-        {/* Titre */}
-        <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
-          <h2 className="section-heading">Centro di <span className="text-gradient-cyan">Validazione</span></h2>
-          <p className="section-copy mt-5">
-            Controllo e approvazione dei movimenti finanziari. Ogni prelievo o trasferimento deve essere validato.
-          </p>
-        </div>
+  const formatAmount = (amount: number) =>
+    Math.abs(amount).toLocaleString('it-IT', { minimumFractionDigits: 2 });
 
-        {loading ? (
-          <div className="surface-card p-20 text-center">
-            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-secondary border-t-transparent" />
-            <p className="text-sm text-slate-500">Caricamento transazioni...</p>
+  const formatTime = (dateStr: string) => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Adesso';
+    if (mins < 60) return `${mins} min fa`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} ore fa`;
+    return `${Math.floor(hours / 24)} giorni fa`;
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-black text-primary">Approvazioni</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Controlla e approva le richieste dei clienti. Ogni transazione è in attesa di validazione.
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div className="flex gap-3">
+        <div className="bg-white rounded-xl px-4 py-3 border border-slate-200/80 flex items-center gap-3" style={{ boxShadow: 'var(--shadow-card)' }}>
+          <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+            <Clock size={14} />
           </div>
-        ) : transactions.length === 0 ? (
-          <div className="surface-card p-20 text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-              <CheckCircle2 size={32} />
-            </div>
-            <h3 className="mb-2 text-xl font-black text-primary">Nessuna transazione in sospeso</h3>
-            <p className="text-sm text-slate-500">Tutte le richieste sono state elaborate.</p>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">In Attesa</p>
+            <p className="text-lg font-black text-primary">{loading ? '—' : transactions.length}</p>
           </div>
-        ) : (
-          <div className="space-y-4">
-            {transactions.map((tx) => (
-              <div
-                key={tx.id}
-                className="surface-card flex flex-col gap-4 p-5 sm:p-6 sm:flex-row sm:items-center sm:justify-between"
-              >
+        </div>
+      </div>
+
+      {/* List */}
+      {loading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 size={24} className="animate-spin text-secondary" />
+        </div>
+      ) : transactions.length === 0 ? (
+        <div className="bg-white rounded-xl p-16 text-center border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+            <CheckCircle2 size={32} />
+          </div>
+          <h3 className="mb-2 text-xl font-black text-primary">Nessuna transazione in sospeso</h3>
+          <p className="text-sm text-slate-500">Tutte le richieste sono state elaborate.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {transactions.map((tx) => (
+            <div
+              key={tx.id}
+              className="bg-white rounded-xl border border-slate-200/80 p-5 hover:border-secondary/30 transition-all"
+              style={{ boxShadow: 'var(--shadow-card)' }}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm font-black text-primary">
-                    {tx.type === 'TRANSFER_OUT' ? '⇄' : '↓'}
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+                    tx.type === 'DEBIT' || tx.type === 'TRANSFER_OUT'
+                      ? 'bg-amber-50 text-amber-600'
+                      : 'bg-emerald-50 text-emerald-600'
+                  }`}>
+                    {tx.type === 'DEBIT' || tx.type === 'TRANSFER_OUT' ? <Send size={16} /> : <CreditCard size={16} />}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-black uppercase text-white">
-                        {tx.type}
+                      <span className="text-sm font-black text-primary">
+                        {tx.type === 'DEBIT' ? 'Prelievo' : tx.type === 'TRANSFER_OUT' ? 'Trasferimento' : tx.type}
                       </span>
-                      <span className="font-mono text-[10px] text-slate-400">{tx.id}</span>
+                      <span className="text-[10px] text-slate-400">• {formatTime(tx.createdAt)}</span>
                     </div>
-                    <p className="font-black text-primary">{tx.description}</p>
-                    <p className="mt-0.5 text-sm text-slate-500">
-                      Conto: <span className="font-mono">{tx.account.iban}</span>
-                      {' '}&middot;{' '}
-                      Cliente: {tx.account.user.nome} {tx.account.user.cognome}
+                    <p className="text-xs text-slate-500 mb-1">{tx.description}</p>
+                    <p className="text-[10px] text-slate-400">
+                      {tx.account.user.nome} {tx.account.user.cognome} • {tx.account.iban}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 sm:gap-6 pl-14 sm:pl-0">
-                  <p className="text-xl font-black text-red-600">{tx.amount} €</p>
+                <div className="flex items-center gap-3 sm:gap-4 pl-14 sm:pl-0">
+                  <span className="text-lg font-black text-primary">
+                    {formatAmount(tx.amount)} €
+                  </span>
                   <div className="flex gap-2">
+                    <Link
+                      href={`/admin/prelievo/${tx.id}`}
+                      className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-400 hover:text-secondary"
+                      title="Vedi dettaglio"
+                    >
+                      <ArrowRight size={14} />
+                    </Link>
                     <button
                       onClick={() => handleAction(tx.id, 'REJECT')}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-black text-slate-500 transition-all hover:border-red-300 hover:text-red-600"
+                      disabled={actionId === tx.id}
+                      className="p-2 border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors text-slate-400 hover:text-red-500 disabled:opacity-50"
+                      title="Rifiuta"
                     >
-                      <XCircle size={14} />
-                      Rifiuta
+                      {actionId === tx.id ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
                     </button>
                     <button
                       onClick={() => handleAction(tx.id, 'APPROVE')}
-                      className="btn-primary px-4 py-2.5 text-xs"
+                      disabled={actionId === tx.id}
+                      className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-black hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-1.5"
                     >
-                      <CheckCircle2 size={14} />
+                      {actionId === tx.id ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
                       Approva
                     </button>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
