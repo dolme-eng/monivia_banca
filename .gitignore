@@ -17,10 +17,6 @@ build/
 .env.test.local
 .env.production.local
 
-# database
-*.db
-*.db-journal
-
 # test files
 test-prisma.js
 
