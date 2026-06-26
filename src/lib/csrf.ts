@@ -1,17 +1,18 @@
 import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
 
-const CSRF_SECRET = process.env.CSRF_SECRET || process.env.NEXTAUTH_SECRET;
-
-if (!CSRF_SECRET) {
-  throw new Error('CSRF_SECRET or NEXTAUTH_SECRET must be set');
-}
-
 const HMAC_ALGO = 'sha256';
 const TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
+function getSecret(): string {
+  const secret = process.env.CSRF_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret) throw new Error('CSRF_SECRET or NEXTAUTH_SECRET must be set');
+  return secret;
+}
+
 export function generateCsrfToken(): string {
+  const secret = getSecret();
   const payload = `${Date.now()}:${randomBytes(16).toString('hex')}`;
-  const sig = createHmac(HMAC_ALGO, CSRF_SECRET!).update(payload).digest('hex');
+  const sig = createHmac(HMAC_ALGO, secret).update(payload).digest('hex');
   return `${payload}.${sig}`;
 }
 
@@ -24,7 +25,8 @@ export function validateCsrfToken(token: string | null | undefined): boolean {
   const payload = token.slice(0, dotIndex);
   const sig = token.slice(dotIndex + 1);
 
-  const expected = createHmac(HMAC_ALGO, CSRF_SECRET!).update(payload).digest('hex');
+  const secret = getSecret();
+  const expected = createHmac(HMAC_ALGO, secret).update(payload).digest('hex');
 
   if (sig.length !== expected.length) return false;
 
