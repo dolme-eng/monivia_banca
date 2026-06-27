@@ -122,7 +122,7 @@ export default function RootLayout({
             <div className="border-t border-white/6 pt-8 pb-8">
               <div className="flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
                 <p className="text-xs text-slate-600">
-                  © {new Date().getFullYear()} Monivia S.r.l. — P.IVA / C.F. 10984760583 — OAM n. A23741
+                  © 2024 – {new Date().getFullYear()} Monivia S.r.l. — P.IVA / C.F. 10984760583 — OAM n. A23741
                 </p>
                 <p className="text-[10px] text-slate-700">
                   Sistemi di Gestione Bancaria Sicura

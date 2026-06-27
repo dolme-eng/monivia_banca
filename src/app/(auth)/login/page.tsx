@@ -164,7 +164,7 @@ export default function LoginPage() {
           {/* Footer */}
           <footer className="mt-16 pt-6 border-t border-slate-100 text-center">
             <p className="text-[10px] text-slate-400">
-              © {new Date().getFullYear()} Monivia S.r.l. — P.IVA 10984760583 — OAM n. A23741
+              © 2024 – {new Date().getFullYear()} Monivia S.r.l. — P.IVA 10984760583 — OAM n. A23741
             </p>
           </footer>
         </div>
