@@ -1,13 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ShieldCheck, Mail, Lock, Eye, EyeOff, ArrowRight, Shield, Clock } from 'lucide-react';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,18 +18,23 @@ export default function LoginPage() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (result?.error) {
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
       setError('Credenziali non valide. Riprova.');
       setLoading(false);
     } else {
-      router.push('/dashboard');
-      router.refresh();
+      if (data.role === 'ADMIN') {
+        window.location.href = '/admin/dashboard';
+      } else {
+        window.location.href = '/dashboard';
+      }
     }
   };
 
