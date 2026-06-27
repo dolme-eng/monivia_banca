@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SessionProvider } from 'next-auth/react';
 import '../globals.css';
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export default function AuthLayout({
         <meta name="theme-color" content="#0f172a" />
       </head>
       <body className="bg-white text-slate-900 antialiased">
-        {children}
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );
