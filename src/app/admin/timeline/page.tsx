@@ -41,7 +41,7 @@ export default function AdminTimelinePage() {
       const res = await fetch('/api/admin/transactions');
       if (!res.ok) throw new Error('Errore del server');
       const data = await res.json();
-      setTransactions(Array.isArray(data) ? data : []);
+      setTransactions(data.transactions || []);
       setError(null);
     } catch {
       setError('Impossibile caricare la timeline. Riprovo automaticamente...');
@@ -68,7 +68,7 @@ export default function AdminTimelinePage() {
   };
 
   const formatAmount = (amount: number) =>
-    Math.abs(amount).toLocaleString('it-IT', { minimumFractionDigits: 2 });
+    Math.abs(Number(amount)).toLocaleString('it-IT', { minimumFractionDigits: 2 });
 
   const formatTime = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();

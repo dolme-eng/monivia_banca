@@ -11,7 +11,10 @@ export async function GET(req: NextRequest) {
       where: { status: 'PENDING' },
       include: {
         account: {
-          include: { user: true },
+          select: {
+            id: true, iban: true, balance: true, currency: true, status: true,
+            user: { select: { id: true, email: true, nome: true, cognome: true, role: true } },
+          },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -20,7 +23,7 @@ export async function GET(req: NextRequest) {
     const notifications = pendingTransactions.map((tx) => ({
       id: tx.id,
       type: tx.type,
-      amount: Math.abs(tx.amount),
+      amount: Math.abs(Number(tx.amount)),
       description: tx.description,
       reference: tx.reference,
       client: {

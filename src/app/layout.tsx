@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Monivia Banca | Gestione Finanziaria Sicura',
-  description: 'Gestione sicura dei fondi Monivia',
+  description: 'Gestione sicura dei fondi Monivia — conto, carte, pagamenti e trasferimenti sotto il tuo controllo.',
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -18,6 +18,21 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/site.webmanifest',
+  openGraph: {
+    title: 'Monivia Banca',
+    description: 'Gestione sicura dei fondi Monivia — conto, carte, pagamenti e trasferimenti.',
+    url: 'https://monivia-banca.vercel.app',
+    siteName: 'Monivia Banca',
+    images: [{ url: '/og-default.png', width: 1200, height: 630 }],
+    locale: 'it_IT',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Monivia Banca',
+    description: 'Gestione sicura dei fondi Monivia.',
+    images: ['/og-default.png'],
+  },
 };
 
 export default function RootLayout({
@@ -28,8 +43,8 @@ export default function RootLayout({
   return (
     <html lang="it">
       <head>
-        <meta name="msapplication-TileColor" content="#0f172a" />
-        <meta name="theme-color" content="#0f172a" />
+        <meta name="msapplication-TileColor" content="#0a1628" />
+        <meta name="theme-color" content="#0a1628" />
       </head>
       <body className="bg-white text-slate-900 antialiased">
         {children}

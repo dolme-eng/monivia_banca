@@ -1,7 +1,6 @@
 'use client';
 
 import { SessionProvider } from 'next-auth/react';
-import '../globals.css';
 import DashboardShell from '@/components/DashboardShell';
 
 export default function DashboardLayout({

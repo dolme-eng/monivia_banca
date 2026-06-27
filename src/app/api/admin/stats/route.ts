@@ -28,13 +28,27 @@ export async function GET(req: NextRequest) {
 
     const pendingList = await prisma.transaction.findMany({
       where: { status: 'PENDING' },
-      include: { account: { include: { user: true } } },
+      include: {
+        account: {
+          select: {
+            id: true, iban: true, balance: true, currency: true, status: true,
+            user: { select: { id: true, email: true, nome: true, cognome: true, role: true } },
+          },
+        },
+      },
       orderBy: { createdAt: 'asc' },
       take: 5,
     });
 
     const recentTransactions = await prisma.transaction.findMany({
-      include: { account: { include: { user: true } } },
+      include: {
+        account: {
+          select: {
+            id: true, iban: true, balance: true, currency: true, status: true,
+            user: { select: { id: true, email: true, nome: true, cognome: true, role: true } },
+          },
+        },
+      },
       orderBy: { createdAt: 'desc' },
       take: 10,
     });

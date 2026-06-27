@@ -15,7 +15,8 @@ function escapeHtml(str: string): string {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 export async function sendAdminPrelievoNotification(data: {
@@ -137,7 +138,7 @@ export async function sendClientTransactionUpdate(data: {
     return;
   }
 
-  const amountStr = Math.abs(data.amount).toLocaleString('it-IT', { minimumFractionDigits: 2 });
+  const amountStr = Math.abs(Number(data.amount)).toLocaleString('it-IT', { minimumFractionDigits: 2 });
   const isApproved = data.type === 'APPROVED';
   const statusColor = isApproved ? '#10b981' : '#ef4444';
   const statusText = isApproved ? 'Approvata' : 'Rifiutata';

@@ -12,7 +12,7 @@ const provisionSchema = z.object({
   nome: z.string().min(1),
   cognome: z.string().min(1),
   amount: z.number().positive(),
-  password: z.string().min(6, 'La password deve avere almeno 6 caratteri'),
+  password: z.string().min(8, 'La password deve avere almeno 8 caratteri'),
 });
 
 function checkOrigin(req: Request): boolean {
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
 
       await tx.account.update({
         where: { id: account.id },
-        data: { balance: { increment: amount } },
+        data: { balance: { increment: Number(amount) } },
       });
 
       const cardBytes = randomBytes(8);
@@ -111,12 +111,12 @@ export async function POST(req: NextRequest) {
         balance: amount,
       },
       card: {
-        number: result.card.number,
+        number: '•••• •••• •••• ' + result.card.number.slice(-4),
         holder: result.card.holder,
       },
     });
   } catch (error) {
     console.error('Provision error:', error);
-    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Errore durante il provisioning' }, { status: 500 });
   }
 }

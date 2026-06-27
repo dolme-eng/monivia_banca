@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       if (action === 'APPROVE') {
         if (transaction.type === 'DEBIT' || transaction.type === 'TRANSFER_OUT') {
           const currentAccount = await tx.account.findUnique({ where: { id: transaction.accountId } });
-          if (!currentAccount || currentAccount.balance < Math.abs(transaction.amount)) {
+          if (!currentAccount || Number(currentAccount.balance) < Number(transaction.amount)) {
             return { success: false, error: 'Fondi insufficienti per questa transazione' };
           }
         }
@@ -83,12 +83,12 @@ export async function POST(req: NextRequest) {
         if (transaction.type === 'DEBIT' || transaction.type === 'TRANSFER_OUT') {
           await tx.account.update({
             where: { id: transaction.accountId },
-            data: { balance: { decrement: Math.abs(transaction.amount) } },
+            data: { balance: { decrement: Math.abs(Number(transaction.amount)) } },
           });
         } else if (transaction.type === 'CREDIT' || transaction.type === 'TRANSFER_IN') {
           await tx.account.update({
             where: { id: transaction.accountId },
-            data: { balance: { increment: Math.abs(transaction.amount) } },
+            data: { balance: { increment: Math.abs(Number(transaction.amount)) } },
           });
         }
       } else {
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       clientNome: transaction.account.user.nome,
       type: action === 'APPROVE' ? 'APPROVED' : 'REJECTED',
       transactionType: transaction.type === 'DEBIT' ? 'Prelievo' : transaction.type === 'TRANSFER_OUT' ? 'Trasferimento' : transaction.type,
-      amount: transaction.amount,
+      amount: Number(transaction.amount),
       description: transaction.description,
     }).catch((err) => console.error('Email notification failed:', err));
 
@@ -135,17 +135,33 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
+    const skip = (page - 1) * limit;
 
     const where = status && ['PENDING', 'APPROVED', 'REJECTED'].includes(status)
       ? { status: status as 'PENDING' | 'APPROVED' | 'REJECTED' }
       : {};
 
-    const transactions = await prisma.transaction.findMany({
-      where,
-      include: { account: { include: { user: true } } },
-      orderBy: { createdAt: status ? 'desc' : 'asc' },
-    });
-    return NextResponse.json(transactions);
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where,
+        include: {
+          account: {
+            select: {
+              id: true, iban: true, balance: true, currency: true, status: true,
+              user: { select: { id: true, email: true, nome: true, cognome: true, role: true } },
+            },
+          },
+        },
+        orderBy: { createdAt: status ? 'desc' : 'asc' },
+        skip,
+        take: limit,
+      }),
+      prisma.transaction.count({ where }),
+    ]);
+
+    return NextResponse.json({ transactions, total, page, limit });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Impossibile recuperare le transazioni' }, { status: 500 });
   }

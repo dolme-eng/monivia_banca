@@ -69,7 +69,7 @@ export default function DashboardPage() {
   }, []);
 
   const formatAmount = (amount: number) =>
-    amount.toLocaleString('it-IT', { minimumFractionDigits: 2 });
+    Number(amount).toLocaleString('it-IT', { minimumFractionDigits: 2 });
 
   const formatTime = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();

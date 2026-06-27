@@ -205,7 +205,7 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                   <span className="text-[10px] font-black text-primary">
-                    {Math.abs(item.amount).toLocaleString('it-IT')} €
+                    {Number(item.amount).toLocaleString('it-IT')} €
                   </span>
                 </Link>
               ))}
@@ -265,7 +265,7 @@ export default function AdminDashboardPage() {
                         </span>
                       </td>
                       <td className="py-3 text-right font-black text-primary">
-                        {Math.abs(tx.amount).toLocaleString('it-IT')} €
+                        {Number(tx.amount).toLocaleString('it-IT')} €
                       </td>
                       <td className="py-3 text-right text-slate-500 text-[11px]">
                         {formatTime(tx.createdAt)}

@@ -57,7 +57,8 @@ export default function AdminPrelievoDetailPage() {
       const res = await fetch(`/api/admin/transactions`);
       if (!res.ok) throw new Error('Errore del server');
       const data = await res.json();
-      const found = Array.isArray(data) ? data.find((t: any) => t.id === txId) : null;
+      const allTx = data.transactions || [];
+      const found = allTx.find((t: any) => t.id === txId);
       if (found) {
         setTx(found);
       }
@@ -75,7 +76,6 @@ export default function AdminPrelievoDetailPage() {
   const handleAction = async (action: 'APPROVE' | 'REJECT') => {
     setActionLoading(action);
     setResult(null);
-    setConfirmOpen(false);
 
     try {
       const res = await csrfFetch('/api/admin/transactions', {
@@ -86,12 +86,18 @@ export default function AdminPrelievoDetailPage() {
       const data = await res.json();
 
       if (data.success) {
+        setConfirmOpen(false);
+        setConfirmAction(null);
         setResult({ type: 'success', message: data.message });
         fetchTx();
       } else {
+        setConfirmOpen(false);
+        setConfirmAction(null);
         setResult({ type: 'error', message: data.error });
       }
     } catch {
+      setConfirmOpen(false);
+      setConfirmAction(null);
       setResult({ type: 'error', message: 'Errore di connessione' });
     } finally {
       setActionLoading(null);
@@ -104,7 +110,7 @@ export default function AdminPrelievoDetailPage() {
   };
 
   const formatAmount = (amount: number) =>
-    Math.abs(amount).toLocaleString('it-IT', { minimumFractionDigits: 2 });
+    Math.abs(Number(amount)).toLocaleString('it-IT', { minimumFractionDigits: 2 });
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleString('it-IT', {

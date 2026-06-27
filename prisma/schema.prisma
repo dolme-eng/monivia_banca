@@ -15,6 +15,7 @@ model User {
   role           UserRole  @default(USER)
   accounts       Account[]
   createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Account {
@@ -22,12 +23,16 @@ model Account {
   userId       String
   user         User            @relation(fields: [userId], references: [id])
   iban         String          @unique
-  balance      Float           @default(0)
+  balance      Decimal         @default(0) @db.Decimal(12, 2)
   currency     String          @default("EUR")
   status       AccountStatus   @default(ACTIVE)
   cards        Card[]
   transactions Transaction[]
   createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model Card {
@@ -40,6 +45,9 @@ model Card {
   holder    String
   status    CardStatus @default(ACTIVE)
   createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([accountId])
 }
 
 model Transaction {
@@ -47,13 +55,17 @@ model Transaction {
   accountId   String
   account     Account           @relation(fields: [accountId], references: [id])
   type        TransactionType
-  amount      Float
+  amount      Decimal           @db.Decimal(12, 2)
   description String
   status      TransactionStatus @default(PENDING)
   reference   String?           @unique
   category    String?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+
+  @@index([accountId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 enum UserRole {

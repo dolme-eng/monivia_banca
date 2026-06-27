@@ -69,26 +69,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Conto non trovato' }, { status: 400 });
     }
 
-    const pendingSum = await prisma.transaction.aggregate({
-      where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },
-      _sum: { amount: true },
-    });
-    const pendingTotal = Math.abs(pendingSum._sum.amount ?? 0);
-    const availableBalance = account.balance - pendingTotal;
+    const result = await prisma.$transaction(async (tx) => {
+      const pendingSum = await tx.transaction.aggregate({
+        where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },
+        _sum: { amount: true },
+      });
+      const pendingTotal = Number(pendingSum._sum.amount ?? 0);
+      const availableBalance = Number(account.balance) - pendingTotal;
 
-    if (availableBalance < amount) {
-      return NextResponse.json({ success: false, error: 'Fondi insufficienti (transazioni in sospeso incluse)' }, { status: 400 });
+      if (availableBalance < amount) {
+        return { success: false, error: 'Fondi insufficienti (transazioni in sospeso incluse)' };
+      }
+
+      await tx.transaction.create({
+        data: {
+          accountId,
+          type: type === 'TRANSFER_OUT' ? 'TRANSFER_OUT' : 'DEBIT',
+          amount: -amount,
+          description,
+          status: 'PENDING',
+        },
+      });
+
+      return { success: true };
+    });
+
+    if (!result.success) {
+      return NextResponse.json({ success: false, error: result.error }, { status: 400 });
     }
-
-    await prisma.transaction.create({
-      data: {
-        accountId,
-        type: type === 'TRANSFER_OUT' ? 'TRANSFER_OUT' : 'DEBIT',
-        amount: -amount,
-        description,
-        status: 'PENDING',
-      },
-    });
 
     return NextResponse.json({
       success: true,

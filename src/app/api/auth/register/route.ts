@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -12,6 +13,12 @@ const registerSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const rl = checkRateLimit(`register:${ip}`, 5, 60 * 60 * 1000);
+  if (!rl.allowed) {
+    return NextResponse.json({ success: false, error: 'Troppe registrazioni. Riprova più tardi.' }, { status: 429 });
+  }
+
   const ct = req.headers.get('content-type');
   if (!ct?.includes('application/json')) {
     return NextResponse.json({ success: false, error: 'Content-Type non valido' }, { status: 415 });
@@ -45,8 +52,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, user });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Register error:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Errore durante la registrazione' }, { status: 500 });
   }
 }

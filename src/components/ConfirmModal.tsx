@@ -58,7 +58,12 @@ export default function ConfirmModal({
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={() => !loading && onCancel()}
       />
-      <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-modal-title"
+        className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+      >
         <button
           onClick={onCancel}
           disabled={loading}
@@ -71,7 +76,7 @@ export default function ConfirmModal({
           <AlertTriangle size={24} className={colors.icon} />
         </div>
 
-        <h3 className="text-lg font-black text-primary mb-2">{title}</h3>
+        <h3 id="confirm-modal-title" className="text-lg font-black text-primary mb-2">{title}</h3>
         <p className="text-sm text-slate-500 mb-6 leading-relaxed">{message}</p>
 
         <div className="flex gap-3">

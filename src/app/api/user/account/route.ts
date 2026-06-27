@@ -47,13 +47,29 @@ export async function GET() {
       return NextResponse.json({ success: false, error: 'Utente non trovato' }, { status: 404 });
     }
 
-    const totalBalance = user.accounts.reduce((sum, acc) => sum + acc.balance, 0);
-    const allTransactions = user.accounts.flatMap((acc) => acc.transactions);
+    const maskedUser = {
+      ...user,
+      accounts: user.accounts.map((acc) => ({
+        ...acc,
+        balance: Number(acc.balance),
+        cards: acc.cards.map((card) => ({
+          ...card,
+          number: '•••• •••• •••• ' + card.number.slice(-4),
+        })),
+        transactions: acc.transactions.map((tx) => ({
+          ...tx,
+          amount: Number(tx.amount),
+        })),
+      })),
+    };
+
+    const totalBalance = maskedUser.accounts.reduce((sum, acc) => sum + acc.balance, 0);
+    const allTransactions = maskedUser.accounts.flatMap((acc) => acc.transactions);
 
     return NextResponse.json({
       success: true,
       user: {
-        ...user,
+        ...maskedUser,
         totalBalance,
         recentTransactions: allTransactions
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())

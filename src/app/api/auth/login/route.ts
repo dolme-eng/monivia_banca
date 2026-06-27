@@ -3,8 +3,11 @@ import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 import { prisma } from '@/lib/prisma';
 
-const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || '';
-const secret = new TextEncoder().encode(AUTH_SECRET);
+const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+if (!AUTH_SECRET) {
+  console.error('[SECURITY] AUTH_SECRET non configurato — login impossibile');
+}
+const secret = AUTH_SECRET ? new TextEncoder().encode(AUTH_SECRET) : null;
 
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
 
@@ -26,6 +29,9 @@ function getClientIp(req: NextRequest): string {
 }
 
 export async function POST(req: NextRequest) {
+  if (!secret) {
+    return NextResponse.json({ error: 'Configurazione di sicurezza mancante' }, { status: 500 });
+  }
   try {
     const ip = getClientIp(req);
     if (isLoginRateLimited(ip)) {
@@ -41,6 +47,7 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user || !user.hashedPassword) {
+      await bcrypt.compare('dummy_hash_to_prevent_timing_attack', '$2a$12$x' + '0'.repeat(53));
       return NextResponse.json({ error: 'Credenziali non valide' }, { status: 401 });
     }
 

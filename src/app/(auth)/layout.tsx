@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
-import '../globals.css';
 
 export const metadata: Metadata = {
   title: 'Monivia Banca | Accesso Sicuro',

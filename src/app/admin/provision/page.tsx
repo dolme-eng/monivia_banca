@@ -125,11 +125,11 @@ export default function ProvisionPage() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
-                    minLength={6}
+                    minLength={8}
                     className="field-shell pr-10"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Minimo 6 caratteri"
+                    placeholder="Minimo 8 caratteri"
                   />
                   <button
                     type="button"
@@ -220,7 +220,7 @@ export default function ProvisionPage() {
                 </div>
                 <div className="rounded-lg bg-slate-50 p-3">
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Password</p>
-                  <p className="mt-1 text-sm font-bold text-primary">{formData.password}</p>
+                  <p className="mt-1 text-sm font-bold text-primary">Imposta dall&apos;admin</p>
                 </div>
               </div>
               <p className="mt-4 text-xs italic text-slate-400">

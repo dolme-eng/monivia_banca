@@ -41,7 +41,7 @@ export default function ApprovalsPage() {
       const res = await fetch('/api/admin/transactions?status=PENDING');
       if (!res.ok) throw new Error('Errore del server');
       const data = await res.json();
-      setTransactions(Array.isArray(data) ? data : []);
+      setTransactions(data.transactions || []);
       setError(null);
     } catch {
       setError('Impossibile caricare le transazioni. Riprovo automaticamente...');
@@ -58,7 +58,6 @@ export default function ApprovalsPage() {
 
   const handleAction = async (transactionId: string, action: 'APPROVE' | 'REJECT') => {
     setActionId(transactionId);
-    setConfirmOpen(false);
     try {
       const res = await csrfFetch('/api/admin/transactions', {
         method: 'POST',
@@ -66,15 +65,20 @@ export default function ApprovalsPage() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        setConfirmOpen(false);
+        setConfirmAction(null);
         await fetchTransactions();
       } else {
         setError(data.error || 'Azione non riuscita');
+        setConfirmOpen(false);
+        setConfirmAction(null);
       }
     } catch {
       setError('Errore di connessione durante l\'azione');
+      setConfirmOpen(false);
+      setConfirmAction(null);
     } finally {
       setActionId(null);
-      setConfirmAction(null);
     }
   };
 
@@ -84,7 +88,7 @@ export default function ApprovalsPage() {
   };
 
   const formatAmount = (amount: number) =>
-    Math.abs(amount).toLocaleString('it-IT', { minimumFractionDigits: 2 });
+    Math.abs(Number(amount)).toLocaleString('it-IT', { minimumFractionDigits: 2 });
 
   const formatTime = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();

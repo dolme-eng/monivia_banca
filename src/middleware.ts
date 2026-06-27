@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || process.env.CSRF_SECRET || '';
+const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || process.env.CSRF_SECRET;
+if (!AUTH_SECRET) {
+  console.error('[SECURITY] AUTH_SECRET non configurato — il middleware non potrà verificare i token');
+}
 
 async function getSession(req: NextRequest) {
   const token = req.cookies.get('authjs.session-token')?.value

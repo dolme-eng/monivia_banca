@@ -57,28 +57,38 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Conto non trovato' }, { status: 404 });
     }
 
-    const pendingSum = await prisma.transaction.aggregate({
-      where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },
-      _sum: { amount: true },
-    });
-    const pendingTotal = Math.abs(pendingSum._sum.amount ?? 0);
-    const availableBalance = account.balance - pendingTotal;
+    const result = await prisma.$transaction(async (tx) => {
+      const pendingSum = await tx.transaction.aggregate({
+        where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },
+        _sum: { amount: true },
+      });
+      const pendingTotal = Number(pendingSum._sum.amount ?? 0);
+      const availableBalance = Number(account.balance) - pendingTotal;
 
-    if (availableBalance < amount) {
-      return NextResponse.json({ success: false, error: 'Fondi insufficienti (transazioni in sospeso incluse)' }, { status: 400 });
+      if (availableBalance < amount) {
+        return { success: false as const, error: 'Fondi insufficienti (transazioni in sospeso incluse)' };
+      }
+
+      const transaction = await tx.transaction.create({
+        data: {
+          accountId,
+          type: 'DEBIT',
+          amount: -amount,
+          description,
+          status: 'PENDING',
+          reference: `PRELIEVO-${Date.now()}`,
+        },
+        include: { account: { include: { user: true } } },
+      });
+
+      return { success: true as const, transaction };
+    });
+
+    if (!result.success) {
+      return NextResponse.json({ success: false, error: result.error }, { status: 400 });
     }
 
-    const transaction = await prisma.transaction.create({
-      data: {
-        accountId,
-        type: 'DEBIT',
-        amount: -amount,
-        description,
-        status: 'PENDING',
-        reference: `PRELIEVO-${Date.now()}`,
-      },
-      include: { account: { include: { user: true } } },
-    });
+    const transaction = result.transaction;
 
     sendAdminPrelievoNotification({
       clientNome: transaction.account.user.nome,

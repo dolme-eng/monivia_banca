@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 import {
   LayoutDashboard,
@@ -27,15 +28,21 @@ const NAV_ITEMS = [
 
 export default function AdminDashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
+
+  const adminName = session?.user?.name || 'Admin';
+  const initials = adminName.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
 
   useEffect(() => {
     const fetchPending = async () => {
       try {
         const res = await fetch('/api/admin/transactions?status=PENDING');
         const data = await res.json();
-        if (Array.isArray(data)) {
+        if (data.transactions) {
+          setPendingCount(data.transactions.length);
+        } else if (Array.isArray(data)) {
           setPendingCount(data.length);
         }
       } catch {}
@@ -204,7 +211,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
               <HelpCircle size={18} />
             </button>
             <div className="w-9 h-9 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-xs font-black ml-1">
-              AD
+              {initials}
             </div>
           </div>
         </header>
