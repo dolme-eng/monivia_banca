@@ -83,7 +83,7 @@ export default function PublicLayout({
           <div className="border-t border-white/6 pt-8 pb-8">
             <div className="flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
               <p className="text-xs text-slate-600">
-                © 2025 Monivia S.r.l. — P.IVA / C.F. 10984760583 — OAM n. A23741
+                © 2026 Monivia S.r.l. — P.IVA / C.F. 10984760583 — OAM n. A23741
               </p>
               <p className="text-[11px] text-slate-700">
                 Sistemi di Gestione Bancaria Sicura

@@ -111,8 +111,8 @@ export default function Home() {
 
               {/* Balance */}
               <div className="mb-8">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Saldo disponibile</p>
-                <p className="text-4xl sm:text-5xl font-black text-primary tracking-tight">
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Saldo disponibile</p>
+                <p className="text-3xl sm:text-5xl font-black text-primary tracking-tight">
                   15.200<span className="text-2xl text-slate-400">,00 €</span>
                 </p>
               </div>
@@ -126,7 +126,7 @@ export default function Home() {
                 <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-secondary to-accent rounded-full" style={{ width: '60.8%' }} />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1.5">15.200 € disponibili su 25.000 €</p>
+                <p className="text-[11px] text-slate-400 mt-1.5">15.200 € disponibili su 25.000 €</p>
               </div>
 
               {/* Mini transactions */}
@@ -138,7 +138,7 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="text-sm font-black text-primary">Accredito prestito</p>
-                      <p className="text-[10px] text-slate-400">12 Giu 2026</p>
+                      <p className="text-[11px] text-slate-400">12 Giu 2026</p>
                     </div>
                   </div>
                   <span className="text-sm font-black text-emerald-600">+25.000 €</span>
@@ -150,10 +150,10 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="text-sm font-black text-primary">Prelievo</p>
-                      <p className="text-[10px] text-slate-400">In attesa di approvazione</p>
+                      <p className="text-[11px] text-slate-400">In attesa di approvazione</p>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-black uppercase text-amber-600">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-black uppercase text-amber-600">
                     <Clock size={10} />
                     In Attesa
                   </span>
@@ -165,7 +165,7 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="text-sm font-black text-primary">Pagamento carta</p>
-                      <p className="text-[10px] text-slate-400">10 Giu 2026</p>
+                      <p className="text-[11px] text-slate-400">10 Giu 2026</p>
                     </div>
                   </div>
                   <span className="text-sm font-black text-red-500">-340 €</span>
@@ -230,7 +230,7 @@ export default function Home() {
                   <Smartphone size={20} className="text-secondary" />
                 </div>
                 <div className="relative z-10 mt-auto">
-                  <p className="text-[10px] opacity-50 uppercase tracking-widest">Carta Prepagata</p>
+                  <p className="text-[11px] opacity-50 uppercase tracking-widest">Carta Prepagata</p>
                   <p className="font-mono text-sm tracking-[0.2em] mt-1">•••• •••• •••• 4821</p>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export default function Home() {
               </p>
               <div className="flex items-center gap-2 bg-primary/50 p-3 rounded-lg border border-white/10">
                 <Shield size={16} className="text-emerald-400" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Sistema attivo 24/7</span>
+                <span className="text-[11px] font-black uppercase tracking-widest">Sistema attivo 24/7</span>
               </div>
             </FadeIn>
 
@@ -281,7 +281,7 @@ export default function Home() {
                   <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-black text-primary">Prelievo 5.000 €</span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-black uppercase text-amber-600">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-black uppercase text-amber-600">
                         <Clock size={10} />
                         In corso
                       </span>
@@ -289,12 +289,12 @@ export default function Home() {
                     <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-secondary to-accent rounded-full animate-pulse" style={{ width: '45%' }} />
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-1.5">Tempo stimato: ~2 ore</p>
+                    <p className="text-[11px] text-slate-400 mt-1.5">Tempo stimato: ~2 ore</p>
                   </div>
                   <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm opacity-60">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-black text-primary">Trasferimento 2.000 €</span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[10px] font-black uppercase text-slate-400">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[11px] font-black uppercase text-slate-400">
                         In coda
                       </span>
                     </div>
@@ -302,7 +302,7 @@ export default function Home() {
                   <div className="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-black text-primary">Prelievo 1.500 €</span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-600">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-black uppercase text-emerald-600">
                         <CheckCircle2 size={10} />
                         Completato
                       </span>
@@ -439,14 +439,14 @@ export default function Home() {
           <FadeIn delay={200}>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Saldo totale</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Saldo totale</p>
                 <p className="text-xl font-black text-primary">15.200 €</p>
                 <div className="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-secondary rounded-full" style={{ width: '60%' }} />
                 </div>
               </div>
               <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm translate-y-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Prelievi in sospeso</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Prelievi in sospeso</p>
                 <p className="text-xl font-black text-amber-600">2</p>
                 <div className="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-amber-400 rounded-full" style={{ width: '30%' }} />
@@ -455,7 +455,7 @@ export default function Home() {
               <div className="col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-2">
                 <div className="flex items-center justify-between mb-5">
                   <span className="text-sm font-black text-primary">Movimenti recenti</span>
-                  <span className="text-[10px] font-black bg-secondary/10 text-secondary px-3 py-1 rounded-full">Ultimi 30 giorni</span>
+                  <span className="text-[11px] font-black bg-secondary/10 text-secondary px-3 py-1 rounded-full">Ultimi 30 giorni</span>
                 </div>
                 <div className="flex items-end gap-1.5 h-28">
                   {[40, 65, 55, 90, 70, 85, 75, 50, 60, 80, 45, 95].map((h, i) => (

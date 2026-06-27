@@ -57,8 +57,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Conto non trovato' }, { status: 404 });
     }
 
-    if (account.balance < amount) {
-      return NextResponse.json({ success: false, error: 'Fondi insufficienti' }, { status: 400 });
+    const pendingSum = await prisma.transaction.aggregate({
+      where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },
+      _sum: { amount: true },
+    });
+    const pendingTotal = Math.abs(pendingSum._sum.amount ?? 0);
+    const availableBalance = account.balance - pendingTotal;
+
+    if (availableBalance < amount) {
+      return NextResponse.json({ success: false, error: 'Fondi insufficienti (transazioni in sospeso incluse)' }, { status: 400 });
     }
 
     const transaction = await prisma.transaction.create({
@@ -95,6 +102,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error('Prelievo error:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Errore durante l\'invio della richiesta' }, { status: 500 });
   }
 }

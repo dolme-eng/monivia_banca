@@ -118,7 +118,7 @@ export default function AdminPrelievoDetailPage() {
   const getTimeline = (status: string) => {
     const steps = [
       { label: 'Richiesta Ricevuta', icon: FileText, done: true },
-      { label: 'In Revisione', icon: Clock, done: status !== 'PENDING' || true },
+      { label: 'In Revisione', icon: Clock, done: status !== 'PENDING' },
       { label: status === 'APPROVED' ? 'Approvata' : status === 'REJECTED' ? 'Rifiutata' : 'In Attesa', icon: status === 'APPROVED' ? CheckCircle2 : status === 'REJECTED' ? XCircle : Clock, done: status !== 'PENDING' },
     ];
     return steps;

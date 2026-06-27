@@ -8,8 +8,10 @@ import {
   AlertCircle,
   Wallet,
   ArrowRight,
+  Loader2,
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface Account {
   id: string;
@@ -31,32 +33,63 @@ export default function PrelievoPage() {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingAccount, setLoadingAccount] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [recentPrelievi, setRecentPrelievi] = useState<RecentPrelievo[]>([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
-    // Mock: fetch first account (in real app, use session)
     const fetchAccount = async () => {
       try {
-        const res = await fetch('/api/accounts/provision', { method: 'GET' }).catch(() => null);
-        // Since we don't have a GET on provision, we'll use mock data
-        setAccount({
-          id: 'demo',
-          iban: 'IT00A0000000000000000000000',
-          balance: 15200,
-          user: { nome: 'Marco', cognome: 'Rossi' },
-        });
-      } catch {}
+        const res = await fetch('/api/user/account');
+        if (res.status === 401) {
+          window.location.replace('/login');
+          return;
+        }
+        const data = await res.json();
+        if (data.success && data.user?.accounts?.[0]) {
+          const acc = data.user.accounts[0];
+          setAccount({ id: acc.id, iban: acc.iban, balance: acc.balance, user: { nome: data.user.nome, cognome: data.user.cognome } });
+        } else {
+          setError('Impossibile caricare i dati del conto.');
+        }
+      } catch {
+        setError('Errore di connessione.');
+      } finally {
+        setLoadingAccount(false);
+      }
     };
     fetchAccount();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    if (!amount || Number(amount) <= 0) {
+      setError('Inserisci un importo valido.');
+      return;
+    }
+
+    if (!description.trim()) {
+      setError('Inserisci una descrizione.');
+      return;
+    }
+
+    if (account && Number(amount) > account.balance) {
+      setError('Fondi insufficienti.');
+      return;
+    }
+
+    setConfirmOpen(true);
+  };
+
+  const executeSubmit = async () => {
     setLoading(true);
     setError('');
     setSuccess(false);
+    setConfirmOpen(false);
 
     try {
       const res = await csrfFetch('/api/prelievo', {
@@ -96,8 +129,22 @@ export default function PrelievoPage() {
 
   const quickAmounts = [100, 500, 1000, 2000, 5000];
 
+  if (loadingAccount) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 size={24} className="animate-spin text-secondary" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
+      {error && (
+        <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600">
+          {error}
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-primary">Prelievo</h1>
@@ -191,7 +238,7 @@ export default function PrelievoPage() {
 
               {/* Error */}
               {error && (
-                <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
+                <div role="alert" className="flex items-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
                   <AlertCircle size={14} className="text-red-500" />
                   <span className="text-xs text-red-600">{error}</span>
                 </div>
@@ -199,7 +246,7 @@ export default function PrelievoPage() {
 
               {/* Success */}
               {success && (
-                <div className="flex items-center gap-2 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                <div role="status" className="flex items-center gap-2 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
                   <CheckCircle2 size={14} className="text-emerald-500" />
                   <span className="text-xs text-emerald-600">Richiesta inviata con successo!</span>
                 </div>
@@ -208,7 +255,7 @@ export default function PrelievoPage() {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={loading || !amount || Number(amount) <= 0}
+                disabled={loading || !amount || Number(amount) <= 0 || !account}
                 className="w-full btn-cyan py-4 text-sm"
               >
                 {loading ? (
@@ -292,6 +339,17 @@ export default function PrelievoPage() {
           </div>
         </aside>
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        title="Confermare il prelievo?"
+        message={`Stai per richiedere un prelievo di ${Number(amount).toLocaleString('it-IT', { minimumFractionDigits: 2 })} €. La richiesta sarà inviata all'amministrazione per l'approvazione.`}
+        confirmLabel="Conferma Prelievo"
+        variant="warning"
+        loading={loading}
+        onConfirm={executeSubmit}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }

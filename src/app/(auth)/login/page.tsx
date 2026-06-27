@@ -18,23 +18,28 @@ export default function LoginPage() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok || !data.ok) {
-      setError('Credenziali non valide. Riprova.');
-      setLoading(false);
-    } else {
-      if (data.role === 'ADMIN') {
-        window.location.href = '/admin/dashboard';
+      if (!res.ok || !data.ok) {
+        setError('Credenziali non valide. Riprova.');
+        setLoading(false);
       } else {
-        window.location.href = '/dashboard';
+        if (data.role === 'ADMIN') {
+          window.location.href = '/admin/dashboard';
+        } else {
+          window.location.href = '/dashboard';
+        }
       }
+    } catch {
+      setError('Errore di connessione. Riprova.');
+      setLoading(false);
     }
   };
 
@@ -60,7 +65,7 @@ export default function LoginPage() {
 
           {/* Error */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600 text-center">
+            <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600 text-center">
               {error}
             </div>
           )}
@@ -124,6 +129,7 @@ export default function LoginPage() {
               </label>
               <a
                 href="#"
+                onClick={(e) => { e.preventDefault(); alert('Contatta l\'amministrazione per reimpostare la password.'); }}
                 className="text-sm text-secondary hover:text-cyan-400 transition-colors py-2 px-1 inline-block"
               >
                 Password dimenticata?
@@ -166,7 +172,7 @@ export default function LoginPage() {
           {/* Footer */}
           <footer className="mt-16 pt-6 border-t border-slate-100 text-center">
             <p className="text-[11px] text-slate-400">
-              © 2025 Monivia S.r.l. — P.IVA 10984760583 — OAM n. A23741
+              © 2026 Monivia S.r.l. — P.IVA 10984760583 — OAM n. A23741
             </p>
           </footer>
         </div>

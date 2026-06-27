@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
         </div>
         <Link
           href="/admin/provision"
-          className="hidden sm:flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-black hover:bg-slate-800 transition-colors"
+          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-black hover:bg-slate-800 transition-colors"
         >
           <Plus size={14} />
           Nuovo Provisioning
@@ -117,10 +117,12 @@ export default function AdminDashboardPage() {
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">In Attesa</p>
               <p className="text-xl font-black text-primary">{loading ? '—' : stats.pendingTransactions}</p>
-              <div className="flex items-center gap-1 mt-2 text-amber-600">
-                <AlertTriangle size={12} />
-                <span className="text-[10px] font-black">Azione richiesta</span>
-              </div>
+              {stats.pendingTransactions > 0 && (
+                <div className="flex items-center gap-1 mt-2 text-amber-600">
+                  <AlertTriangle size={12} />
+                  <span className="text-[10px] font-black">Azione richiesta</span>
+                </div>
+              )}
             </div>
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Clienti Attivi</p>
@@ -215,7 +217,7 @@ export default function AdminDashboardPage() {
         <section className="md:col-span-3 lg:col-span-2 bg-white rounded-xl p-5 border border-slate-200/80 flex flex-col" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-black text-primary">Attività Recenti</h3>
-            <Link href="/admin/approvals" className="text-secondary text-xs font-black hover:underline">
+            <Link href="/admin/timeline" className="text-secondary text-xs font-black hover:underline">
               Vedi tutto
             </Link>
           </div>
@@ -243,10 +245,10 @@ export default function AdminDashboardPage() {
                 </thead>
                 <tbody className="text-xs divide-y divide-slate-50">
                   {stats.recentTransactions.map((tx: any) => (
-                    <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors cursor-pointer">
+                    <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="py-3 flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center text-[11px] font-black text-secondary shrink-0">
-                          {tx.account?.user?.nome?.[0]}{tx.account?.user?.cognome?.[0]}
+                          {tx.account?.user?.nome?.[0] || '?'}{tx.account?.user?.cognome?.[0] || '?'}
                         </div>
                         {tx.account?.user?.nome} {tx.account?.user?.cognome}
                       </td>
@@ -259,7 +261,7 @@ export default function AdminDashboardPage() {
                           tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
                           'bg-amber-50 text-amber-600'
                         }`}>
-                          {tx.status === 'APPROVED' ? 'OK' : tx.status === 'REJECTED' ? 'NO' : '...'}
+                          {tx.status === 'APPROVED' ? 'Approvata' : tx.status === 'REJECTED' ? 'Rifiutata' : 'In Attesa'}
                         </span>
                       </td>
                       <td className="py-3 text-right font-black text-primary">

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import {
   CreditCard,
   Wifi,
@@ -42,18 +41,28 @@ interface UserData {
 }
 
 export default function CardsPage() {
-  const { data: session } = useSession();
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [selectedCard, setSelectedCard] = useState(0);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch('/api/user/account');
+        if (res.status === 401) {
+          window.location.replace('/login');
+          return;
+        }
         const data = await res.json();
-        if (data.success) setUser(data.user);
-      } catch {} finally {
+        if (data.success) {
+          setUser(data.user);
+        } else {
+          setError('Impossibile caricare i dati delle carte.');
+        }
+      } catch {
+        setError('Errore di connessione.');
+      } finally {
         setLoading(false);
       }
     };
@@ -73,9 +82,7 @@ export default function CardsPage() {
   const card = cards[selectedCard];
   const transactions = account?.transactions ?? [];
   const balance = account?.balance ?? 0;
-  const cardLimit = 5000;
-  const spent = cardLimit - balance;
-  const spentPercent = Math.min((Math.abs(spent) / cardLimit) * 100, 100);
+  const spentPercent = account?.balance != null ? Math.min(Math.max(((5000 - balance) / 5000) * 100, 0), 100) : 0;
 
   const maskNumber = (num: string) => {
     const last4 = num.slice(-4);
@@ -98,6 +105,12 @@ export default function CardsPage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600">
+          {error}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -167,7 +180,7 @@ export default function CardsPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-xs text-slate-500">Limite mensile</span>
-                  <span className="text-sm font-black text-primary">{formatAmount(cardLimit)} €</span>
+                  <span className="text-sm font-black text-primary">5.000,00 €</span>
                 </div>
                 <div>
                   <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">

@@ -68,6 +68,13 @@ export async function POST(req: NextRequest) {
 
     const result = await prisma.$transaction(async (tx) => {
       if (action === 'APPROVE') {
+        if (transaction.type === 'DEBIT' || transaction.type === 'TRANSFER_OUT') {
+          const currentAccount = await tx.account.findUnique({ where: { id: transaction.accountId } });
+          if (!currentAccount || currentAccount.balance < Math.abs(transaction.amount)) {
+            return { success: false, error: 'Fondi insufficienti per questa transazione' };
+          }
+        }
+
         await tx.transaction.update({
           where: { id: transactionId },
           data: { status: 'APPROVED' },
@@ -94,6 +101,10 @@ export async function POST(req: NextRequest) {
       return { success: true, message: `Transazione ${action === 'APPROVE' ? 'approvata' : 'rifiutata'}` };
     });
 
+    if (!result.success) {
+      return NextResponse.json({ success: false, error: result.error }, { status: 400 });
+    }
+
     sendClientTransactionUpdate({
       clientEmail: transaction.account.user.email,
       clientNome: transaction.account.user.nome,
@@ -106,7 +117,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('Approval error:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Errore durante l\'elaborazione' }, { status: 500 });
   }
 }
 

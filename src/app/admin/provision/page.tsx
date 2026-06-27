@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { CheckCircle2, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
+import ConfirmModal from '@/components/ConfirmModal';
 
 export default function ProvisionPage() {
   const [formData, setFormData] = useState({
@@ -16,12 +17,18 @@ export default function ProvisionPage() {
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setConfirmOpen(true);
+  };
+
+  const executeSubmit = async () => {
     setLoading(true);
     setError(null);
     setResult(null);
+    setConfirmOpen(false);
     try {
       const res = await csrfFetch('/api/accounts/provision', {
         method: 'POST',
@@ -219,10 +226,27 @@ export default function ProvisionPage() {
               <p className="mt-4 text-xs italic text-slate-400">
                 Invia queste credenziali al cliente via email o WhatsApp.
               </p>
+              <button
+                onClick={() => { setResult(null); setFormData({ email: '', nome: '', cognome: '', amount: '', password: '' }); }}
+                className="mt-4 w-full btn-primary px-6 py-3 text-sm"
+              >
+                Nuovo Provisioning
+              </button>
             </div>
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        title="Confermare il provisioning?"
+        message={`Stai per creare un conto per ${formData.nome} ${formData.cognome} con un accredito di ${Number(formData.amount).toLocaleString('it-IT')} €. Questa azione è irreversibile.`}
+        confirmLabel="Crea il conto"
+        variant="info"
+        loading={loading}
+        onConfirm={executeSubmit}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }

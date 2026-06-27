@@ -57,16 +57,27 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { accountId, type, amount, description } = transactionSchema.parse(body);
+    const { accountId, type, amount, description, toIban } = transactionSchema.parse(body);
+
+    if (type === 'TRANSFER_OUT' && !toIban) {
+      return NextResponse.json({ success: false, error: 'IBAN destinatario obbligatorio per i trasferimenti' }, { status: 400 });
+    }
 
     const account = await prisma.account.findUnique({ where: { id: accountId } });
 
     if (!account || account.userId !== auth.session.userId) {
-      return NextResponse.json({ success: false, error: 'Fondi insufficienti o conto non trovato' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Conto non trovato' }, { status: 400 });
     }
 
-    if (account.balance < amount) {
-      return NextResponse.json({ success: false, error: 'Fondi insufficienti o conto non trovato' }, { status: 400 });
+    const pendingSum = await prisma.transaction.aggregate({
+      where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },
+      _sum: { amount: true },
+    });
+    const pendingTotal = Math.abs(pendingSum._sum.amount ?? 0);
+    const availableBalance = account.balance - pendingTotal;
+
+    if (availableBalance < amount) {
+      return NextResponse.json({ success: false, error: 'Fondi insufficienti (transazioni in sospeso incluse)' }, { status: 400 });
     }
 
     await prisma.transaction.create({
@@ -85,6 +96,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error('Transaction request error:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Errore durante l\'invio della richiesta' }, { status: 500 });
   }
 }

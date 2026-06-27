@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Wallet, ShieldCheck, ArrowRight, Lock } from 'lucide-react';
+import { LayoutDashboard, Clock, Wallet, ShieldCheck, ArrowRight, Settings } from 'lucide-react';
 
 export default function AdminHub() {
   return (
@@ -8,7 +8,7 @@ export default function AdminHub() {
         {/* Titolo */}
         <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
           <div className="badge inline-flex mb-4">
-            <Lock size={12} />
+            <Settings size={12} />
             Amministrazione
           </div>
           <h2 className="section-heading">Console di Amministrazione</h2>
@@ -18,7 +18,25 @@ export default function AdminHub() {
         </div>
 
         {/* Griglia */}
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <Link
+            href="/admin/dashboard"
+            className="surface-card group relative overflow-hidden p-8 sm:p-10 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:rounded-xl"
+          >
+            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary transition-colors group-hover:bg-secondary group-hover:text-primary">
+              <LayoutDashboard size={28} />
+            </div>
+            <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
+              Dashboard
+            </h3>
+            <p className="mb-6 text-sm leading-relaxed text-slate-500">
+              Panoramica generale dei conti, statistiche e stato del sistema.
+            </p>
+            <div className="flex items-center text-secondary font-black text-sm gap-2 group-hover:gap-3 transition-all">
+              Visualizza <ArrowRight size={16} />
+            </div>
+          </Link>
+
           <Link
             href="/admin/provision"
             className="surface-card group relative overflow-hidden p-8 sm:p-10 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:rounded-xl"
@@ -52,6 +70,24 @@ export default function AdminHub() {
             </p>
             <div className="flex items-center text-secondary font-black text-sm gap-2 group-hover:gap-3 transition-all">
               Verifica i flussi <ArrowRight size={16} />
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/timeline"
+            className="surface-card group relative overflow-hidden p-8 sm:p-10 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:rounded-xl"
+          >
+            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary transition-colors group-hover:bg-secondary group-hover:text-primary">
+              <Clock size={28} />
+            </div>
+            <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
+              Timeline
+            </h3>
+            <p className="mb-6 text-sm leading-relaxed text-slate-500">
+              Storico completo delle transazioni con filtri per stato e dettaglio operazioni.
+            </p>
+            <div className="flex items-center text-secondary font-black text-sm gap-2 group-hover:gap-3 transition-all">
+              Consulta lo storico <ArrowRight size={16} />
             </div>
           </Link>
         </div>

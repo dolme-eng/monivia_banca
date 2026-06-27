@@ -33,7 +33,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
   useEffect(() => {
     const fetchPending = async () => {
       try {
-        const res = await fetch('/api/admin/transactions');
+        const res = await fetch('/api/admin/transactions?status=PENDING');
         const data = await res.json();
         if (Array.isArray(data)) {
           setPendingCount(data.length);
@@ -55,8 +55,10 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
   }, [mobileOpen]);
 
   const handleSignOut = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    window.location.href = '/login';
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {}
+    window.location.replace('/login');
   };
 
   return (
@@ -135,12 +137,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
             <nav className="flex flex-col gap-1 flex-grow">
               {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
                 const active = pathname === href || pathname.startsWith(href + '/');
-  const handleSignOut = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    window.location.href = '/login';
-  };
-
-  return (
+                return (
                   <Link
                     key={href}
                     href={href}
@@ -162,6 +159,13 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
                 );
               })}
             </nav>
+            <button
+              onClick={() => { setMobileOpen(false); handleSignOut(); }}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-black text-white/40 hover:bg-white/10 hover:text-white transition-all"
+            >
+              <LogOut size={18} />
+              Esci
+            </button>
           </aside>
         </div>
       )}
@@ -188,14 +192,14 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <button className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-secondary transition-colors" aria-label="Notifiche">
+            <Link href="/admin/approvals" className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-secondary transition-colors" aria-label="Notifiche">
               <Bell size={18} />
               {pendingCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-amber-500 rounded-full text-[9px] font-black text-primary flex items-center justify-center">
                   {pendingCount > 9 ? '9+' : pendingCount}
                 </span>
               )}
-            </button>
+            </Link>
             <button className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-secondary transition-colors" aria-label="Aiuto">
               <HelpCircle size={18} />
             </button>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import {
   User,
   Mail,
@@ -23,17 +22,27 @@ interface UserData {
 }
 
 export default function SettingsPage() {
-  const { data: session } = useSession();
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch('/api/user/account');
+        if (res.status === 401) {
+          window.location.replace('/login');
+          return;
+        }
         const data = await res.json();
-        if (data.success) setUser(data.user);
-      } catch {} finally {
+        if (data.success) {
+          setUser(data.user);
+        } else {
+          setError('Impossibile caricare le impostazioni.');
+        }
+      } catch {
+        setError('Errore di connessione.');
+      } finally {
         setLoading(false);
       }
     };
@@ -54,6 +63,12 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600">
+          {error}
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-primary">Impostazioni e Sicurezza</h1>

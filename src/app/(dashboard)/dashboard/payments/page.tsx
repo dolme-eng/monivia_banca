@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import {
   Send,
   Clock,
@@ -13,6 +12,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface UserData {
   nome: string;
@@ -34,12 +34,13 @@ interface UserData {
 }
 
 export default function PaymentsPage() {
-  const { data: session } = useSession();
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAmount, setConfirmAmount] = useState(0);
 
   const [form, setForm] = useState({
     recipientName: '',
@@ -52,9 +53,19 @@ export default function PaymentsPage() {
     const fetchUser = async () => {
       try {
         const res = await fetch('/api/user/account');
+        if (res.status === 401) {
+          window.location.replace('/login');
+          return;
+        }
         const data = await res.json();
-        if (data.success) setUser(data.user);
-      } catch {} finally {
+        if (data.success) {
+          setUser(data.user);
+        } else {
+          setError('Impossibile caricare i dati del conto.');
+        }
+      } catch {
+        setError('Errore di connessione.');
+      } finally {
         setLoading(false);
       }
     };
@@ -67,32 +78,36 @@ export default function PaymentsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
     setError('');
 
     if (!form.iban || !form.amount || !form.description) {
       setError('Compila tutti i campi obbligatori.');
-      setSubmitting(false);
       return;
     }
 
     const amount = parseFloat(form.amount.replace(',', '.'));
     if (isNaN(amount) || amount <= 0) {
       setError('Importo non valido.');
-      setSubmitting(false);
       return;
     }
 
     if (amount > balance) {
       setError('Fondi insufficienti.');
-      setSubmitting(false);
       return;
     }
 
-    try {
-      const csrfRes = await fetch('/api/csrf');
-      const { csrfToken } = await csrfRes.json();
+    setConfirmAmount(amount);
+    setConfirmOpen(true);
+  };
 
+  const executeSubmit = async () => {
+    setSubmitting(true);
+    setError('');
+    setConfirmOpen(false);
+
+    const amount = confirmAmount;
+
+    try {
       const res = await csrfFetch('/api/transactions', {
         method: 'POST',
         body: JSON.stringify({
@@ -159,13 +174,13 @@ export default function PaymentsPage() {
             </h2>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600">
+              <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm font-black text-emerald-600 flex items-center gap-2">
+              <div role="status" className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm font-black text-emerald-600 flex items-center gap-2">
                 <CheckCircle2 size={16} />
                 Trasferimento inviato! In attesa di approvazione.
               </div>
@@ -175,22 +190,22 @@ export default function PaymentsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* Sender account */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Conto mittente</label>
-                  <select className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:border-secondary focus:ring-1 focus:ring-secondary/30 transition-all outline-none" disabled>
+                  <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Conto mittente</label>
+                  <select className="field-shell" disabled>
                     <option>Conto Personale •• {account?.iban?.slice(-4) ?? '—'} ({formatAmount(balance)} €)</option>
                   </select>
                 </div>
 
                 {/* Recipient name */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Nome destinatario</label>
+                  <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Nome destinatario</label>
                   <div className="relative">
                     <input
                       type="text"
                       value={form.recipientName}
                       onChange={(e) => setForm({ ...form, recipientName: e.target.value })}
                       placeholder="Nome o azienda"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 pr-10 text-sm focus:border-secondary focus:ring-1 focus:ring-secondary/30 transition-all outline-none"
+                      className="field-shell pr-10"
                     />
                     <UserSearch size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   </div>
@@ -198,20 +213,20 @@ export default function PaymentsPage() {
 
                 {/* IBAN */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">IBAN destinatario *</label>
+                  <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">IBAN destinatario *</label>
                   <input
                     type="text"
                     value={form.iban}
                     onChange={(e) => setForm({ ...form, iban: e.target.value })}
                     placeholder="IT00 A000 0000 0000 0000 0000 000"
                     required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:border-secondary focus:ring-1 focus:ring-secondary/30 transition-all outline-none"
+                    className="field-shell"
                   />
                 </div>
 
                 {/* Amount */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Importo *</label>
+                  <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Importo *</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 font-black">€</span>
                     <input
@@ -222,7 +237,7 @@ export default function PaymentsPage() {
                       onChange={(e) => setForm({ ...form, amount: e.target.value })}
                       placeholder="0,00"
                       required
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 pl-8 text-sm font-black focus:border-secondary focus:ring-1 focus:ring-secondary/30 transition-all outline-none"
+                      className="field-shell pl-8 font-black"
                     />
                   </div>
                 </div>
@@ -230,20 +245,20 @@ export default function PaymentsPage() {
 
               {/* Reference */}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Causale *</label>
+                <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Causale *</label>
                 <input
                   type="text"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   placeholder="Fattura / Pagamento servizi"
                   required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:border-secondary focus:ring-1 focus:ring-secondary/30 transition-all outline-none"
+                  className="field-shell"
                 />
               </div>
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[11px] text-slate-400">
                   Il trasferimento sarà in attesa di approvazione amministrativa.
                 </p>
                 <button
@@ -295,7 +310,7 @@ export default function PaymentsPage() {
                         </div>
                         <div>
                           <p className="text-xs font-black text-primary">{tx.description}</p>
-                          <p className="text-[10px] text-slate-400">{formatTime(tx.createdAt)}</p>
+                          <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -303,15 +318,15 @@ export default function PaymentsPage() {
                           {isCredit ? '+' : '-'}{formatAmount(tx.amount)} €
                         </p>
                         {tx.status === 'PENDING' ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-amber-600">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-amber-600">
                             <Clock size={8} /> In attesa
                           </span>
                         ) : tx.status === 'APPROVED' ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-emerald-600">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-600">
                             <CheckCircle2 size={8} /> OK
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-red-500">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-500">
                             Rifiutato
                           </span>
                         )}
@@ -337,7 +352,7 @@ export default function PaymentsPage() {
               <div>
                 <p className="text-3xl font-black">{formatAmount(balance)} €</p>
               </div>
-              <p className="text-[10px] text-white/40">
+              <p className="text-[11px] text-white/40">
                 I fondi sono soggetti ad approvazione per prelievi e trasferimenti.
               </p>
             </div>
@@ -347,14 +362,25 @@ export default function PaymentsPage() {
           <div className="p-4 border border-slate-200 rounded-xl flex gap-3 items-start bg-white">
             <Shield size={18} className="text-secondary shrink-0 mt-0.5" />
             <div>
-              <p className="text-[10px] font-black text-primary uppercase">Banca Verificata</p>
-              <p className="text-[10px] text-slate-400 leading-relaxed mt-1">
+              <p className="text-[11px] font-black text-primary uppercase">Banca Verificata</p>
+              <p className="text-[11px] text-slate-400 leading-relaxed mt-1">
                 Tutti i trasferimenti sono protetti da crittografia di livello bancario e autenticazione multi-fattore.
               </p>
             </div>
           </div>
         </aside>
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        title="Confermare il trasferimento?"
+        message={`Stai per inviare ${confirmAmount.toLocaleString('it-IT', { minimumFractionDigits: 2 })} € all'IBAN ${form.iban}. L'operazione sarà in attesa di approvazione amministrativa.`}
+        confirmLabel="Conferma Invio"
+        variant="info"
+        loading={submitting}
+        onConfirm={executeSubmit}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }

@@ -43,16 +43,25 @@ interface UserData {
 export default function DashboardPage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch('/api/user/account');
+        if (res.status === 401) {
+          window.location.replace('/login');
+          return;
+        }
         const data = await res.json();
         if (data.success) {
           setUser(data.user);
+        } else {
+          setError('Impossibile caricare i dati del conto.');
         }
-      } catch {} finally {
+      } catch {
+        setError('Errore di connessione.');
+      } finally {
         setLoading(false);
       }
     };
@@ -92,6 +101,12 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600 flex items-center gap-2">
+          {error}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -99,11 +114,11 @@ export default function DashboardPage() {
           <p className="text-sm text-slate-500 mt-1">Bentornato, {firstName}. Ecco il tuo conto.</p>
         </div>
         <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-100 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-100 transition-colors">
             <Clock size={14} />
             Ultimi 30 giorni
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-black hover:bg-slate-800 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg bg-primary text-white text-sm font-black hover:bg-slate-800 transition-colors">
             <Download size={14} />
             Esporta
           </button>
@@ -117,11 +132,11 @@ export default function DashboardPage() {
           <div className="absolute -right-8 -top-8 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" aria-hidden />
           <div className="relative z-10">
             <div className="flex justify-between items-start">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary">Saldo Totale</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-secondary">Saldo Totale</span>
               <Wallet size={18} className="text-secondary" />
             </div>
             <div className="mt-4">
-              <p className="text-3xl lg:text-4xl font-black tracking-tight">{formatAmount(balance)} €</p>
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">{formatAmount(balance)} €</p>
               <div className="flex items-center gap-1.5 text-emerald-400 mt-2">
                 <TrendingUp size={14} />
                 <span className="text-[11px] font-black">Conto attivo</span>
@@ -130,11 +145,11 @@ export default function DashboardPage() {
           </div>
           <div className="mt-6 flex gap-4 relative z-10">
             <div className="flex-1">
-              <p className="text-[10px] text-white/50">IBAN</p>
+              <p className="text-[11px] text-white/50">IBAN</p>
               <p className="text-xs font-black font-mono truncate">{account?.iban ?? '—'}</p>
             </div>
             <div className="flex-1 border-l border-white/10 pl-4">
-              <p className="text-[10px] text-white/50">Valuta</p>
+              <p className="text-[11px] text-white/50">Valuta</p>
               <p className="text-lg font-black">{account?.currency ?? 'EUR'}</p>
             </div>
           </div>
@@ -147,7 +162,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-secondary" />
-                <span className="text-[10px] text-slate-400">Periodo corrente</span>
+                <span className="text-[11px] text-slate-400">Periodo corrente</span>
               </div>
             </div>
           </div>
@@ -166,10 +181,10 @@ export default function DashboardPage() {
             </svg>
           </div>
           <div className="flex justify-between mt-3 px-1">
-            <span className="text-[10px] text-slate-400">1 Giu</span>
-            <span className="text-[10px] text-slate-400">10 Giu</span>
-            <span className="text-[10px] text-slate-400">20 Giu</span>
-            <span className="text-[10px] text-slate-400">26 Giu</span>
+            <span className="text-[11px] text-slate-400">1 Giu</span>
+            <span className="text-[11px] text-slate-400">10 Giu</span>
+            <span className="text-[11px] text-slate-400">20 Giu</span>
+            <span className="text-[11px] text-slate-400">26 Giu</span>
           </div>
         </div>
 
@@ -201,7 +216,7 @@ export default function DashboardPage() {
                       </div>
                       <div>
                         <p className="text-sm font-black text-primary">{tx.description}</p>
-                        <p className="text-[10px] text-slate-400">{formatTime(tx.createdAt)}</p>
+                        <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -209,15 +224,15 @@ export default function DashboardPage() {
                         {isCredit ? '+' : '-'}{formatAmount(Math.abs(tx.amount))} €
                       </p>
                       {tx.status === 'PENDING' ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-amber-600">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-amber-600">
                           <Clock size={8} /> In sospeso
                         </span>
                       ) : tx.status === 'APPROVED' ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-emerald-600">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-600">
                           <CheckCircle2 size={8} /> Completato
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-red-500">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-500">
                           Rifiutato
                         </span>
                       )}
@@ -240,7 +255,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-left">
                   <p className="text-sm font-black">Nuovo Trasferimento</p>
-                  <p className="text-[10px] text-white/50">Trasferisci fondi</p>
+                  <p className="text-[11px] text-white/50">Trasferisci fondi</p>
                 </div>
                 <ArrowRight size={14} className="ml-auto group-hover:translate-x-1 transition-transform" />
               </Link>
@@ -250,7 +265,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-left">
                   <p className="text-sm font-black text-primary">Prelievo</p>
-                  <p className="text-[10px] text-slate-400">Richiedi prelievo</p>
+                  <p className="text-[11px] text-slate-400">Richiedi prelievo</p>
                 </div>
                 <ArrowRight size={14} className="ml-auto text-slate-400 group-hover:translate-x-1 transition-transform" />
               </Link>
@@ -260,7 +275,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-left">
                   <p className="text-sm font-black text-primary">Le mie Carte</p>
-                  <p className="text-[10px] text-slate-400">Gestisci la carta</p>
+                  <p className="text-[11px] text-slate-400">Gestisci la carta</p>
                 </div>
                 <ArrowRight size={14} className="ml-auto text-slate-400 group-hover:translate-x-1 transition-transform" />
               </Link>
@@ -281,7 +296,7 @@ export default function DashboardPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-xs text-slate-400">Stato</span>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded ${
+                <span className={`text-[11px] font-black px-2 py-0.5 rounded ${
                   account?.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
                 }`}>
                   {account?.status === 'ACTIVE' ? 'Attivo' : account?.status === 'FROZEN' ? 'Congelato' : 'Chiuso'}
