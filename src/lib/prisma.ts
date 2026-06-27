@@ -10,7 +10,10 @@ const globalForPrisma = globalThis as unknown as {
 function getClient(): PrismaClient {
   if (globalForPrisma.prisma) return globalForPrisma.prisma;
   const { PrismaClient: PClient } = require('@prisma/client');
+  const { PrismaPg } = require('@prisma/pg-worker');
+  const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
   const client = new PClient({
+    adapter,
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   });
   if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = client;

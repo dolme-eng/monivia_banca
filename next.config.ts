@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  serverExternalPackages: ['@prisma/client'],
+  serverExternalPackages: ['@prisma/client', '@prisma/pg-worker', 'pg'],
   turbopack: {
     root: ".",
   },
