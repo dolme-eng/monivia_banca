@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { requireAdmin } from '@/lib/api-auth';
 
 const provisionSchema = z.object({
   email: z.string().email(),
@@ -25,7 +26,10 @@ function checkOrigin(req: Request): boolean {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const auth = await requireAdmin(req);
+  if ('error' in auth) return auth.error;
+
   // 1. Origin check (fail-closed)
   if (!checkOrigin(req)) {
     return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });

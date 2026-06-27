@@ -80,12 +80,9 @@ export default function Home() {
 
             <FadeIn delay={300}>
               <div className="flex flex-wrap gap-4 mt-2">
-                <Link href="/admin/provision" className="btn-cyan px-8 py-4 text-sm">
-                  Apri un conto
+                <Link href="/login" className="btn-cyan px-8 py-4 text-sm">
+                  Accedi alla tua area
                   <ArrowRight size={16} />
-                </Link>
-                <Link href="/admin" className="btn-secondary px-8 py-4 text-sm">
-                  Area Admin
                 </Link>
               </div>
             </FadeIn>
@@ -488,12 +485,9 @@ export default function Home() {
                   Unisciti a migliaia di clienti che hanno già scelto la modernità e la sicurezza.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link href="/admin/provision" className="btn-cyan px-8 py-4 text-sm">
-                    Apri il tuo conto
+                  <Link href="/login" className="btn-cyan px-8 py-4 text-sm">
+                    Accedi alla tua area
                     <ArrowRight size={16} />
-                  </Link>
-                  <Link href="/admin" className="btn-ghost-white px-8 py-4 text-sm">
-                    Contatta un esperto
                   </Link>
                 </div>
                 <p className="mt-8 text-white/30 text-[11px] font-black uppercase tracking-[0.18em]">

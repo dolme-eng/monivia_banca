@@ -3,7 +3,7 @@ import './globals.css';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Monivia Banque | Administration',
+  title: 'Monivia Banca | Gestione Finanziaria Sicura',
   description: 'Gestione sicura dei fondi Monivia',
   icons: {
     icon: [
@@ -61,19 +61,10 @@ export default function RootLayout({
               <Link href="/" className="rounded-full px-4 py-2 text-sm font-black text-slate-500 hover:bg-slate-100 hover:text-primary transition-colors">
                 Home
               </Link>
-              <Link href="/admin" className="rounded-full px-4 py-2 text-sm font-black bg-secondary/10 text-secondary">
-                Amministrazione
-              </Link>
-              <Link href="/admin/provision" className="rounded-full px-4 py-2 text-sm font-black text-slate-500 hover:bg-slate-100 hover:text-primary transition-colors">
-                Provisioning
-              </Link>
-              <Link href="/admin/approvals" className="rounded-full px-4 py-2 text-sm font-black text-slate-500 hover:bg-slate-100 hover:text-primary transition-colors">
-                Approvazioni
-              </Link>
             </nav>
             <div className="flex items-center gap-2 sm:gap-3">
-              <Link href="/admin" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition-all hover:-translate-y-0.5 hover:bg-slate-800">
-                Admin
+              <Link href="/login" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition-all hover:-translate-y-0.5 hover:bg-slate-800">
+                Accedi
               </Link>
             </div>
           </div>
@@ -97,9 +88,7 @@ export default function RootLayout({
                   <h3 className="mb-5 text-[11px] font-black uppercase tracking-[0.2em] text-white">Navigazione</h3>
                   <ul className="space-y-3">
                     <li><Link href="/" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Home</Link></li>
-                    <li><Link href="/admin" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Amministrazione</Link></li>
-                    <li><Link href="/admin/provision" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Provisioning</Link></li>
-                    <li><Link href="/admin/approvals" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Approvazioni</Link></li>
+                    <li><Link href="/login" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Accesso Riservato</Link></li>
                   </ul>
                 </div>
                 <div>

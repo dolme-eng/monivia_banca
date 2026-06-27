@@ -18,8 +18,10 @@ async function getSession(req: NextRequest) {
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  const isPublic = pathname === '/'
+    || pathname.startsWith('/api/csrf')
+    || pathname.startsWith('/api/auth');
   const isAuthPage = pathname === '/login';
-  const isPublic = pathname === '/' || pathname.startsWith('/api/csrf');
 
   if (isPublic || isAuthPage) {
     const session = await getSession(req);
@@ -33,14 +35,32 @@ export default async function middleware(req: NextRequest) {
   const session = await getSession(req);
 
   if (!session) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        { success: false, error: 'Non autenticato' },
+        { status: 401 }
+      );
+    }
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  if (pathname.startsWith('/admin') && session.role !== 'ADMIN') {
+  const isAdmin = session.role === 'ADMIN';
+
+  if (pathname.startsWith('/api/admin') || pathname.startsWith('/api/accounts/provision')) {
+    if (!isAdmin) {
+      return NextResponse.json(
+        { success: false, error: 'Accesso riservato all\'amministrazione' },
+        { status: 403 }
+      );
+    }
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith('/admin') && !isAdmin) {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
-  if (pathname.startsWith('/dashboard') && session.role === 'ADMIN') {
+  if (pathname.startsWith('/dashboard') && isAdmin) {
     return NextResponse.redirect(new URL('/admin/dashboard', req.url));
   }
 
@@ -48,5 +68,15 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*', '/login'],
+  matcher: [
+    '/dashboard/:path*',
+    '/admin/:path*',
+    '/login',
+    '/api/admin/:path*',
+    '/api/accounts/provision',
+    '/api/transactions/:path*',
+    '/api/prelievo/:path*',
+    '/api/notifications/:path*',
+    '/api/user/:path*',
+  ],
 };

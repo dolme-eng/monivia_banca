@@ -1,8 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { requireAdmin } from '@/lib/api-auth';
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
+  const auth = await requireAdmin(req);
+  if ('error' in auth) return auth.error;
+
   const ip = getClientIp(req);
   const rl = checkRateLimit(`admin-stats:${ip}`, 60, 10 * 60 * 1000);
   if (!rl.allowed) {
