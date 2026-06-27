@@ -4,7 +4,7 @@ const HMAC_ALGO = 'sha256';
 const TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 function getSecret(): string {
-  const secret = process.env.CSRF_SECRET || process.env.NEXTAUTH_SECRET;
+  const secret = process.env.CSRF_SECRET || process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
   if (!secret) throw new Error('CSRF_SECRET or NEXTAUTH_SECRET must be set');
   return secret;
 }

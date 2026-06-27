@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const AUTH_SECRET = process.env.NEXTAUTH_SECRET || process.env.CSRF_SECRET || '';
+const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || process.env.CSRF_SECRET || '';
 
 export interface SessionPayload {
   role?: string;
