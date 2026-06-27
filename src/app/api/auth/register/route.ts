@@ -9,7 +9,6 @@ const registerSchema = z.object({
   password: z.string().min(8),
   nome: z.string().min(1),
   cognome: z.string().min(1),
-  role: z.enum(['USER', 'ADMIN']).default('USER'),
 });
 
 export async function POST(req: Request) {
@@ -40,7 +39,7 @@ export async function POST(req: Request) {
         hashedPassword,
         nome: data.nome,
         cognome: data.cognome,
-        role: data.role,
+        role: 'USER',
       },
       select: { id: true, email: true, nome: true, cognome: true, role: true },
     });

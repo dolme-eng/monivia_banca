@@ -5,7 +5,7 @@ export default function AdminHub() {
   return (
     <section className="section-pad">
       <div className="site-container">
-        {/* Titre */}
+        {/* Titolo */}
         <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
           <div className="badge inline-flex mb-4">
             <Lock size={12} />
@@ -17,7 +17,7 @@ export default function AdminHub() {
           </p>
         </div>
 
-        {/* Grille */}
+        {/* Griglia */}
         <div className="grid gap-6 sm:grid-cols-2">
           <Link
             href="/admin/provision"

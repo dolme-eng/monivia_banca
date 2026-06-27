@@ -34,7 +34,7 @@ export default function RootLayout({
       </head>
       <body className="bg-white text-slate-900 antialiased">
         <header className="fixed left-0 top-0 z-50 w-full border-b border-slate-200/70 bg-white text-primary shadow-sm">
-          {/* Barre utilitaire */}
+          {/* Barra utility */}
           <div className="hidden border-b border-slate-100 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 md:block">
             <div className="site-container flex h-9 items-center justify-between">
               <div className="flex items-center gap-6">
@@ -44,7 +44,7 @@ export default function RootLayout({
               <span className="hidden lg:block">Accesso riservato all'amministrazione</span>
             </div>
           </div>
-          {/* Barre principale */}
+          {/* Barra principale */}
           <div className="site-container flex h-[68px] items-center justify-between">
             <Link
               href="/"

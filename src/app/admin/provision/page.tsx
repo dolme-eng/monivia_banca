@@ -37,7 +37,7 @@ export default function ProvisionPage() {
   return (
     <section className="section-pad">
       <div className="site-container">
-        {/* Titre */}
+        {/* Titolo */}
         <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
           <h2 className="section-heading">Provisionamento <span className="text-gradient-cyan">del Prestito</span></h2>
           <p className="section-copy mt-5">
@@ -124,7 +124,7 @@ export default function ProvisionPage() {
             </div>
           </form>
 
-          {/* Panneau latéral */}
+          {/* Pannello laterale */}
           <div className="lg:col-span-2 space-y-6">
             <div className="surface-card p-6">
               <h3 className="mb-4 flex items-center gap-2 font-black text-primary">
