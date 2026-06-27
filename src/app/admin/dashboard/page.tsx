@@ -11,11 +11,10 @@ import {
   Plus,
   UserPlus,
   Activity,
-  Settings,
   CreditCard,
   Send,
-  Wallet,
-  Users,
+  AlertCircle,
+  XCircle,
 } from 'lucide-react';
 
 interface AdminStats {
@@ -37,16 +36,21 @@ export default function AdminDashboardPage() {
     pendingList: [],
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const res = await fetch('/api/admin/stats');
+        if (!res.ok) throw new Error('Errore del server');
         const data = await res.json();
         if (data.totalAccounts !== undefined) {
           setStats(data);
+          setError(null);
         }
-      } catch {} finally {
+      } catch {
+        setError('Impossibile caricare le statistiche');
+      } finally {
         setLoading(false);
       }
     };
@@ -82,6 +86,16 @@ export default function AdminDashboardPage() {
           Nuovo Provisioning
         </Link>
       </div>
+
+      {error && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2">
+          <AlertCircle size={16} />
+          {error}
+          <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">
+            <XCircle size={14} />
+          </button>
+        </div>
+      )}
 
       {/* Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">

@@ -122,12 +122,19 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const pendingTransactions = await prisma.transaction.findMany({
-      where: { status: 'PENDING' },
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get('status');
+
+    const where = status && ['PENDING', 'APPROVED', 'REJECTED'].includes(status)
+      ? { status: status as 'PENDING' | 'APPROVED' | 'REJECTED' }
+      : {};
+
+    const transactions = await prisma.transaction.findMany({
+      where,
       include: { account: { include: { user: true } } },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: status ? 'desc' : 'asc' },
     });
-    return NextResponse.json(pendingTransactions);
+    return NextResponse.json(transactions);
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Impossibile recuperare le transazioni' }, { status: 500 });
   }

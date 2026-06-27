@@ -14,7 +14,10 @@ import {
   AlertTriangle,
   Send,
   Loader2,
+  AlertCircle,
 } from 'lucide-react';
+import { csrfFetch } from '@/lib/csrf-client';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface TransactionDetail {
   id: string;
@@ -46,16 +49,21 @@ export default function AdminPrelievoDetailPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<'APPROVE' | 'REJECT' | null>(null);
   const [result, setResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<'APPROVE' | 'REJECT' | null>(null);
 
   const fetchTx = useCallback(async () => {
     try {
       const res = await fetch(`/api/admin/transactions`);
+      if (!res.ok) throw new Error('Errore del server');
       const data = await res.json();
       const found = Array.isArray(data) ? data.find((t: any) => t.id === txId) : null;
       if (found) {
         setTx(found);
       }
-    } catch {} finally {
+    } catch {
+      setResult({ type: 'error', message: 'Impossibile caricare i dettagli della transazione' });
+    } finally {
       setLoading(false);
     }
   }, [txId]);
@@ -67,17 +75,11 @@ export default function AdminPrelievoDetailPage() {
   const handleAction = async (action: 'APPROVE' | 'REJECT') => {
     setActionLoading(action);
     setResult(null);
+    setConfirmOpen(false);
 
     try {
-      const csrfRes = await fetch('/api/csrf');
-      const { csrfToken } = await csrfRes.json();
-
-      const res = await fetch('/api/admin/transactions', {
+      const res = await csrfFetch('/api/admin/transactions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': csrfToken,
-        },
         body: JSON.stringify({ transactionId: txId, action }),
       });
 
@@ -94,6 +96,11 @@ export default function AdminPrelievoDetailPage() {
     } finally {
       setActionLoading(null);
     }
+  };
+
+  const openConfirm = (action: 'APPROVE' | 'REJECT') => {
+    setConfirmAction(action);
+    setConfirmOpen(true);
   };
 
   const formatAmount = (amount: number) =>
@@ -142,7 +149,6 @@ export default function AdminPrelievoDetailPage() {
 
   return (
     <div className="space-y-6 max-w-3xl">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <button onClick={() => router.back()} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
           <ArrowLeft size={18} className="text-slate-500" />
@@ -153,23 +159,20 @@ export default function AdminPrelievoDetailPage() {
         </div>
       </div>
 
-      {/* Result toast */}
       {result && (
         <div className={`p-4 rounded-xl border text-sm font-black flex items-center gap-2 ${
           result.type === 'success'
             ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
             : 'bg-red-50 border-red-200 text-red-700'
         }`}>
-          {result.type === 'success' ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+          {result.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
           {result.message}
         </div>
       )}
 
-      {/* Timeline */}
       <div className="bg-white rounded-xl p-6 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
         <h3 className="text-sm font-black text-primary mb-5">Stato della Richiesta</h3>
         <div className="flex items-center justify-between relative">
-          {/* Connector line */}
           <div className="absolute top-5 left-[15%] right-[15%] h-0.5 bg-slate-200" />
           <div
             className="absolute top-5 left-[15%] h-0.5 bg-secondary transition-all duration-500"
@@ -197,9 +200,7 @@ export default function AdminPrelievoDetailPage() {
         </div>
       </div>
 
-      {/* Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Client info */}
         <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h3 className="text-sm font-black text-primary mb-4 flex items-center gap-2">
             <User size={14} className="text-secondary" />
@@ -225,7 +226,6 @@ export default function AdminPrelievoDetailPage() {
           </div>
         </div>
 
-        {/* Transaction info */}
         <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h3 className="text-sm font-black text-primary mb-4 flex items-center gap-2">
             <CreditCard size={14} className="text-secondary" />
@@ -260,7 +260,6 @@ export default function AdminPrelievoDetailPage() {
         </div>
       </div>
 
-      {/* Description */}
       <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
         <h3 className="text-sm font-black text-primary mb-3 flex items-center gap-2">
           <FileText size={14} className="text-secondary" />
@@ -269,13 +268,12 @@ export default function AdminPrelievoDetailPage() {
         <p className="text-sm text-slate-600 leading-relaxed">{tx.description}</p>
       </div>
 
-      {/* Actions */}
       {isPending && (
         <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h3 className="text-sm font-black text-primary mb-4">Azioni</h3>
           <div className="flex gap-3">
             <button
-              onClick={() => handleAction('APPROVE')}
+              onClick={() => openConfirm('APPROVE')}
               disabled={actionLoading !== null}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-colors disabled:opacity-50"
             >
@@ -287,7 +285,7 @@ export default function AdminPrelievoDetailPage() {
               Approva
             </button>
             <button
-              onClick={() => handleAction('REJECT')}
+              onClick={() => openConfirm('REJECT')}
               disabled={actionLoading !== null}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-black hover:bg-red-100 transition-colors disabled:opacity-50"
             >
@@ -305,12 +303,26 @@ export default function AdminPrelievoDetailPage() {
         </div>
       )}
 
-      {/* Back link */}
       <div className="text-center">
         <Link href="/admin/approvals" className="text-sm text-secondary font-black hover:underline">
           ← Torna alle Approvazioni
         </Link>
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        title={confirmAction === 'APPROVE' ? 'Approvare la transazione?' : 'Rifiutare la transazione?'}
+        message={
+          confirmAction === 'APPROVE'
+            ? 'Questa azione debiterà automaticamente il saldo del conto del cliente. Vuoi procedere?'
+            : 'La transazione verrà rifiutata e il saldo del conto non verrà modificato. Vuoi procedere?'
+        }
+        confirmLabel={confirmAction === 'APPROVE' ? 'Approva' : 'Rifiuta'}
+        variant={confirmAction === 'APPROVE' ? 'info' : 'danger'}
+        loading={actionLoading !== null}
+        onConfirm={() => confirmAction && handleAction(confirmAction)}
+        onCancel={() => { setConfirmOpen(false); setConfirmAction(null); }}
+      />
     </div>
   );
 }

@@ -10,9 +10,10 @@ import {
   Clock,
   ArrowRight,
   Loader2,
-  AlertTriangle,
+  AlertCircle,
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface Transaction {
   id: string;
@@ -31,13 +32,20 @@ export default function ApprovalsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ id: string; action: 'APPROVE' | 'REJECT' } | null>(null);
 
   const fetchTransactions = async () => {
     try {
-      const res = await fetch('/api/admin/transactions');
+      const res = await fetch('/api/admin/transactions?status=PENDING');
+      if (!res.ok) throw new Error('Errore del server');
       const data = await res.json();
       setTransactions(Array.isArray(data) ? data : []);
-    } catch {} finally {
+      setError(null);
+    } catch {
+      setError('Impossibile caricare le transazioni. Riprovo automaticamente...');
+    } finally {
       setLoading(false);
     }
   };
@@ -50,17 +58,29 @@ export default function ApprovalsPage() {
 
   const handleAction = async (transactionId: string, action: 'APPROVE' | 'REJECT') => {
     setActionId(transactionId);
+    setConfirmOpen(false);
     try {
       const res = await csrfFetch('/api/admin/transactions', {
         method: 'POST',
         body: JSON.stringify({ transactionId, action }),
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
         await fetchTransactions();
+      } else {
+        setError(data.error || 'Azione non riuscita');
       }
-    } catch {} finally {
+    } catch {
+      setError('Errore di connessione durante l\'azione');
+    } finally {
       setActionId(null);
+      setConfirmAction(null);
     }
+  };
+
+  const openConfirm = (id: string, action: 'APPROVE' | 'REJECT') => {
+    setConfirmAction({ id, action });
+    setConfirmOpen(true);
   };
 
   const formatAmount = (amount: number) =>
@@ -78,7 +98,6 @@ export default function ApprovalsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-primary">Approvazioni</h1>
         <p className="text-sm text-slate-500 mt-1">
@@ -86,7 +105,16 @@ export default function ApprovalsPage() {
         </p>
       </div>
 
-      {/* Stats */}
+      {error && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2">
+          <AlertCircle size={16} />
+          {error}
+          <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">
+            <XCircle size={14} />
+          </button>
+        </div>
+      )}
+
       <div className="flex gap-3">
         <div className="bg-white rounded-xl px-4 py-3 border border-slate-200/80 flex items-center gap-3" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
@@ -99,7 +127,6 @@ export default function ApprovalsPage() {
         </div>
       </div>
 
-      {/* List */}
       {loading ? (
         <div className="flex items-center justify-center py-16">
           <Loader2 size={24} className="animate-spin text-secondary" />
@@ -156,7 +183,7 @@ export default function ApprovalsPage() {
                       <ArrowRight size={14} />
                     </Link>
                     <button
-                      onClick={() => handleAction(tx.id, 'REJECT')}
+                      onClick={() => openConfirm(tx.id, 'REJECT')}
                       disabled={actionId === tx.id}
                       className="p-2 border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors text-slate-400 hover:text-red-500 disabled:opacity-50"
                       title="Rifiuta"
@@ -164,7 +191,7 @@ export default function ApprovalsPage() {
                       {actionId === tx.id ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
                     </button>
                     <button
-                      onClick={() => handleAction(tx.id, 'APPROVE')}
+                      onClick={() => openConfirm(tx.id, 'APPROVE')}
                       disabled={actionId === tx.id}
                       className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-black hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-1.5"
                     >
@@ -178,6 +205,21 @@ export default function ApprovalsPage() {
           ))}
         </div>
       )}
+
+      <ConfirmModal
+        open={confirmOpen}
+        title={confirmAction?.action === 'APPROVE' ? 'Approvare la transazione?' : 'Rifiutare la transazione?'}
+        message={
+          confirmAction?.action === 'APPROVE'
+            ? 'Questa azione debiterà automaticamente il saldo del conto del cliente. Vuoi procedere?'
+            : 'La transazione verrà rifiutata e il saldo del conto non verrà modificato. Vuoi procedere?'
+        }
+        confirmLabel={confirmAction?.action === 'APPROVE' ? 'Approva' : 'Rifiuta'}
+        variant={confirmAction?.action === 'APPROVE' ? 'info' : 'danger'}
+        loading={actionId !== null}
+        onConfirm={() => confirmAction && handleAction(confirmAction.id, confirmAction.action)}
+        onCancel={() => { setConfirmOpen(false); setConfirmAction(null); }}
+      />
     </div>
   );
 }

@@ -11,6 +11,7 @@ import {
   Loader2,
   ArrowRight,
   AlertTriangle,
+  AlertCircle,
 } from 'lucide-react';
 
 interface Transaction {
@@ -33,13 +34,18 @@ export default function AdminTimelinePage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('ALL');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchTransactions = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/transactions');
+      if (!res.ok) throw new Error('Errore del server');
       const data = await res.json();
       setTransactions(Array.isArray(data) ? data : []);
-    } catch {} finally {
+      setError(null);
+    } catch {
+      setError('Impossibile caricare la timeline. Riprovo automaticamente...');
+    } finally {
       setLoading(false);
     }
   }, []);
@@ -90,13 +96,21 @@ export default function AdminTimelinePage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-primary">Timeline Transazioni</h1>
         <p className="text-sm text-slate-500 mt-1">Monitora lo stato di tutte le transazioni in tempo reale.</p>
       </div>
 
-      {/* Stats bar */}
+      {error && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2">
+          <AlertCircle size={16} />
+          {error}
+          <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">
+            <XCircle size={14} />
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { label: 'Totale', value: stats.total, color: 'text-primary' },
@@ -106,12 +120,11 @@ export default function AdminTimelinePage() {
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-xl p-4 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">{stat.label}</p>
-            <p className={`text-xl font-black ${stat.color}`}>{stat.value}</p>
+            <p className={`text-xl font-black ${stat.color}`}>{loading ? '—' : stat.value}</p>
           </div>
         ))}
       </div>
 
-      {/* Filter tabs */}
       <div className="flex gap-2 bg-white rounded-xl p-1.5 border border-slate-200/80 w-fit" style={{ boxShadow: 'var(--shadow-card)' }}>
         {(['ALL', 'PENDING', 'APPROVED', 'REJECTED'] as const).map((f) => (
           <button
@@ -128,7 +141,6 @@ export default function AdminTimelinePage() {
         ))}
       </div>
 
-      {/* Timeline */}
       {loading ? (
         <div className="flex items-center justify-center py-16">
           <Loader2 size={24} className="animate-spin text-secondary" />
@@ -177,7 +189,6 @@ export default function AdminTimelinePage() {
                   </div>
                 </div>
 
-                {/* Progress bar */}
                 <div className="relative">
                   <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                     <div
