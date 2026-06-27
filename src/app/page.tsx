@@ -245,7 +245,7 @@ export default function Home() {
               <p className="text-sm leading-relaxed opacity-70 mb-5">
                 2FA, crittografia e protezione avanzata per custodire ogni centesimo.
               </p>
-              <div className="flex items-center gap-2 bg-primary-container/50 p-3 rounded-lg border border-white/10">
+              <div className="flex items-center gap-2 bg-primary/50 p-3 rounded-lg border border-white/10">
                 <Shield size={16} className="text-emerald-400" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Sistema attivo 24/7</span>
               </div>

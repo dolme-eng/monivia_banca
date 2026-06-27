@@ -172,7 +172,7 @@ export default function AdminTimelinePage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-black text-primary">€ {formatAmount(tx.amount)}</p>
+                    <p className="text-sm font-black text-primary">{formatAmount(tx.amount)} €</p>
                     <p className="text-[10px] text-slate-400">{formatTime(tx.createdAt)}</p>
                   </div>
                 </div>

@@ -12,14 +12,6 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="it">
-      <head>
-        <meta name="msapplication-TileColor" content="#0f172a" />
-        <meta name="theme-color" content="#0f172a" />
-      </head>
-      <body className="bg-white text-slate-900 antialiased">
-        <SessionProvider>{children}</SessionProvider>
-      </body>
-    </html>
+    <SessionProvider>{children}</SessionProvider>
   );
 }

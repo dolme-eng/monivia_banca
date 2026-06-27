@@ -220,7 +220,7 @@ export default function AdminPrelievoDetailPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-xs text-slate-400">Saldo Attuale</span>
-              <span className="text-sm font-black text-primary">€ {formatAmount(tx.account.balance)}</span>
+              <span className="text-sm font-black text-primary">{formatAmount(tx.account.balance)} €</span>
             </div>
           </div>
         </div>
@@ -234,7 +234,7 @@ export default function AdminPrelievoDetailPage() {
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-xs text-slate-400">Importo</span>
-              <span className="text-lg font-black text-primary">€ {formatAmount(tx.amount)}</span>
+              <span className="text-lg font-black text-primary">{formatAmount(tx.amount)} €</span>
             </div>
             <div className="flex justify-between">
               <span className="text-xs text-slate-400">Tipo</span>
