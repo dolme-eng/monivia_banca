@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
@@ -32,13 +31,13 @@ export async function POST(req: NextRequest) {
 
   // 1. Origin check
   if (!checkOrigin(req)) {
-    return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    return NextResponse.json({ success: false, error: 'Accesso negato' }, { status: 403 });
   }
 
   // 2. Content-Type validation
   const ct = req.headers.get('content-type');
   if (!ct?.includes('application/json')) {
-    return NextResponse.json({ success: false, error: 'Invalid Content-Type' }, { status: 415 });
+    return NextResponse.json({ success: false, error: 'Content-Type non valido' }, { status: 415 });
   }
 
   // 3. CSRF validation

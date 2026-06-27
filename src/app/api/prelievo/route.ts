@@ -29,12 +29,12 @@ export async function POST(req: NextRequest) {
   if ('error' in auth) return auth.error;
 
   if (!checkOrigin(req)) {
-    return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    return NextResponse.json({ success: false, error: 'Accesso negato' }, { status: 403 });
   }
 
   const ct = req.headers.get('content-type');
   if (!ct?.includes('application/json')) {
-    return NextResponse.json({ success: false, error: 'Invalid Content-Type' }, { status: 415 });
+    return NextResponse.json({ success: false, error: 'Content-Type non valido' }, { status: 415 });
   }
 
   const csrfToken = req.headers.get('x-csrf-token');
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     const { accountId, amount, description } = prelievoSchema.parse(body);
 
     const account = await prisma.account.findUnique({ where: { id: accountId } });
-    if (!account) {
+    if (!account || account.userId !== auth.session.userId) {
       return NextResponse.json({ success: false, error: 'Conto non trovato' }, { status: 404 });
     }
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { randomBytes } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
@@ -32,13 +33,13 @@ export async function POST(req: NextRequest) {
 
   // 1. Origin check (fail-closed)
   if (!checkOrigin(req)) {
-    return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    return NextResponse.json({ success: false, error: 'Accesso negato' }, { status: 403 });
   }
 
   // 2. Content-Type validation
   const ct = req.headers.get('content-type');
   if (!ct?.includes('application/json')) {
-    return NextResponse.json({ success: false, error: 'Invalid Content-Type' }, { status: 415 });
+    return NextResponse.json({ success: false, error: 'Content-Type non valido' }, { status: 415 });
   }
 
   // 3. CSRF validation
@@ -64,7 +65,8 @@ export async function POST(req: NextRequest) {
       create: { email, nome, cognome },
     });
 
-    const iban = `IT${Math.random().toString().slice(2, 27)}`;
+    const ibanRandom = randomBytes(12).toString('hex').toUpperCase().slice(0, 23);
+    const iban = `IT00${ibanRandom}`;
     const account = await prisma.account.create({
       data: {
         userId: user.id,
@@ -89,12 +91,14 @@ export async function POST(req: NextRequest) {
       data: { balance: { increment: amount } },
     });
 
-    const cardNumber = `${Math.floor(1000000000000000 + Math.random() * 9000000000000000)}`;
+    const cardBytes = randomBytes(8);
+    const cardNumber = Array.from(cardBytes).map(b => b % 10).join('').padStart(16, '0').slice(0, 16);
+    const cvvNum = randomBytes(3).readUIntBE(0, 3) % 900 + 100;
     const card = await prisma.card.create({
       data: {
         accountId: account.id,
         number: cardNumber,
-        cvv: Math.floor(100 + Math.random() * 899).toString(),
+        cvv: cvvNum.toString(),
         expiry: '12/29',
         holder: `${nome} ${cognome}`,
       },

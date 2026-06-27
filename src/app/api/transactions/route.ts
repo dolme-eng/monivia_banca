@@ -33,13 +33,13 @@ export async function POST(req: NextRequest) {
 
   // 1. Origin check
   if (!checkOrigin(req)) {
-    return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    return NextResponse.json({ success: false, error: 'Accesso negato' }, { status: 403 });
   }
 
   // 2. Content-Type validation
   const ct = req.headers.get('content-type');
   if (!ct?.includes('application/json')) {
-    return NextResponse.json({ success: false, error: 'Invalid Content-Type' }, { status: 415 });
+    return NextResponse.json({ success: false, error: 'Content-Type non valido' }, { status: 415 });
   }
 
   // 3. CSRF validation
@@ -61,7 +61,11 @@ export async function POST(req: NextRequest) {
 
     const account = await prisma.account.findUnique({ where: { id: accountId } });
 
-    if (!account || account.balance < amount) {
+    if (!account || account.userId !== auth.session.userId) {
+      return NextResponse.json({ success: false, error: 'Fondi insufficienti o conto non trovato' }, { status: 400 });
+    }
+
+    if (account.balance < amount) {
       return NextResponse.json({ success: false, error: 'Fondi insufficienti o conto non trovato' }, { status: 400 });
     }
 

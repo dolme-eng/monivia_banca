@@ -155,7 +155,7 @@ export default function Home() {
                   </div>
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-black uppercase text-amber-600">
                     <Clock size={10} />
-                    Pending
+                    In Attesa
                   </span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50/80">
@@ -421,7 +421,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="text-sm font-black text-primary mb-1">Trasparenza totale</h4>
-                  <p className="text-sm text-slate-500">Ogni movimento è tracciato e visibile: prelievi, accredity, transferimenti in attesa.</p>
+                  <p className="text-sm text-slate-500">Ogni movimento è tracciato e visibile: prelievi, accrediti, trasferimenti in attesa.</p>
                 </div>
               </li>
               <li className="flex gap-4">

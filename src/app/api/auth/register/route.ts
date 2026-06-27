@@ -14,7 +14,7 @@ const registerSchema = z.object({
 export async function POST(req: Request) {
   const ct = req.headers.get('content-type');
   if (!ct?.includes('application/json')) {
-    return NextResponse.json({ success: false, error: 'Invalid Content-Type' }, { status: 415 });
+    return NextResponse.json({ success: false, error: 'Content-Type non valido' }, { status: 415 });
   }
 
   const csrfToken = req.headers.get('x-csrf-token');
