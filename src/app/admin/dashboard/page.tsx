@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-black text-primary">Dashboard Amministrazione</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-primary">Dashboard Amministrazione</h1>
           <p className="text-sm text-slate-500 mt-1">Panoramica dei conti e stato di sicurezza.</p>
         </div>
         <Link
@@ -229,10 +229,11 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-slate-400">Nessuna attività recente</p>
             </div>
           ) : (
-            <div className="overflow-x-auto flex-1">
+            <div className="overflow-x-auto flex-1 -mx-5 px-5">
+              <div className="min-w-[600px]">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-100 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                  <tr className="border-b border-slate-100 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
                     <th className="pb-2 font-medium">Cliente</th>
                     <th className="pb-2 font-medium">Tipo</th>
                     <th className="pb-2 font-medium">Stato</th>
@@ -244,7 +245,7 @@ export default function AdminDashboardPage() {
                   {stats.recentTransactions.map((tx: any) => (
                     <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors cursor-pointer">
                       <td className="py-3 flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center text-[10px] font-black text-secondary">
+                        <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center text-[11px] font-black text-secondary shrink-0">
                           {tx.account?.user?.nome?.[0]}{tx.account?.user?.cognome?.[0]}
                         </div>
                         {tx.account?.user?.nome} {tx.account?.user?.cognome}
@@ -253,7 +254,7 @@ export default function AdminDashboardPage() {
                         {tx.type === 'DEBIT' ? 'Prelievo' : tx.type === 'TRANSFER_OUT' ? 'Trasferimento' : tx.type}
                       </td>
                       <td className="py-3">
-                        <span className={`text-[10px] font-black px-2 py-0.5 rounded ${
+                        <span className={`text-[11px] font-black px-2 py-0.5 rounded ${
                           tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
                           tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
                           'bg-amber-50 text-amber-600'
@@ -264,13 +265,14 @@ export default function AdminDashboardPage() {
                       <td className="py-3 text-right font-black text-primary">
                         {Math.abs(tx.amount).toLocaleString('it-IT')} €
                       </td>
-                      <td className="py-3 text-right text-slate-400 text-[10px]">
+                      <td className="py-3 text-right text-slate-500 text-[11px]">
                         {formatTime(tx.createdAt)}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
         </section>

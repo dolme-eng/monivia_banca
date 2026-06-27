@@ -197,8 +197,8 @@ export default function AdminTimelinePage() {
                     />
                   </div>
                   <div className="flex justify-between mt-1.5">
-                    <span className="text-[9px] text-slate-400">Richiesta</span>
-                    <span className={`text-[9px] font-black ${
+                    <span className="text-[10px] text-slate-500">Richiesta</span>
+                    <span className={`text-[10px] font-black ${
                       tx.status === 'APPROVED' ? 'text-emerald-600' :
                       tx.status === 'REJECTED' ? 'text-red-500' :
                       'text-amber-600'
@@ -209,7 +209,7 @@ export default function AdminTimelinePage() {
                 </div>
 
                 <div className="flex justify-end mt-2">
-                  <span className="text-[10px] text-secondary font-black opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                  <span className="text-[11px] text-secondary font-black sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1">
                     Vedi dettaglio <ArrowRight size={10} />
                   </span>
                 </div>

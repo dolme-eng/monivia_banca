@@ -117,11 +117,11 @@ export default function PrelievoPage() {
                   <Wallet size={20} className="text-secondary" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Il mio conto</p>
-                  <p className="text-sm font-black text-primary">{account.iban}</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Il mio conto</p>
+                  <p className="text-sm font-black text-primary truncate">{account.iban}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Saldo</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Saldo</p>
                   <p className="text-lg font-black text-primary">{account.balance.toLocaleString('it-IT')} €</p>
                 </div>
               </div>
@@ -130,7 +130,7 @@ export default function PrelievoPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Amount */}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 ml-1">
+                <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 ml-1">
                   Importo da prelevare *
                 </label>
                 <div className="relative">
@@ -155,7 +155,7 @@ export default function PrelievoPage() {
                     key={qa}
                     type="button"
                     onClick={() => setAmount(qa.toString())}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+                    className={`px-3 py-2.5 rounded-lg text-xs font-black transition-all min-h-[40px] ${
                       amount === qa.toString()
                         ? 'bg-secondary text-primary'
                         : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
@@ -168,7 +168,7 @@ export default function PrelievoPage() {
 
               {/* Description */}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 ml-1">
+                <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 ml-1">
                   Descrizione *
                 </label>
                 <input

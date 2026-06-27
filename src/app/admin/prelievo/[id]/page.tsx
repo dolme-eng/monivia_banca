@@ -150,7 +150,7 @@ export default function AdminPrelievoDetailPage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <button onClick={() => router.back()} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+        <button onClick={() => router.back()} className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-slate-100 rounded-lg transition-colors">
           <ArrowLeft size={18} className="text-slate-500" />
         </button>
         <div>
@@ -183,7 +183,7 @@ export default function AdminPrelievoDetailPage() {
 
           {timeline.map((step, i) => (
             <div key={i} className="relative z-10 flex flex-col items-center text-center w-1/3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
                 step.done
                   ? tx.status === 'APPROVED'
                     ? 'bg-emerald-100 text-emerald-600'
@@ -194,7 +194,7 @@ export default function AdminPrelievoDetailPage() {
               }`}>
                 <step.icon size={18} />
               </div>
-              <span className="text-[10px] font-black mt-2 text-slate-500">{step.label}</span>
+              <span className="text-[11px] font-black mt-2 text-slate-500">{step.label}</span>
             </div>
           ))}
         </div>
@@ -217,7 +217,7 @@ export default function AdminPrelievoDetailPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-xs text-slate-400">IBAN</span>
-              <span className="text-xs text-slate-600 font-mono">{tx.account.iban}</span>
+              <span className="text-xs text-slate-600 font-mono truncate min-w-0">{tx.account.iban}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-xs text-slate-400">Saldo Attuale</span>

@@ -161,10 +161,10 @@ export default function ApprovalsPage() {
                       <span className="text-sm font-black text-primary">
                         {tx.type === 'DEBIT' ? 'Prelievo' : tx.type === 'TRANSFER_OUT' ? 'Trasferimento' : tx.type}
                       </span>
-                      <span className="text-[10px] text-slate-400">• {formatTime(tx.createdAt)}</span>
+                      <span className="text-[11px] text-slate-500">• {formatTime(tx.createdAt)}</span>
                     </div>
                     <p className="text-xs text-slate-500 mb-1">{tx.description}</p>
-                    <p className="text-[10px] text-slate-400">
+                    <p className="text-[11px] text-slate-500 truncate">
                       {tx.account.user.nome} {tx.account.user.cognome} • {tx.account.iban}
                     </p>
                   </div>
@@ -177,7 +177,7 @@ export default function ApprovalsPage() {
                   <div className="flex gap-2">
                     <Link
                       href={`/admin/prelievo/${tx.id}`}
-                      className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-400 hover:text-secondary"
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-400 hover:text-secondary"
                       title="Vedi dettaglio"
                     >
                       <ArrowRight size={14} />
@@ -185,7 +185,7 @@ export default function ApprovalsPage() {
                     <button
                       onClick={() => openConfirm(tx.id, 'REJECT')}
                       disabled={actionId === tx.id}
-                      className="p-2 border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors text-slate-400 hover:text-red-500 disabled:opacity-50"
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors text-slate-400 hover:text-red-500 disabled:opacity-50"
                       title="Rifiuta"
                     >
                       {actionId === tx.id ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
@@ -193,7 +193,7 @@ export default function ApprovalsPage() {
                     <button
                       onClick={() => openConfirm(tx.id, 'APPROVE')}
                       disabled={actionId === tx.id}
-                      className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-black hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                      className="px-4 py-3 min-h-[44px] bg-emerald-600 text-white rounded-lg text-xs font-black hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-1.5"
                     >
                       {actionId === tx.id ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
                       Approva

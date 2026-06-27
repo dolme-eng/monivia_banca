@@ -119,7 +119,7 @@ export default function CardsPage() {
           {/* Main Card Display */}
           <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200/80 p-6 rounded-xl flex flex-col md:flex-row gap-6 items-center" style={{ boxShadow: 'var(--shadow-card)' }}>
             {/* Card visual */}
-            <div className="w-80 h-48 rounded-xl p-5 flex flex-col justify-between text-white relative shadow-2xl overflow-hidden shrink-0"
+            <div className="w-full max-w-80 h-48 rounded-xl p-5 flex flex-col justify-between text-white relative shadow-2xl overflow-hidden shrink-0"
               style={{ background: 'rgba(10, 22, 40, 0.9)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-secondary rounded-full blur-3xl" />

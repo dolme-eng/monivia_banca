@@ -41,7 +41,7 @@ export default function PublicLayout({
           </div>
         </div>
       </header>
-      <main className="min-h-screen pt-[108px]">
+      <main className="min-h-screen pt-[68px] md:pt-[108px]">
         {children}
       </main>
       <footer className="relative overflow-hidden bg-[#050d1a] text-slate-400">
@@ -85,7 +85,7 @@ export default function PublicLayout({
               <p className="text-xs text-slate-600">
                 © 2025 Monivia S.r.l. — P.IVA / C.F. 10984760583 — OAM n. A23741
               </p>
-              <p className="text-[10px] text-slate-700">
+              <p className="text-[11px] text-slate-700">
                 Sistemi di Gestione Bancaria Sicura
               </p>
             </div>

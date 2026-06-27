@@ -39,9 +39,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen overflow-hidden">
+    <div className="flex min-h-screen">
       {/* ===== Left: Login Form ===== */}
-      <main className="w-full lg:w-[45%] flex flex-col justify-center px-6 md:px-10 xl:px-16 bg-white z-10 relative">
+      <main className="w-full lg:w-[45%] flex flex-col justify-center px-6 md:px-10 xl:px-16 py-12 bg-white z-10 relative">
         <div className="max-w-md w-full mx-auto">
           {/* Branding */}
           <div className="mb-8">
@@ -103,7 +103,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-primary transition-colors"
                   aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -113,7 +113,7 @@ export default function LoginPage() {
 
             {/* Utilities */}
             <div className="flex items-center justify-between py-1">
-              <label className="flex items-center gap-2 cursor-pointer group">
+              <label className="flex items-center gap-2 cursor-pointer group p-1 -m-1 rounded">
                 <input
                   type="checkbox"
                   className="w-4 h-4 rounded border-slate-300 text-secondary focus:ring-secondary/30 transition-all"
@@ -124,7 +124,7 @@ export default function LoginPage() {
               </label>
               <a
                 href="#"
-                className="text-sm text-secondary hover:text-cyan-400 transition-colors"
+                className="text-sm text-secondary hover:text-cyan-400 transition-colors py-2 px-1 inline-block"
               >
                 Password dimenticata?
               </a>
@@ -165,7 +165,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <footer className="mt-16 pt-6 border-t border-slate-100 text-center">
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[11px] text-slate-400">
               © 2025 Monivia S.r.l. — P.IVA 10984760583 — OAM n. A23741
             </p>
           </footer>

@@ -68,7 +68,7 @@ export default function SettingsPage() {
               <User size={16} className="text-secondary" />
               Informazioni Profilo
             </h2>
-            <button className="text-secondary text-xs font-black hover:underline">Modifica</button>
+            <button className="text-secondary text-xs font-black hover:underline px-3 py-2 min-h-[44px]">Modifica</button>
           </div>
           <div className="flex items-center gap-4 mb-6">
             <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-xl font-black">
@@ -81,27 +81,27 @@ export default function SettingsPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Nome</label>
-              <p className="text-sm font-black text-primary">{user?.nome ?? '—'}</p>
+              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">Nome</label>
+               <p className="text-sm font-black text-primary">{user?.nome ?? '—'}</p>
             </div>
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Cognome</label>
-              <p className="text-sm font-black text-primary">{user?.cognome ?? '—'}</p>
+              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">Cognome</label>
+               <p className="text-sm font-black text-primary">{user?.cognome ?? '—'}</p>
             </div>
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Email</label>
-              <p className="text-sm font-black text-primary">{user?.email ?? '—'}</p>
+              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">Email</label>
+               <p className="text-sm font-black text-primary">{user?.email ?? '—'}</p>
             </div>
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Ruolo</label>
-              <span className="inline-flex items-center px-2 py-0.5 rounded bg-secondary/10 text-secondary text-[10px] font-black uppercase">
+              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">Ruolo</label>
+              <span className="inline-flex items-center px-2 py-0.5 rounded bg-secondary/10 text-secondary text-[11px] font-black uppercase">
                 {user?.role === 'ADMIN' ? 'Amministratore' : 'Cliente'}
               </span>
             </div>
             {user?.accounts?.[0] && (
               <div className="md:col-span-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">IBAN</label>
-                <p className="text-sm font-black text-primary font-mono">{user.accounts[0].iban}</p>
+                <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">IBAN</label>
+                <p className="text-sm font-black text-primary font-mono truncate">{user.accounts[0].iban}</p>
               </div>
             )}
           </div>
@@ -116,7 +116,7 @@ export default function SettingsPage() {
             </h2>
             <div className="space-y-4">
               <div>
-                <div className="flex justify-between text-[10px] mb-1">
+                <div className="flex justify-between text-[11px] mb-1">
                   <span className="text-white/60">Trasferimento</span>
                   <span className="font-black">0 / 10.000 €</span>
                 </div>
@@ -125,7 +125,7 @@ export default function SettingsPage() {
                 </div>
               </div>
               <div>
-                <div className="flex justify-between text-[10px] mb-1">
+                <div className="flex justify-between text-[11px] mb-1">
                   <span className="text-white/60">Prelievo</span>
                   <span className="font-black">0 / 2.500 €</span>
                 </div>
@@ -135,7 +135,7 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
-          <button className="mt-5 w-full py-2 border border-white/20 rounded-lg text-xs font-black hover:bg-white/10 transition-colors relative z-10">
+          <button className="mt-5 w-full py-3 min-h-[44px] border border-white/20 rounded-lg text-xs font-black hover:bg-white/10 transition-colors relative z-10">
             Richiedi Aumento
           </button>
         </div>
