@@ -10,7 +10,7 @@ const globalForPrisma = globalThis as unknown as {
 function getClient(): PrismaClient {
   if (globalForPrisma.prisma) return globalForPrisma.prisma;
   const { PrismaClient: PClient } = require('@prisma/client');
-  const { PrismaPg } = require('@prisma/pg-worker');
+  const { PrismaPg } = require('@prisma/adapter-pg');
   const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
   const client = new PClient({
     adapter,
