@@ -1,5 +1,12 @@
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: 'Monivia Banca | Gestione Finanziaria Sicura',
@@ -41,12 +48,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="it">
+    <html lang="it" className={inter.variable}>
       <head>
         <meta name="msapplication-TileColor" content="#0a1628" />
         <meta name="theme-color" content="#0a1628" />
       </head>
-      <body className="bg-white text-slate-900 antialiased">
+      <body className="bg-white text-slate-900 antialiased" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>
         {children}
       </body>
     </html>
