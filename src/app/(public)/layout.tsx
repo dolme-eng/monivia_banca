@@ -22,10 +22,10 @@ export default function PublicLayout({
             href="/"
             className="relative z-50 flex items-center gap-2 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-secondary/50"
           >
-            <span className="text-2xl font-black tracking-tight text-primary">
+            <span className="text-[22px] sm:text-2xl font-black tracking-tight text-primary">
               MO<span className="text-secondary">NIVIA</span>
             </span>
-            <span className="hidden sm:inline text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-l border-slate-200 pl-2 ml-1">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-l border-slate-200 pl-2 ml-1">
               Banca
             </span>
           </Link>
