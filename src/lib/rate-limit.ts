@@ -1,45 +1,43 @@
-interface RateLimitEntry {
-  count: number;
-  resetAt: number;
-}
+import { prisma } from './prisma';
 
-const store = new Map<string, RateLimitEntry>();
-
-// Periodic cleanup every 5 minutes
-let cleanupTimer: ReturnType<typeof setInterval> | null = null;
-
-function ensureCleanup() {
-  if (cleanupTimer) return;
-  cleanupTimer = setInterval(() => {
-    const now = Date.now();
-    for (const [key, entry] of store) {
-      if (now > entry.resetAt) store.delete(key);
-    }
-  }, 5 * 60 * 1000);
-}
-
-export function checkRateLimit(
+export async function checkRateLimit(
   key: string,
   maxRequests: number,
   windowMs: number
-): { allowed: boolean; remaining: number; resetAt: number } {
-  ensureCleanup();
+): Promise<{ allowed: boolean; remaining: number; resetAt: number }> {
+  const now = new Date();
+  const resetAt = new Date(now.getTime() + windowMs);
 
-  const now = Date.now();
-  const entry = store.get(key);
+  try {
+    const existing = await (prisma as any).rateLimitEntry.findUnique({
+      where: { key },
+    });
 
-  if (!entry || now > entry.resetAt) {
-    store.set(key, { count: 1, resetAt: now + windowMs });
-    return { allowed: true, remaining: maxRequests - 1, resetAt: now + windowMs };
+    if (!existing || now > existing.resetAt) {
+      await (prisma as any).rateLimitEntry.upsert({
+        where: { key },
+        update: { count: 1, resetAt },
+        create: { key, count: 1, resetAt },
+      });
+      return { allowed: true, remaining: maxRequests - 1, resetAt: resetAt.getTime() };
+    }
+
+    const newCount = existing.count + 1;
+
+    if (newCount > maxRequests) {
+      return { allowed: false, remaining: 0, resetAt: existing.resetAt.getTime() };
+    }
+
+    await (prisma as any).rateLimitEntry.update({
+      where: { key },
+      data: { count: newCount },
+    });
+
+    return { allowed: true, remaining: maxRequests - newCount, resetAt: existing.resetAt.getTime() };
+  } catch (err) {
+    console.error('[RATE-LIMIT] Errore Supabase, fallback permesso:', err);
+    return { allowed: true, remaining: maxRequests - 1, resetAt: resetAt.getTime() };
   }
-
-  entry.count++;
-
-  if (entry.count > maxRequests) {
-    return { allowed: false, remaining: 0, resetAt: entry.resetAt };
-  }
-
-  return { allowed: true, remaining: maxRequests - entry.count, resetAt: entry.resetAt };
 }
 
 export function getClientIp(req: Request): string {

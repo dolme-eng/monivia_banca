@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
+import AmountInput from '@/components/AmountInput';
 
 interface Account {
   id: string;
@@ -30,7 +31,7 @@ interface RecentPrelievo {
 
 export default function PrelievoPage() {
   const [account, setAccount] = useState<Account | null>(null);
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingAccount, setLoadingAccount] = useState(true);
@@ -67,7 +68,7 @@ export default function PrelievoPage() {
     e.preventDefault();
     setError('');
 
-    if (!amount || Number(amount) <= 0) {
+    if (amount <= 0) {
       setError('Inserisci un importo valido.');
       return;
     }
@@ -77,7 +78,7 @@ export default function PrelievoPage() {
       return;
     }
 
-    if (account && Number(amount) > account.balance) {
+    if (account && amount > account.balance) {
       setError('Fondi insufficienti.');
       return;
     }
@@ -96,7 +97,7 @@ export default function PrelievoPage() {
         method: 'POST',
         body: JSON.stringify({
           accountId: account?.id || 'demo',
-          amount: Number(amount),
+          amount,
           description,
         }),
       });
@@ -107,14 +108,14 @@ export default function PrelievoPage() {
         setRecentPrelievi((prev) => [
           {
             id: data.transaction.id,
-            amount: -Number(amount),
+            amount: -amount,
             description,
             status: 'PENDING',
             createdAt: new Date().toISOString(),
           },
           ...prev,
         ]);
-        setAmount('');
+        setAmount(0);
         setDescription('');
         setTimeout(() => setSuccess(false), 3000);
       } else {
@@ -180,19 +181,12 @@ export default function PrelievoPage() {
                 <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 ml-1">
                   Importo da prelevare *
                 </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg text-slate-400 font-black">€</span>
-                  <input
-                    type="number"
-                    required
-                    min={1}
-                    max={account?.balance || 999999}
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0,00"
-                    className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-4 pl-10 text-2xl font-black text-primary focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-all outline-none"
-                  />
-                </div>
+                <AmountInput
+                  value={amount}
+                  onChange={setAmount}
+                  max={account?.balance || 999999}
+                  disabled={loading}
+                />
               </div>
 
               {/* Quick amounts */}
@@ -201,9 +195,9 @@ export default function PrelievoPage() {
                   <button
                     key={qa}
                     type="button"
-                    onClick={() => setAmount(qa.toString())}
+                    onClick={() => setAmount(qa)}
                     className={`px-3 py-2.5 rounded-lg text-xs font-black transition-all min-h-[40px] ${
-                      amount === qa.toString()
+                      amount === qa
                         ? 'bg-secondary text-primary'
                         : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                     }`}
@@ -255,7 +249,7 @@ export default function PrelievoPage() {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={loading || !amount || Number(amount) <= 0 || !account}
+                disabled={loading || amount <= 0 || !account}
                 className="w-full btn-cyan py-4 text-sm"
               >
                 {loading ? (
@@ -343,7 +337,7 @@ export default function PrelievoPage() {
       <ConfirmModal
         open={confirmOpen}
         title="Confermare il prelievo?"
-        message={`Stai per richiedere un prelievo di ${Number(amount).toLocaleString('it-IT', { minimumFractionDigits: 2 })} €. La richiesta sarà inviata all'amministrazione per l'approvazione.`}
+        message={`Stai per richiedere un prelievo di ${amount.toLocaleString('it-IT', { minimumFractionDigits: 2 })} €. La richiesta sarà inviata all'amministrazione per l'approvazione.`}
         confirmLabel="Conferma Prelievo"
         variant="warning"
         loading={loading}

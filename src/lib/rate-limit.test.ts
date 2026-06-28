@@ -1,70 +1,80 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { checkRateLimit, getClientIp } from './rate-limit';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// Mock prisma before importing the module
+const mockFindUnique = vi.fn();
+const mockUpsert = vi.fn();
+const mockUpdate = vi.fn();
+
+vi.mock('./prisma', () => ({
+  prisma: {
+    $transaction: vi.fn((fns: any[]) => Promise.all(fns)),
+    rateLimitEntry: {
+      findUnique: mockFindUnique,
+      upsert: mockUpsert,
+      update: mockUpdate,
+    },
+  },
+}));
+
+const { checkRateLimit, getClientIp } = await import('./rate-limit');
 
 describe('Rate Limiting', () => {
   beforeEach(() => {
-    // Rate limiter uses module-level Map; no way to clear it directly
-    // Use unique keys per test to avoid interference
+    vi.clearAllMocks();
   });
 
-  it('allows first request', () => {
-    const result = checkRateLimit(`test-${Date.now()}-1`, 5, 60000);
+  it('allows first request when no existing entry', async () => {
+    mockFindUnique.mockResolvedValue(null);
+    mockUpsert.mockResolvedValue({});
+
+    const result = await checkRateLimit('key-1', 5, 60000);
     expect(result.allowed).toBe(true);
     expect(result.remaining).toBe(4);
-    expect(result.resetAt).toBeGreaterThan(Date.now());
+    expect(mockUpsert).toHaveBeenCalled();
   });
 
-  it('tracks remaining requests correctly', () => {
-    const key = `test-${Date.now()}-track`;
-    const r1 = checkRateLimit(key, 3, 60000);
-    expect(r1.remaining).toBe(2);
+  it('allows request when window has expired', async () => {
+    mockFindUnique.mockResolvedValue({ key: 'key-2', count: 3, resetAt: new Date(Date.now() - 1000) });
+    mockUpsert.mockResolvedValue({});
 
-    const r2 = checkRateLimit(key, 3, 60000);
-    expect(r2.remaining).toBe(1);
-
-    const r3 = checkRateLimit(key, 3, 60000);
-    expect(r3.remaining).toBe(0);
-    expect(r3.allowed).toBe(true);
-  });
-
-  it('blocks when limit exceeded', () => {
-    const key = `test-${Date.now()}-block`;
-    for (let i = 0; i < 3; i++) {
-      checkRateLimit(key, 3, 60000);
-    }
-    const blocked = checkRateLimit(key, 3, 60000);
-    expect(blocked.allowed).toBe(false);
-    expect(blocked.remaining).toBe(0);
-  });
-
-  it('resets after window expires', () => {
-    const key = `test-${Date.now()}-reset`;
-    const result = checkRateLimit(key, 2, 1); // 1ms window
+    const result = await checkRateLimit('key-2', 5, 60000);
     expect(result.allowed).toBe(true);
-
-    // Wait for window to expire
-    const start = Date.now();
-    while (Date.now() - start < 5) { /* busy wait */ }
-
-    const afterReset = checkRateLimit(key, 2, 1);
-    expect(afterReset.allowed).toBe(true);
-    expect(afterReset.remaining).toBe(1);
+    expect(result.remaining).toBe(4);
   });
 
-  it('tracks different keys independently', () => {
-    const base = Date.now();
-    const r1 = checkRateLimit(`a-${base}`, 1, 60000);
-    const r2 = checkRateLimit(`b-${base}`, 1, 60000);
-    expect(r1.remaining).toBe(0);
-    expect(r2.remaining).toBe(0);
+  it('increments count for existing entry within window', async () => {
+    mockFindUnique.mockResolvedValue({ key: 'key-3', count: 2, resetAt: new Date(Date.now() + 60000) });
+    mockUpdate.mockResolvedValue({});
+
+    const result = await checkRateLimit('key-3', 5, 60000);
+    expect(result.allowed).toBe(true);
+    expect(result.remaining).toBe(2);
+    expect(mockUpdate).toHaveBeenCalled();
   });
 
-  it('returns correct resetAt timestamp', () => {
-    const key = `test-${Date.now()}-ts`;
+  it('blocks when limit exceeded', async () => {
+    mockFindUnique.mockResolvedValue({ key: 'key-4', count: 5, resetAt: new Date(Date.now() + 60000) });
+
+    const result = await checkRateLimit('key-4', 5, 60000);
+    expect(result.allowed).toBe(false);
+    expect(result.remaining).toBe(0);
+  });
+
+  it('returns correct resetAt timestamp', async () => {
+    mockFindUnique.mockResolvedValue(null);
+    mockUpsert.mockResolvedValue({});
+
     const now = Date.now();
-    const result = checkRateLimit(key, 5, 10000);
+    const result = await checkRateLimit('key-5', 5, 10000);
     expect(result.resetAt).toBeGreaterThanOrEqual(now + 10000 - 100);
     expect(result.resetAt).toBeLessThanOrEqual(now + 10000 + 100);
+  });
+
+  it('falls back to allowed on database error', async () => {
+    mockFindUnique.mockRejectedValue(new Error('DB connection failed'));
+
+    const result = await checkRateLimit('key-6', 5, 60000);
+    expect(result.allowed).toBe(true);
   });
 });
 

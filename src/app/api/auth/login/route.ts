@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 import { prisma } from '@/lib/prisma';
+import { randomBytes } from 'node:crypto';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
 if (!AUTH_SECRET) {
@@ -9,24 +11,8 @@ if (!AUTH_SECRET) {
 }
 const secret = AUTH_SECRET ? new TextEncoder().encode(AUTH_SECRET) : null;
 
-const loginAttempts = new Map<string, { count: number; resetAt: number }>();
-
-function isLoginRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const record = loginAttempts.get(ip);
-  if (!record || now > record.resetAt) {
-    loginAttempts.set(ip, { count: 1, resetAt: now + 15 * 60 * 1000 });
-    return false;
-  }
-  record.count++;
-  return record.count > 5;
-}
-
-function getClientIp(req: NextRequest): string {
-  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-    || req.headers.get('x-real-ip')
-    || 'unknown';
-}
+const ACCESS_TOKEN_TTL = '15m';
+const REFRESH_TOKEN_TTL_DAYS = 30;
 
 export async function POST(req: NextRequest) {
   if (!secret) {
@@ -34,7 +20,8 @@ export async function POST(req: NextRequest) {
   }
   try {
     const ip = getClientIp(req);
-    if (isLoginRateLimited(ip)) {
+    const rl = await checkRateLimit(`login:${ip}`, 5, 15 * 60 * 1000);
+    if (!rl.allowed) {
       return NextResponse.json({ error: 'Troppi tentativi. Riprova tra 15 minuti.' }, { status: 429 });
     }
 
@@ -56,9 +43,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Credenziali non valide' }, { status: 401 });
     }
 
-    loginAttempts.delete(ip);
-
-    const token = await new SignJWT({
+    const accessToken = await new SignJWT({
       name: `${user.nome} ${user.cognome}`,
       email: user.email,
       role: user.role,
@@ -66,17 +51,37 @@ export async function POST(req: NextRequest) {
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime('30d')
+      .setExpirationTime(ACCESS_TOKEN_TTL)
       .sign(secret);
+
+    const refreshTokenValue = randomBytes(40).toString('hex');
+    const refreshExpiresAt = new Date();
+    refreshExpiresAt.setDate(refreshExpiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
+
+    await prisma.refreshToken.create({
+      data: {
+        token: refreshTokenValue,
+        userId: user.id,
+        expiresAt: refreshExpiresAt,
+      },
+    });
 
     const response = NextResponse.json({ ok: true, role: user.role });
 
-    response.cookies.set('authjs.session-token', token, {
+    response.cookies.set('authjs.session-token', accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge: 60 * 15,
+    });
+
+    response.cookies.set('refresh-token', refreshTokenValue, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * REFRESH_TOKEN_TTL_DAYS,
     });
 
     return response;

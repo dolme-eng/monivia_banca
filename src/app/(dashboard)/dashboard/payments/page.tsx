@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
+import AmountInput from '@/components/AmountInput';
 
 interface UserData {
   nome: string;
@@ -45,7 +46,7 @@ export default function PaymentsPage() {
   const [form, setForm] = useState({
     recipientName: '',
     iban: '',
-    amount: '',
+    amount: 0,
     description: '',
   });
 
@@ -85,18 +86,17 @@ export default function PaymentsPage() {
       return;
     }
 
-    const amount = parseFloat(form.amount.replace(',', '.'));
-    if (isNaN(amount) || amount <= 0) {
+    if (form.amount <= 0) {
       setError('Importo non valido.');
       return;
     }
 
-    if (amount > balance) {
+    if (form.amount > balance) {
       setError('Fondi insufficienti.');
       return;
     }
 
-    setConfirmAmount(amount);
+    setConfirmAmount(form.amount);
     setConfirmOpen(true);
   };
 
@@ -105,15 +105,13 @@ export default function PaymentsPage() {
     setError('');
     setConfirmOpen(false);
 
-    const amount = confirmAmount;
-
     try {
       const res = await csrfFetch('/api/transactions', {
         method: 'POST',
         body: JSON.stringify({
           accountId: account?.id,
           type: 'TRANSFER_OUT',
-          amount,
+          amount: confirmAmount,
           description: form.description,
           toIban: form.iban,
         }),
@@ -123,7 +121,7 @@ export default function PaymentsPage() {
 
       if (data.success) {
         setSuccess(true);
-        setForm({ recipientName: '', iban: '', amount: '', description: '' });
+        setForm({ recipientName: '', iban: '', amount: 0, description: '' });
         setTimeout(() => setSuccess(false), 3000);
       } else {
         setError(data.error || 'Errore durante l\'invio.');
@@ -227,19 +225,12 @@ export default function PaymentsPage() {
                 {/* Amount */}
                 <div className="space-y-1.5">
                   <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Importo *</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 font-black">€</span>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0.01"
-                      value={form.amount}
-                      onChange={(e) => setForm({ ...form, amount: e.target.value })}
-                      placeholder="0,00"
-                      required
-                      className="field-shell pl-8 font-black"
-                    />
-                  </div>
+                  <AmountInput
+                    value={form.amount}
+                    onChange={(val) => setForm({ ...form, amount: val })}
+                    max={balance}
+                    disabled={submitting}
+                  />
                 </div>
               </div>
 
