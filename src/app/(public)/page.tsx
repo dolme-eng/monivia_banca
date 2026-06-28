@@ -17,6 +17,7 @@ import {
   Smartphone,
   Shield,
 } from 'lucide-react';
+import HeroBackground from '@/components/HeroBackground';
 
 function FadeIn({ children, className = '', delay = 0, style }: { children: React.ReactNode; className?: string; delay?: number; style?: React.CSSProperties }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -53,7 +54,8 @@ export default function Home() {
   return (
     <>
       {/* ===== HERO ===== */}
-      <section className="relative overflow-hidden bg-white py-20 sm:py-28 lg:py-40">
+      <section className="relative overflow-hidden py-20 sm:py-28 lg:py-40">
+        <HeroBackground />
         <div className="site-container relative z-10 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left copy */}
           <div className="flex flex-col gap-8">
@@ -65,14 +67,14 @@ export default function Home() {
             </FadeIn>
 
             <FadeIn delay={100}>
-              <h1 className="text-display font-black tracking-tight text-primary leading-[0.95]">
+              <h1 className="text-display font-black tracking-tight text-white leading-[0.95]">
                 La banca che{' '}
                 <span className="text-gradient-cyan">libera la tua crescita.</span>
               </h1>
             </FadeIn>
 
             <FadeIn delay={200}>
-              <p className="text-hero-lead max-w-xl text-slate-500">
+              <p className="text-hero-lead max-w-xl text-white/60">
                 Gestisci le tue finanze, le tue carte e i tuoi pagamenti con una piattaforma sicura
                 pensata per chi vuole semplicità e trasparenza.
               </p>
@@ -175,8 +177,9 @@ export default function Home() {
           </FadeIn>
         </div>
 
-        {/* Decorative circle */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" aria-hidden />
+        {/* Decorative glow */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" aria-hidden />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-accent/10 rounded-full blur-3xl" aria-hidden />
       </section>
 
       {/* ===== SOCIAL PROOF ===== */}
