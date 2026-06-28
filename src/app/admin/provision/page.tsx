@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Eye, EyeOff, ArrowUpCircle } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
 
@@ -40,6 +40,7 @@ export default function ProvisionPage() {
       const data = await res.json();
       if (data.success) {
         setResult(data);
+        setFormData({ email: '', nome: '', cognome: '', amount: '', password: '' });
       } else {
         setError(data.error || 'Errore durante il provisioning');
       }
@@ -70,7 +71,7 @@ export default function ProvisionPage() {
             </div>
 
             {error && (
-              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2">
+              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2" role="alert">
                 <AlertCircle size={16} />
                 {error}
               </div>
@@ -189,7 +190,7 @@ export default function ProvisionPage() {
               </li>
               <li className="flex gap-2">
                 <span className="text-secondary font-black">•</span>
-                L&apos;accredito è istantaneo e il conto viene creato immediatamente.
+                Se il cliente ha già un conto, l&apos;importo viene aggiunto al saldo esistente.
               </li>
               <li className="flex gap-2">
                 <span className="text-secondary font-black">•</span>
@@ -199,25 +200,35 @@ export default function ProvisionPage() {
           </div>
 
           {result && result.success && (
-            <div className="surface-card p-6 border-l-4 border-emerald-500">
+            <div className="surface-card p-6 border-l-4 border-emerald-500" role="status">
               <div className="mb-4 flex items-center gap-2">
                 <CheckCircle2 size={20} className="text-emerald-500" />
-                <h3 className="font-black text-primary">Conto creato</h3>
+                <h3 className="font-black text-primary">
+                  {result.isNew ? 'Conto creato e accreditato' : 'Conto accreditato'}
+                </h3>
               </div>
+              {!result.isNew && (
+                <p className="mb-4 text-sm text-emerald-700 bg-emerald-50 rounded-lg p-3">
+                  <ArrowUpCircle size={14} className="inline mr-1" />
+                  Importo di {Number(result.account.balance).toLocaleString('it-IT')} € accreditato al conto esistente.
+                </p>
+              )}
               <div className="space-y-3">
                 <div className="rounded-lg bg-slate-50 p-3">
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">IBAN</p>
                   <p className="mt-1 font-mono text-sm font-bold text-primary">{result.account.iban}</p>
                 </div>
                 <div className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Saldo iniziale</p>
-                  <p className="mt-1 text-lg font-black text-primary">{result.account.balance} €</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Saldo attuale</p>
+                  <p className="mt-1 text-lg font-black text-primary">{Number(result.account.balance).toLocaleString('it-IT')} €</p>
                 </div>
-                <div className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Carta bancaria</p>
-                  <p className="mt-1 font-mono text-sm font-bold text-primary">{result.card.number}</p>
-                  <p className="text-xs text-slate-500">{result.card.holder}</p>
-                </div>
+                {result.card && (
+                  <div className="rounded-lg bg-slate-50 p-3">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Carta bancaria</p>
+                    <p className="mt-1 font-mono text-sm font-bold text-primary">{result.card.number}</p>
+                    <p className="text-xs text-slate-500">{result.card.holder}</p>
+                  </div>
+                )}
                 <div className="rounded-lg bg-slate-50 p-3">
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Password</p>
                   <p className="mt-1 text-sm font-bold text-primary">Imposta dall&apos;admin</p>
@@ -227,7 +238,7 @@ export default function ProvisionPage() {
                 Invia queste credenziali al cliente via email o WhatsApp.
               </p>
               <button
-                onClick={() => { setResult(null); setFormData({ email: '', nome: '', cognome: '', amount: '', password: '' }); }}
+                onClick={() => setResult(null)}
                 className="mt-4 w-full btn-primary px-6 py-3 text-sm"
               >
                 Nuovo Provisioning
@@ -240,8 +251,8 @@ export default function ProvisionPage() {
       <ConfirmModal
         open={confirmOpen}
         title="Confermare il provisioning?"
-        message={`Stai per creare un conto per ${formData.nome} ${formData.cognome} con un accredito di ${Number(formData.amount).toLocaleString('it-IT')} €. Questa azione è irreversibile.`}
-        confirmLabel="Crea il conto"
+        message={`Stai per creare/aggiornare il conto per ${formData.nome} ${formData.cognome} con un accredito di ${Number(formData.amount).toLocaleString('it-IT')} €.`}
+        confirmLabel="Conferma"
         variant="info"
         loading={loading}
         onConfirm={executeSubmit}

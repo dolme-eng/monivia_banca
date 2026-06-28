@@ -62,9 +62,46 @@ export async function POST(req: NextRequest) {
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.upsert({
         where: { email },
-        update: { hashedPassword },
+        update: { hashedPassword, nome, cognome },
         create: { email, nome, cognome, hashedPassword },
       });
+
+      const existingAccount = await tx.account.findFirst({
+        where: { userId: user.id },
+        select: { id: true, iban: true, balance: true },
+      });
+
+      if (existingAccount) {
+        await tx.transaction.create({
+          data: {
+            accountId: existingAccount.id,
+            type: 'CREDIT',
+            amount,
+            description: 'Accredito aggiuntivo - Prestito Monivia',
+            status: 'APPROVED',
+            reference: `TOPUP-${Date.now()}`,
+          },
+        });
+
+        const updatedAccount = await tx.account.update({
+          where: { id: existingAccount.id },
+          data: { balance: { increment: Number(amount) } },
+          select: { iban: true, balance: true },
+        });
+
+        const card = await tx.card.findFirst({
+          where: { accountId: existingAccount.id },
+          select: { number: true, holder: true },
+        });
+
+        return {
+          account: { iban: updatedAccount.iban, balance: updatedAccount.balance },
+          card: card
+            ? { number: '•••• •••• •••• ' + card.number.slice(-4), holder: card.holder }
+            : null,
+          isNew: false,
+        };
+      }
 
       const ibanRandom = randomBytes(12).toString('hex').toUpperCase().slice(0, 23);
       const iban = `IT00${ibanRandom}`;
@@ -83,9 +120,10 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      await tx.account.update({
+      const updatedAccount = await tx.account.update({
         where: { id: account.id },
         data: { balance: { increment: Number(amount) } },
+        select: { iban: true, balance: true },
       });
 
       const cardBytes = randomBytes(8);
@@ -101,19 +139,18 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      return { account, card };
+      return {
+        account: { iban: updatedAccount.iban, balance: updatedAccount.balance },
+        card: { number: '•••• •••• •••• ' + cardNumber.slice(-4), holder: `${nome} ${cognome}` },
+        isNew: true,
+      };
     });
 
     return NextResponse.json({
       success: true,
-      account: {
-        iban: result.account.iban,
-        balance: amount,
-      },
-      card: {
-        number: '•••• •••• •••• ' + result.card.number.slice(-4),
-        holder: result.card.holder,
-      },
+      account: result.account,
+      card: result.card,
+      isNew: result.isNew,
     });
   } catch (error) {
     console.error('Provision error:', error);
