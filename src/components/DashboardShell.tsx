@@ -203,7 +203,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
         {/* Mobile bottom nav */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1.5 flex justify-around items-center z-40">
-          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+          {(isRestricted ? NAV_ITEMS.slice(0, 1) : NAV_ITEMS).map(({ href, label, icon: Icon }) => {
             const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
             return (
               <Link

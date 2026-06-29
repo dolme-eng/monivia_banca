@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
   // 3. CSRF validation
   const csrfToken = req.headers.get('x-csrf-token');
   if (!validateCsrfToken(csrfToken)) {
-    return NextResponse.json({ success: false, error: 'Invalid CSRF token' }, { status: 403 });
+    return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
   }
 
   // 4. Rate limiting (20 requests per 10 minutes per IP)

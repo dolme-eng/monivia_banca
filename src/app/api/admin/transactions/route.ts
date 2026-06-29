@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   // 3. CSRF validation
   const csrfToken = req.headers.get('x-csrf-token');
   if (!validateCsrfToken(csrfToken)) {
-    return NextResponse.json({ success: false, error: 'Invalid CSRF token' }, { status: 403 });
+    return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
   }
 
   // 4. Rate limiting (30 requests per 10 minutes per IP)
@@ -139,8 +139,8 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
     const skip = (page - 1) * limit;
 
-    const where = status && ['PENDING', 'APPROVED', 'REJECTED'].includes(status)
-      ? { status: status as 'PENDING' | 'APPROVED' | 'REJECTED' }
+    const where = status && ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'].includes(status)
+      ? { status: status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' }
       : {};
 
     const [transactions, total] = await Promise.all([

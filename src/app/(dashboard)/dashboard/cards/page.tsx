@@ -247,6 +247,10 @@ export default function CardsPage() {
                           <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-amber-600">
                             <Clock size={8} /> In sospeso
                           </span>
+                        ) : tx.status === 'CANCELLED' ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-slate-500">
+                            Annullato
+                          </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-600">
                             <CheckCircle2 size={8} /> OK

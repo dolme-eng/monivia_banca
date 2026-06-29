@@ -317,6 +317,10 @@ export default function PaymentsPage() {
                           <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-600">
                             <CheckCircle2 size={8} /> OK
                           </span>
+                        ) : tx.status === 'CANCELLED' ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-slate-500">
+                            Annullato
+                          </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-500">
                             Rifiutato

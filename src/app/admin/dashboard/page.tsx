@@ -271,9 +271,10 @@ export default function AdminDashboardPage() {
                         <span className={`text-[11px] font-black px-2 py-0.5 rounded ${
                           tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
                           tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
+                          tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-500' :
                           'bg-amber-50 text-amber-600'
                         }`}>
-                          {tx.status === 'APPROVED' ? 'Approvata' : tx.status === 'REJECTED' ? 'Rifiutata' : 'In Attesa'}
+                          {tx.status === 'APPROVED' ? 'Approvata' : tx.status === 'REJECTED' ? 'Rifiutata' : tx.status === 'CANCELLED' ? 'Annullata' : 'In Attesa'}
                         </span>
                       </td>
                       <td className="py-3 text-right font-black text-primary">
