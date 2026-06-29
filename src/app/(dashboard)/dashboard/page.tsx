@@ -15,7 +15,6 @@ import {
   Download,
   Receipt,
   Loader2,
-  BarChart3,
 } from 'lucide-react';
 import { authFetch } from '@/lib/auth-client';
 
@@ -157,118 +156,40 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Spending Trend */}
-        <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200/80 p-6 rounded-xl flex flex-col" style={{ boxShadow: 'var(--shadow-card)' }}>
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-sm font-black text-primary">Andamento Movimenti</h3>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-secondary" />
-                <span className="text-[11px] text-slate-400">Periodo corrente</span>
+        {/* Card Preview */}
+        <div className="col-span-12 lg:col-span-8 rounded-xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
+          <div className="bg-gradient-to-br from-primary via-slate-800 to-primary p-6 lg:p-8 text-white relative min-h-[220px] lg:min-h-[260px] flex flex-col justify-between">
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute -right-16 -top-16 w-64 h-64 bg-secondary rounded-full blur-3xl" />
+              <div className="absolute -left-8 -bottom-8 w-48 h-48 bg-accent rounded-full blur-3xl" />
+            </div>
+            <div className="relative z-10 flex justify-between items-start">
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/50">Carta Principale</p>
+                <p className="text-sm font-black mt-1 text-secondary">{account?.currency ?? 'EUR'}</p>
+              </div>
+              <div className="flex gap-2">
+                <Link href="/dashboard/cards" className="px-3 py-1.5 min-h-[44px] text-[11px] font-black bg-white/10 hover:bg-white/20 rounded-lg transition-colors flex items-center">
+                  Gestisci
+                </Link>
+              </div>
+            </div>
+            <div className="relative z-10 mt-auto">
+              <p className="text-xl lg:text-2xl font-black tracking-[0.15em] font-mono mb-4">
+                {account?.cards?.[0]?.number ?? '•••• •••• •••• ••••'}
+              </p>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-[11px] text-white/40 uppercase">Titolare</p>
+                  <p className="text-sm font-black mt-0.5">{user?.nome} {user?.cognome}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[11px] text-white/40 uppercase">Scadenza</p>
+                  <p className="text-sm font-black font-mono mt-0.5">{account?.cards?.[0]?.expiry ?? '••/••'}</p>
+                </div>
               </div>
             </div>
           </div>
-          {(() => {
-            const txs = user?.recentTransactions ?? [];
-            if (txs.length === 0) {
-              return (
-                <div className="flex-grow flex items-center justify-center h-64 text-slate-300">
-                  <BarChart3 size={32} />
-                </div>
-              );
-            }
-            const now = new Date();
-            const days = 28;
-            const dailySums: { date: string; label: string; income: number; expense: number }[] = [];
-            for (let i = days - 1; i >= 0; i--) {
-              const d = new Date(now);
-              d.setDate(d.getDate() - i);
-              const key = d.toISOString().slice(0, 10);
-              const label = d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
-              dailySums.push({ date: key, label, income: 0, expense: 0 });
-            }
-            for (const tx of txs) {
-              const key = new Date(tx.createdAt).toISOString().slice(0, 10);
-              const bucket = dailySums.find((b) => b.date === key);
-              if (bucket) {
-                const isCredit = tx.type === 'CREDIT' || tx.type === 'TRANSFER_IN';
-                if (isCredit) bucket.income += Math.abs(tx.amount);
-                else bucket.expense += Math.abs(tx.amount);
-              }
-            }
-            const maxVal = Math.max(1, ...dailySums.map((b) => Math.max(b.income, b.expense)));
-            const svgH = 200;
-            const padTop = 10;
-            const padBot = 20;
-            const chartH = svgH - padTop - padBot;
-            const barW = 1000 / days;
-            const tickLabels = dailySums
-              .filter((_, i) => i % 7 === 0 || i === days - 1)
-              .map((b) => b.label);
-            return (
-              <>
-                <div className="flex-grow h-48 lg:h-64 relative">
-                  <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox={`0 0 1000 ${svgH}`}>
-                    {[0, 0.25, 0.5, 0.75, 1].map((pct) => (
-                      <g key={pct}>
-                        <line x1="0" y1={padTop + chartH * (1 - pct)} x2="1000" y2={padTop + chartH * (1 - pct)} stroke="#e2e8f0" strokeWidth="1" />
-                        <text x="-5" y={padTop + chartH * (1 - pct) + 4} textAnchor="end" className="fill-slate-300 text-[10px] font-black">
-                          {Math.round(maxVal * pct).toLocaleString('it-IT')}
-                        </text>
-                      </g>
-                    ))}
-                    {dailySums.map((b, i) => {
-                      const x = i * barW + 2;
-                      const w = barW - 4;
-                      const hExp = (b.expense / maxVal) * chartH;
-                      const hInc = (b.income / maxVal) * chartH;
-                      return (
-                        <g key={b.date}>
-                          {b.expense > 0 && (
-                            <rect
-                              x={x}
-                              y={padTop + chartH - hExp}
-                              width={w}
-                              height={hExp}
-                              rx="3"
-                              fill="#6366f1"
-                              opacity="0.8"
-                            />
-                          )}
-                          {b.income > 0 && (
-                            <rect
-                              x={x}
-                              y={padTop + chartH - hInc - hExp}
-                              width={w}
-                              height={hInc}
-                              rx="3"
-                              fill="#00d4ff"
-                              opacity="0.9"
-                            />
-                          )}
-                        </g>
-                      );
-                    })}
-                  </svg>
-                </div>
-                <div className="flex justify-between mt-3 px-1">
-                  {tickLabels.map((lbl) => (
-                    <span key={lbl} className="text-[11px] text-slate-400">{lbl}</span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-secondary" />
-                    <span className="text-[11px] text-slate-400">Entrate</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-accent" />
-                    <span className="text-[11px] text-slate-400">Uscite</span>
-                  </div>
-                </div>
-              </>
-            );
-          })()}
         </div>
 
         {/* Recent Transactions */}
