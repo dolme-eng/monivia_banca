@@ -19,7 +19,7 @@ const transporter = (!resend && process.env.SMTP_USER && process.env.SMTP_PASS)
     })
   : null;
 
-const FROM_EMAIL = process.env.EMAIL_FROM || 'Monivia Banca <banca@monivia.it>';
+const FROM_EMAIL = process.env.EMAIL_FROM || 'Monivia <contatto@monivia.it>';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@monivia.it';
 
 function escapeHtml(str: string): string {
