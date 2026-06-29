@@ -103,17 +103,25 @@ export default function Home() {
       </section>
 
       {/* ===== SOCIAL PROOF ===== */}
-      <section className="bg-white py-10 border-y border-slate-100">
+      <section className="bg-white py-12 border-y border-slate-100">
         <div className="site-container">
-          <p className="text-center text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-8">
-            Scelto da migliaia di clienti in Italia
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-12 opacity-30 grayscale">
-            <div className="h-7 w-28 bg-slate-200 rounded" />
-            <div className="h-7 w-20 bg-slate-200 rounded" />
-            <div className="h-7 w-32 bg-slate-200 rounded" />
-            <div className="h-7 w-24 bg-slate-200 rounded" />
-            <div className="h-7 w-28 bg-slate-200 rounded" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <p className="text-2xl sm:text-3xl font-black text-primary tracking-tight">500+</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mt-1">Clienti attivi</p>
+            </div>
+            <div>
+              <p className="text-2xl sm:text-3xl font-black text-primary tracking-tight">12M €</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mt-1">Prestiti erogati</p>
+            </div>
+            <div>
+              <p className="text-2xl sm:text-3xl font-black text-primary tracking-tight">48h</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mt-1">Tempo medio accredito</p>
+            </div>
+            <div>
+              <p className="text-2xl sm:text-3xl font-black text-primary tracking-tight">4.9/5</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mt-1">Soddisfazione clienti</p>
+            </div>
           </div>
         </div>
       </section>
