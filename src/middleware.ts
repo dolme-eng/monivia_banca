@@ -53,15 +53,26 @@ export default async function middleware(req: NextRequest) {
   if (!session && isTokenNearExpiry(req)) {
     const refreshToken = req.cookies.get('refresh-token')?.value;
     if (refreshToken) {
-      const refreshUrl = new URL('/api/auth/refresh', req.url);
-      const refreshResponse = await fetch(refreshUrl, {
-        method: 'POST',
-        headers: { cookie: `refresh-token=${refreshToken}` },
-      });
+      try {
+        const refreshUrl = new URL('/api/auth/refresh', req.url);
+        const refreshResponse = await fetch(refreshUrl, {
+          method: 'POST',
+          headers: { cookie: `refresh-token=${refreshToken}` },
+        });
 
-      if (refreshResponse.ok) {
-        session = await getSession(req);
-      }
+        if (refreshResponse.ok) {
+          const setCookies = refreshResponse.headers.getSetCookie?.() || [];
+          session = await getSession(req);
+
+          if (session && setCookies.length > 0) {
+            const res = NextResponse.next();
+            for (const cookie of setCookies) {
+              res.headers.append('Set-Cookie', cookie);
+            }
+            return res;
+          }
+        }
+      } catch {}
     }
   }
 
