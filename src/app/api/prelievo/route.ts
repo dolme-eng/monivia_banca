@@ -57,6 +57,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Conto non trovato' }, { status: 404 });
     }
 
+    if (account.status !== 'ACTIVE') {
+      return NextResponse.json({ success: false, error: 'Il conto non è attivo. Contatta l\'amministrazione.' }, { status: 403 });
+    }
+
+    if (account.blockedAt) {
+      return NextResponse.json({ success: false, error: 'I trasferimenti sono bloccati sul tuo conto.' }, { status: 403 });
+    }
+
     const result = await prisma.$transaction(async (tx) => {
       const pendingSum = await tx.transaction.aggregate({
         where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },

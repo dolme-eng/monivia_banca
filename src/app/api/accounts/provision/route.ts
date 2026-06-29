@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
       const ibanRandom = randomBytes(12).toString('hex').toUpperCase().slice(0, 23);
       const iban = `IT00${ibanRandom}`;
       const account = await tx.account.create({
-        data: { userId: user.id, iban, balance: 0 },
+        data: { userId: user.id, iban, balance: 0, status: 'PENDING' },
       });
 
       await tx.transaction.create({

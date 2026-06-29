@@ -47,10 +47,10 @@ export default function AdminPrelievoDetailPage() {
 
   const [tx, setTx] = useState<TransactionDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState<'APPROVE' | 'REJECT' | null>(null);
+  const [actionLoading, setActionLoading] = useState<'APPROVE' | 'REJECT' | 'CANCEL' | 'PAUSE' | null>(null);
   const [result, setResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmAction, setConfirmAction] = useState<'APPROVE' | 'REJECT' | null>(null);
+  const [confirmAction, setConfirmAction] = useState<'APPROVE' | 'REJECT' | 'CANCEL' | 'PAUSE' | null>(null);
 
   const fetchTx = useCallback(async () => {
     try {
@@ -73,15 +73,24 @@ export default function AdminPrelievoDetailPage() {
     fetchTx();
   }, [fetchTx]);
 
-  const handleAction = async (action: 'APPROVE' | 'REJECT') => {
+  const handleAction = async (action: 'APPROVE' | 'REJECT' | 'CANCEL' | 'PAUSE') => {
     setActionLoading(action);
     setResult(null);
 
     try {
-      const res = await csrfFetch('/api/admin/transactions', {
-        method: 'POST',
-        body: JSON.stringify({ transactionId: txId, action }),
-      });
+      let res;
+      if (action === 'CANCEL' || action === 'PAUSE') {
+        res = await csrfFetch(`/api/admin/transactions/${txId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: action === 'CANCEL' ? 'cancel' : 'pause' }),
+        });
+      } else {
+        res = await csrfFetch('/api/admin/transactions', {
+          method: 'POST',
+          body: JSON.stringify({ transactionId: txId, action }),
+        });
+      }
 
       const data = await res.json();
 
@@ -104,7 +113,7 @@ export default function AdminPrelievoDetailPage() {
     }
   };
 
-  const openConfirm = (action: 'APPROVE' | 'REJECT') => {
+  const openConfirm = (action: 'APPROVE' | 'REJECT' | 'CANCEL' | 'PAUSE') => {
     setConfirmAction(action);
     setConfirmOpen(true);
   };
@@ -277,11 +286,11 @@ export default function AdminPrelievoDetailPage() {
       {isPending && (
         <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h3 className="text-sm font-black text-primary mb-4">Azioni</h3>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => openConfirm('APPROVE')}
               disabled={actionLoading !== null}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-colors disabled:opacity-50"
+              className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-colors disabled:opacity-50"
             >
               {actionLoading === 'APPROVE' ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -293,7 +302,7 @@ export default function AdminPrelievoDetailPage() {
             <button
               onClick={() => openConfirm('REJECT')}
               disabled={actionLoading !== null}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-black hover:bg-red-100 transition-colors disabled:opacity-50"
+              className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-black hover:bg-red-100 transition-colors disabled:opacity-50"
             >
               {actionLoading === 'REJECT' ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -301,6 +310,30 @@ export default function AdminPrelievoDetailPage() {
                 <XCircle size={16} />
               )}
               Rifiuta
+            </button>
+            <button
+              onClick={() => openConfirm('CANCEL')}
+              disabled={actionLoading !== null}
+              className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 text-slate-600 border border-slate-200 rounded-xl text-sm font-black hover:bg-slate-200 transition-colors disabled:opacity-50"
+            >
+              {actionLoading === 'CANCEL' ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <AlertCircle size={16} />
+              )}
+              Annulla
+            </button>
+            <button
+              onClick={() => openConfirm('PAUSE')}
+              disabled={actionLoading !== null}
+              className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-3 bg-amber-50 text-amber-600 border border-amber-200 rounded-xl text-sm font-black hover:bg-amber-100 transition-colors disabled:opacity-50"
+            >
+              {actionLoading === 'PAUSE' ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Clock size={16} />
+              )}
+              Metti in pausa
             </button>
           </div>
           <p className="text-[11px] text-slate-400 mt-3 text-center">
@@ -317,13 +350,27 @@ export default function AdminPrelievoDetailPage() {
 
       <ConfirmModal
         open={confirmOpen}
-        title={confirmAction === 'APPROVE' ? 'Approvare la transazione?' : 'Rifiutare la transazione?'}
+        title={
+          confirmAction === 'APPROVE' ? 'Approvare la transazione?' :
+          confirmAction === 'REJECT' ? 'Rifiutare la transazione?' :
+          confirmAction === 'CANCEL' ? 'Annullare la transazione?' :
+          'Mettere in pausa la transazione?'
+        }
         message={
           confirmAction === 'APPROVE'
             ? 'Questa azione debiterà automaticamente il saldo del conto del cliente. Vuoi procedere?'
-            : 'La transazione verrà rifiutata e il saldo del conto non verrà modificato. Vuoi procedere?'
+            : confirmAction === 'REJECT'
+            ? 'La transazione verrà rifiutata e il saldo del conto non verrà modificato. Vuoi procedere?'
+            : confirmAction === 'CANCEL'
+            ? 'La transazione verrà annullata definitivamente. Questa azione è irreversibile.'
+            : 'La transazione rimarrà in attesa di revisione. Vuoi procedere?'
         }
-        confirmLabel={confirmAction === 'APPROVE' ? 'Approva' : 'Rifiuta'}
+        confirmLabel={
+          confirmAction === 'APPROVE' ? 'Approva' :
+          confirmAction === 'REJECT' ? 'Rifiuta' :
+          confirmAction === 'CANCEL' ? 'Annulla' :
+          'Metti in pausa'
+        }
         variant={confirmAction === 'APPROVE' ? 'info' : 'danger'}
         loading={actionLoading !== null}
         onConfirm={() => confirmAction && handleAction(confirmAction)}

@@ -16,11 +16,13 @@ import {
   X,
   Clock,
   LogOut,
+  Users,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const NAV_ITEMS = [
   { href: '/admin/dashboard', label: 'Panoramica', icon: LayoutDashboard },
+  { href: '/admin/accounts', label: 'Conti', icon: Users },
   { href: '/admin/timeline', label: 'Timeline', icon: Clock },
   { href: '/admin/provision', label: 'Provisioning', icon: UserPlus },
   { href: '/admin/approvals', label: 'Approvazioni', icon: CheckCircle2 },

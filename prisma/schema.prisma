@@ -26,7 +26,8 @@ model Account {
   iban         String          @unique
   balance      Decimal         @default(0) @db.Decimal(12, 2)
   currency     String          @default("EUR")
-  status       AccountStatus   @default(ACTIVE)
+  status       AccountStatus   @default(PENDING)
+  blockedAt    DateTime?
   cards        Card[]
   transactions Transaction[]
   createdAt    DateTime        @default(now())
@@ -88,6 +89,7 @@ enum UserRole {
 }
 
 enum AccountStatus {
+  PENDING
   ACTIVE
   FROZEN
   CLOSED
@@ -110,4 +112,5 @@ enum TransactionStatus {
   PENDING
   APPROVED
   REJECTED
+  CANCELLED
 }
