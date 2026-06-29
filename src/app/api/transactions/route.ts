@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 
   // 4. Rate limiting (20 requests per 10 minutes per IP)
   const ip = getClientIp(req);
-  const rl = checkRateLimit(`tx:${ip}`, 20, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`tx:${ip}`, 20, 10 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
   }

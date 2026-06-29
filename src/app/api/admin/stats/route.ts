@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   if ('error' in auth) return auth.error;
 
   const ip = getClientIp(req);
-  const rl = checkRateLimit(`admin-stats:${ip}`, 60, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`admin-stats:${ip}`, 60, 10 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
   }

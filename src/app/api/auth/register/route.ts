@@ -14,7 +14,7 @@ const registerSchema = z.object({
 
 export async function POST(req: Request) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-  const rl = checkRateLimit(`register:${ip}`, 5, 60 * 60 * 1000);
+  const rl = await checkRateLimit(`register:${ip}`, 5, 60 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Troppe registrazioni. Riprova più tardi.' }, { status: 429 });
   }

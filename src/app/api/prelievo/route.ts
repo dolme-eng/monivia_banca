@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   }
 
   const ip = getClientIp(req);
-  const rl = checkRateLimit(`prelievo:${ip}`, 5, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`prelievo:${ip}`, 5, 10 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
   }

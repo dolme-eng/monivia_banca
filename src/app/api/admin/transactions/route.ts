@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
   // 4. Rate limiting (30 requests per 10 minutes per IP)
   const ip = getClientIp(req);
-  const rl = checkRateLimit(`admin:${ip}`, 30, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`admin:${ip}`, 30, 10 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
   }
@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
 
   // Rate limiting (read endpoint, less restrictive)
   const ip = getClientIp(req);
-  const rl = checkRateLimit(`admin-read:${ip}`, 60, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`admin-read:${ip}`, 60, 10 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
   }
