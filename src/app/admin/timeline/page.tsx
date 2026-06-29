@@ -209,7 +209,7 @@ export default function AdminTimelinePage() {
                       tx.status === 'CANCELLED' ? 'text-slate-500' :
                       'text-amber-600'
                     }`}>
-                      {tx.status === 'APPROVED' ? 'Completata' : tx.status === 'REJECTED' ? 'Rifiutata' : tx.status === 'CANCELLED' ? 'Annullata' : `${progress}%`}
+                      {tx.status === 'APPROVED' ? 'Completata' : tx.status === 'REJECTED' ? 'Rifiutata' : tx.status === 'CANCELLED' ? 'Annullata' : `In attesa`}
                     </span>
                   </div>
                 </div>

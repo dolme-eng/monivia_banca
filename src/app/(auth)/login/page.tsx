@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Mail, Lock, Eye, EyeOff, ArrowRight, Shield, Clock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,8 +45,8 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen">
-      {/* ===== Left: Login Form ===== */}
-      <main className="w-full lg:w-[45%] flex flex-col justify-center px-6 md:px-10 xl:px-16 py-12 bg-white z-10 relative">
+      {/* ===== Login Form ===== */}
+      <main className="w-full flex flex-col justify-center px-6 md:px-10 xl:px-16 py-12 bg-white z-10 relative">
         <div className="max-w-md w-full mx-auto">
           {/* Branding */}
           <div className="mb-8">
@@ -116,26 +116,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Utilities */}
-            <div className="flex items-center justify-between py-1">
-              <label className="flex items-center gap-2 cursor-pointer group p-1 -m-1 rounded">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-slate-300 text-secondary focus:ring-secondary/30 transition-all"
-                />
-                <span className="text-sm text-slate-500 group-hover:text-primary transition-colors">
-                  Ricordami
-                </span>
-              </label>
-              <a
-                href="#"
-                onClick={(e) => { e.preventDefault(); alert('Contatta l\'amministrazione per reimpostare la password.'); }}
-                className="text-sm text-secondary hover:text-cyan-400 transition-colors py-3 px-2 inline-block min-h-[44px] min-w-[44px]"
-              >
-                Password dimenticata?
-              </a>
-            </div>
-
             {/* CTA */}
             <button
               type="submit"
@@ -177,78 +157,6 @@ export default function LoginPage() {
           </footer>
         </div>
       </main>
-
-      {/* ===== Right: Security Visual ===== */}
-      <section className="hidden lg:flex w-[55%] relative bg-primary overflow-hidden">
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/40 to-transparent" />
-
-        {/* Content */}
-        <div className="relative z-20 flex flex-col justify-between h-full w-full p-12 xl:p-16 text-white">
-          {/* Top badge */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
-              <ShieldCheck size={20} className="text-secondary" />
-            </div>
-            <span className="text-sm font-black uppercase tracking-[0.18em] text-white/70">
-              Accesso Sicuro
-            </span>
-          </div>
-
-          {/* Main copy */}
-          <div className="max-w-xl">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6 leading-tight tracking-tight">
-              La tua sicurezza è la nostra priorità assoluta.
-            </h2>
-            <p className="text-base sm:text-lg text-white/60 mb-10 leading-relaxed">
-              Ogni transazione, ogni dato è protetto da crittografia di livello bancario
-              e autenticazione multi-fattore intelligente.
-            </p>
-
-            {/* Security cards */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-5 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex flex-col gap-3">
-                <Shield size={20} className="text-secondary" />
-                <span className="text-lg font-black">AES-256</span>
-                <span className="text-[11px] text-white/50 leading-relaxed">
-                  Crittografia dei dati a riposo e in transito.
-                </span>
-              </div>
-              <div className="p-5 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex flex-col gap-3">
-                <Clock size={20} className="text-secondary" />
-                <span className="text-lg font-black">24/7</span>
-                <span className="text-[11px] text-white/50 leading-relaxed">
-                  Sorveglianza proattiva delle minacce in tempo reale.
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom — client count */}
-          <div className="flex items-center justify-between">
-            <div className="flex -space-x-3">
-              {['MR', 'GL', 'AB'].map(( initials, i) => (
-                <div
-                  key={i}
-                  className="w-10 h-10 rounded-full border-2 border-primary bg-secondary/20 flex items-center justify-center text-[11px] font-black text-secondary"
-                >
-                  {initials}
-                </div>
-              ))}
-              <div className="w-10 h-10 rounded-full border-2 border-primary bg-white/10 flex items-center justify-center text-[11px] font-black text-white/60">
-                +1k
-              </div>
-            </div>
-            <span className="text-[11px] text-white/40 italic">
-              Già oltre 1.000 clienti ci hanno scelto.
-            </span>
-          </div>
-        </div>
-
-        {/* Decorative blurs */}
-        <div className="absolute -right-24 -top-24 w-96 h-96 bg-secondary/10 blur-[120px] rounded-full" aria-hidden />
-        <div className="absolute -left-24 -bottom-24 w-96 h-96 bg-accent/10 blur-[120px] rounded-full" aria-hidden />
-      </section>
     </div>
   );
 }

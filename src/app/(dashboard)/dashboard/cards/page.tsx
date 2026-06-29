@@ -5,13 +5,9 @@ import { authFetch } from '@/lib/auth-client';
 import {
   CreditCard,
   Wifi,
-  Snowflake,
-  Lock,
-  RefreshCw,
   CheckCircle2,
   Clock,
   Loader2,
-  Shield,
 } from 'lucide-react';
 
 interface CardData {
@@ -196,22 +192,6 @@ export default function CardsPage() {
             </div>
           </div>
 
-          {/* Card Controls */}
-          <div className="col-span-12 lg:col-span-4 grid grid-cols-3 gap-3">
-            {[
-              { icon: Snowflake, label: 'Congela' },
-              { icon: Lock, label: 'CAMBIA PIN' },
-              { icon: RefreshCw, label: 'Sostituisci' },
-            ].map(({ icon: Icon, label }) => (
-              <button key={label} className="bg-white border border-slate-200 p-4 rounded-xl hover:shadow-md transition-all group flex flex-col items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-secondary group-hover:text-primary transition-colors text-slate-500">
-                  <Icon size={16} />
-                </div>
-                <span className="text-[11px] font-black text-primary">{label}</span>
-              </button>
-            ))}
-          </div>
-
           {/* Recent Activity */}
           <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200/80 rounded-xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
@@ -294,19 +274,6 @@ export default function CardsPage() {
                     {i === selectedCard && <CheckCircle2 size={14} className="text-secondary shrink-0" />}
                   </button>
                 ))}
-              </div>
-            </div>
-
-            {/* Security */}
-            <div className="bg-white border border-slate-200/80 rounded-xl p-5" style={{ boxShadow: 'var(--shadow-card)' }}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-full bg-red-50 flex items-center justify-center text-red-500">
-                  <Shield size={16} />
-                </div>
-                <h3 className="text-xs font-black text-primary">Impostazioni Sicurezza</h3>
-              </div>
-              <div className="text-center py-6">
-                <p className="text-xs text-slate-400">Prossimamente</p>
               </div>
             </div>
           </div>

@@ -9,12 +9,8 @@ import {
   Wallet,
   Clock,
   CheckCircle2,
-  TrendingUp,
   Lock,
-  Eye,
-  ArrowDownToLine,
   Banknote,
-  Smartphone,
   Shield,
 } from 'lucide-react';
 import HeroBackground from '@/components/HeroBackground';
@@ -96,34 +92,6 @@ export default function Home() {
             <DashboardDemo />
           </FadeIn>
         </div>
-
-        {/* Decorative glow */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" aria-hidden />
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-accent/10 rounded-full blur-3xl" aria-hidden />
-      </section>
-
-      {/* ===== SOCIAL PROOF ===== */}
-      <section className="bg-white py-12 border-y border-slate-100">
-        <div className="site-container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <p className="text-2xl sm:text-3xl font-black text-primary tracking-tight">500+</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mt-1">Clienti attivi</p>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-black text-primary tracking-tight">12M €</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mt-1">Prestiti erogati</p>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-black text-primary tracking-tight">48h</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mt-1">Tempo medio accredito</p>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-black text-primary tracking-tight">4.9/5</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mt-1">Soddisfazione clienti</p>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* ===== FEATURES — BENTO GRID ===== */}
@@ -158,11 +126,11 @@ export default function Home() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/20 rounded-full blur-2xl" aria-hidden />
                 <div className="flex justify-between items-start relative z-10">
                   <span className="text-lg font-black tracking-tight">MONIVIA</span>
-                  <Smartphone size={20} className="text-secondary" />
+                  <div className="w-8 h-6 bg-secondary/30 rounded" aria-hidden />
                 </div>
                 <div className="relative z-10 mt-auto">
                   <p className="text-[11px] opacity-50 uppercase tracking-widest">Carta Prepagata</p>
-                  <p className="font-mono text-sm tracking-[0.2em] mt-1">•••• •••• •••• 4821</p>
+                  <p className="font-mono text-sm tracking-[0.2em] mt-1">•••• •••• •••• ••••</p>
                 </div>
               </div>
             </FadeIn>
@@ -183,7 +151,7 @@ export default function Home() {
             </FadeIn>
 
             {/* Feature 3 — Prelievi & Trasferimenti */}
-            <FadeIn delay={150} className="col-span-12 md:col-span-4 rounded-2xl border border-slate-200/80 bg-white p-8" style={{ boxShadow: 'var(--shadow-card)' }}>
+            <FadeIn delay={150} className="col-span-12 md:col-span-6 rounded-2xl border border-slate-200/80 bg-white p-8" style={{ boxShadow: 'var(--shadow-card)' }}>
               <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
                 <Banknote size={28} />
               </div>
@@ -194,84 +162,19 @@ export default function Home() {
               </p>
             </FadeIn>
 
-            {/* Feature 4 — Timeline amministrativa (large) */}
-            <FadeIn delay={200} className="col-span-12 md:col-span-8 rounded-2xl border border-slate-200/80 bg-white p-8 overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
-              <div className="flex flex-col md:flex-row gap-8 items-center">
-                <div className="flex-1">
-                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
-                    <Clock size={28} />
-                  </div>
-                  <h3 className="text-xl font-black text-primary sm:text-2xl mb-3">Controllo Amministrativo</h3>
-                  <p className="text-sm leading-relaxed text-slate-500">
-                    Ogni prelievo e trasferimento passa dal team amministrativo.
-                    Visualizza lo stato in tempo reale con barra di avanzamento e tempo stimato.
-                  </p>
-                </div>
-                {/* Timeline mockup */}
-                <div className="flex flex-col gap-3 w-full md:w-72 shrink-0">
-                  <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-black text-primary">Prelievo 5.000 €</span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-black uppercase text-amber-600">
-                        <Clock size={10} />
-                        In corso
-                      </span>
-                    </div>
-                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-secondary to-accent rounded-full animate-pulse" style={{ width: '45%' }} />
-                    </div>
-                    <p className="text-[11px] text-slate-400 mt-1.5">Tempo stimato: ~2 ore</p>
-                  </div>
-                  <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm opacity-60">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-black text-primary">Trasferimento 2.000 €</span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[11px] font-black uppercase text-slate-400">
-                        In coda
-                      </span>
-                    </div>
-                  </div>
-                  <div className="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-primary">Prelievo 1.500 €</span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-black uppercase text-emerald-600">
-                        <CheckCircle2 size={10} />
-                        Completato
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            {/* Feature 4 — Controllo Amministrativo */}
+            <FadeIn delay={200} className="col-span-12 md:col-span-6 rounded-2xl border border-slate-200/80 bg-white p-8 overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
+                <Clock size={28} />
               </div>
+              <h3 className="text-xl font-black text-primary sm:text-2xl mb-3">Controllo Amministrativo</h3>
+              <p className="text-sm leading-relaxed text-slate-500">
+                Ogni prelievo e trasferimento passa dal team amministrativo.
+                Visualizza lo stato in tempo reale direttamente dalla tua dashboard.
+              </p>
             </FadeIn>
           </div>
         </div>
-      </section>
-
-      {/* ===== TESTIMONIAL ===== */}
-      <section className="section-pad bg-primary relative overflow-hidden" id="testimonials">
-        <div className="site-container relative z-10">
-          <FadeIn>
-            <div className="bg-white/5 backdrop-blur-md rounded-3xl p-8 sm:p-12 lg:p-16 border border-white/10 flex flex-col items-center text-center">
-              <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-full bg-secondary/10">
-                <span className="text-secondary text-3xl font-black">&ldquo;</span>
-              </div>
-              <p className="text-xl sm:text-2xl lg:text-3xl font-black text-white italic mb-10 max-w-3xl leading-snug tracking-tight">
-                Monivia Banca ha trasformato la mia gestione finanziaria. La rapidità dei prelievi
-                e la semplicità dell&apos;interfaccia mi permettono di concentrarmi su ciò che conta:
-                la mia crescita.
-              </p>
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-14 h-14 rounded-full border-2 border-secondary p-0.5 bg-primary flex items-center justify-center">
-                  <span className="text-lg font-black text-secondary">MR</span>
-                </div>
-                <div>
-                  <p className="text-sm font-black text-white">Marco Rossi</p>
-                  <p className="text-xs text-secondary">Imprenditore, Milano</p>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-primary to-transparent" aria-hidden />
       </section>
 
       {/* ===== HOW IT WORKS ===== */}
@@ -331,78 +234,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== ANALYTICS PREVIEW ===== */}
-      <section className="section-pad bg-slate-50/50">
-        <div className="site-container grid lg:grid-cols-2 gap-16 items-center">
-          <FadeIn>
-            <h2 className="section-heading mb-8">Pilota le tue finanze con dati reali.</h2>
-            <ul className="flex flex-col gap-6">
-              <li className="flex gap-4">
-                <div className="shrink-0 w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <TrendingUp size={20} className="text-secondary" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-black text-primary mb-1">Analisi in tempo reale</h4>
-                  <p className="text-sm text-slate-500">Visualizza i tuoi flussi finanziari e le tendenze di spesa istantaneamente.</p>
-                </div>
-              </li>
-              <li className="flex gap-4">
-                <div className="shrink-0 w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <Eye size={20} className="text-secondary" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-black text-primary mb-1">Trasparenza totale</h4>
-                  <p className="text-sm text-slate-500">Ogni movimento è tracciato e visibile: prelievi, accrediti, trasferimenti in attesa.</p>
-                </div>
-              </li>
-              <li className="flex gap-4">
-                <div className="shrink-0 w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <Lock size={20} className="text-secondary" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-black text-primary mb-1">Sicurezza garantita</h4>
-                  <p className="text-sm text-slate-500">Crittografia di livello bancario e approvazione manuale per ogni operazione.</p>
-                </div>
-              </li>
-            </ul>
-          </FadeIn>
-
-          <FadeIn delay={200}>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Saldo totale</p>
-                <p className="text-xl font-black text-primary">15.200 €</p>
-                <div className="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-secondary rounded-full" style={{ width: '60%' }} />
-                </div>
-              </div>
-              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm translate-y-4">
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Prelievi in sospeso</p>
-                <p className="text-xl font-black text-amber-600">2</p>
-                <div className="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-400 rounded-full" style={{ width: '30%' }} />
-                </div>
-              </div>
-              <div className="col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-2">
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-sm font-black text-primary">Movimenti recenti</span>
-                  <span className="text-[11px] font-black bg-secondary/10 text-secondary px-3 py-1 rounded-full">Ultimi 30 giorni</span>
-                </div>
-                <div className="flex items-end gap-1.5 h-28">
-                  {[40, 65, 55, 90, 70, 85, 75, 50, 60, 80, 45, 95].map((h, i) => (
-                    <div
-                      key={i}
-                      className={`flex-1 rounded-t ${i === 3 || i === 11 ? 'bg-secondary' : 'bg-slate-100'}`}
-                      style={{ height: `${h}%` }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
       {/* ===== FINAL CTA ===== */}
       <section className="section-pad">
         <div className="site-container">
@@ -421,9 +252,6 @@ export default function Home() {
                     <ArrowRight size={16} />
                   </Link>
                 </div>
-                <p className="mt-8 text-white/30 text-[11px] font-black uppercase tracking-[0.18em]">
-                  Apertura in 10 minuti. Nessun costo nascosto.
-                </p>
               </div>
               {/* Decorative dots */}
               <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} aria-hidden />

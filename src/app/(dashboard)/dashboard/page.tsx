@@ -12,7 +12,6 @@ import {
   CreditCard,
   ArrowRight,
   Send,
-  Download,
   Receipt,
   Loader2,
   Lock,
@@ -136,16 +135,6 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-black text-primary">Panoramica</h1>
           <p className="text-sm text-slate-500 mt-1">Bentornato, {firstName}. Ecco il tuo conto.</p>
-        </div>
-        <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-100 transition-colors">
-            <Clock size={14} />
-            Ultimi 30 giorni
-          </button>
-          <button className="flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-lg bg-primary text-white text-sm font-black hover:bg-slate-800 transition-colors">
-            <Download size={14} />
-            Esporta
-          </button>
         </div>
       </div>
 
@@ -310,33 +299,6 @@ export default function DashboardPage() {
                 </div>
                 <ArrowRight size={14} className="ml-auto text-slate-400 group-hover:translate-x-1 transition-transform" />
               </Link>
-            </div>
-          </div>
-
-          {/* Account Summary */}
-          <div className="bg-white border border-slate-200/80 p-6 rounded-xl" style={{ boxShadow: 'var(--shadow-card)' }}>
-            <h3 className="text-sm font-black text-primary mb-4">Riepilogo Conto</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-xs text-slate-400">Saldo</span>
-                <span className="text-sm font-black text-primary">{formatAmount(balance)} €</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-xs text-slate-400">IBAN</span>
-                <span className="text-xs font-mono text-slate-600">{account?.iban ?? '—'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-xs text-slate-400">Stato</span>
-                <span className={`text-[11px] font-black px-2 py-0.5 rounded ${
-                  account?.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
-                }`}>
-                  {account?.status === 'ACTIVE' ? 'Attivo' : account?.status === 'FROZEN' ? 'Congelato' : 'Chiuso'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-xs text-slate-400">Carte</span>
-                <span className="text-sm font-black text-primary">{account?.cards?.length ?? 0}</span>
-              </div>
             </div>
           </div>
         </div>

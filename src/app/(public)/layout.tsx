@@ -14,7 +14,7 @@ export default function PublicLayout({
               <span className="flex items-center gap-1.5">Monivia S.r.l.</span>
               <span className="flex items-center gap-1.5">Dashboard Sicuro</span>
             </div>
-            <span className="hidden lg:block">Accesso riservato all&apos;amministrazione</span>
+            <span className="hidden lg:block">Piattaforma bancaria sicura</span>
           </div>
         </div>
         <div className="site-container flex h-[68px] items-center justify-between">
@@ -47,7 +47,7 @@ export default function PublicLayout({
       <footer className="relative overflow-hidden bg-[#050d1a] text-slate-400">
         <div className="site-container relative z-10">
           <div className="border-t border-white/6 py-12 sm:py-16">
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
               <div>
                 <div className="mb-5 flex items-baseline">
                   <span className="text-2xl font-black tracking-tight text-white">
@@ -66,14 +66,6 @@ export default function PublicLayout({
                 <ul className="space-y-1">
                   <li><Link href="/" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary py-2 px-1 rounded focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:outline-none"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Home</Link></li>
                   <li><Link href="/login" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary py-2 px-1 rounded focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:outline-none"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Accesso Riservato</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="mb-5 text-[11px] font-black uppercase tracking-[0.2em] text-white">Sicurezza</h3>
-                <ul className="space-y-3">
-                  <li><span className="text-sm text-slate-500">Crittografia AES-256</span></li>
-                  <li><span className="text-sm text-slate-500">Autenticazione rigorosa</span></li>
-                  <li><span className="text-sm text-slate-500">Log di audit completi</span></li>
                 </ul>
               </div>
               <div>

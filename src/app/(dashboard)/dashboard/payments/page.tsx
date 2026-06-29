@@ -6,10 +6,7 @@ import {
   Send,
   Clock,
   CheckCircle2,
-  ChevronRight,
-  Shield,
   Info,
-  UserSearch,
   Loader2,
   Lock,
 } from 'lucide-react';
@@ -47,7 +44,6 @@ export default function PaymentsPage() {
   const [confirmAmount, setConfirmAmount] = useState(0);
 
   const [form, setForm] = useState({
-    recipientName: '',
     iban: '',
     amount: 0,
     description: '',
@@ -124,7 +120,7 @@ export default function PaymentsPage() {
 
       if (data.success) {
         setSuccess(true);
-        setForm({ recipientName: '', iban: '', amount: 0, description: '' });
+        setForm({ iban: '', amount: 0, description: '' });
         setTimeout(() => setSuccess(false), 3000);
       } else {
         setError(data.error || 'Errore durante l\'invio.');
@@ -210,28 +206,13 @@ export default function PaymentsPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 gap-5">
                 {/* Sender account */}
                 <div className="space-y-1.5">
                   <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Conto mittente</label>
                   <select className="field-shell" disabled>
                     <option>Conto Personale •• {account?.iban?.slice(-4) ?? '—'} ({formatAmount(balance)} €)</option>
                   </select>
-                </div>
-
-                {/* Recipient name */}
-                <div className="space-y-1.5">
-                  <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Nome destinatario</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={form.recipientName}
-                      onChange={(e) => setForm({ ...form, recipientName: e.target.value })}
-                      placeholder="Nome o azienda"
-                      className="field-shell pr-10"
-                    />
-                    <UserSearch size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  </div>
                 </div>
 
                 {/* IBAN */}
@@ -375,17 +356,6 @@ export default function PaymentsPage() {
               </div>
               <p className="text-[11px] text-white/40">
                 I fondi sono soggetti ad approvazione per prelievi e trasferimenti.
-              </p>
-            </div>
-          </div>
-
-          {/* Security Notice */}
-          <div className="p-4 border border-slate-200 rounded-xl flex gap-3 items-start bg-white">
-            <Shield size={18} className="text-secondary shrink-0 mt-0.5" />
-            <div>
-              <p className="text-[11px] font-black text-primary uppercase">Banca Verificata</p>
-              <p className="text-[11px] text-slate-400 leading-relaxed mt-1">
-                Tutti i trasferimenti sono protetti da crittografia di livello bancario e autenticazione multi-fattore.
               </p>
             </div>
           </div>

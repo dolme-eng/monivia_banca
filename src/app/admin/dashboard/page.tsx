@@ -5,7 +5,6 @@ import Link from 'next/link';
 import {
   CheckCircle2,
   AlertTriangle,
-  ShieldCheck,
   TrendingUp,
   ArrowRight,
   Plus,
@@ -143,34 +142,6 @@ export default function AdminDashboardPage() {
                 <span className="text-[11px] font-black">Su {stats.totalAccounts} conti</span>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Security Status */}
-        <section className="md:col-span-3 lg:col-span-1 bg-white rounded-xl p-5 border border-slate-200/80 flex flex-col justify-between relative overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
-          <div className="absolute -right-4 -top-4 w-20 h-20 bg-secondary/10 rounded-full blur-xl" aria-hidden />
-          <h3 className="text-sm font-black text-primary mb-4 flex items-center gap-2 relative z-10">
-            <ShieldCheck size={16} className="text-secondary" />
-            Sicurezza
-          </h3>
-          <div className="space-y-3 relative z-10">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">Stato Sistema</span>
-              <span className="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded text-[11px] font-black flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                Ottimale
-              </span>
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-slate-500">Autenticazione</span>
-                <span className="text-sm font-black text-primary">NextAuth</span>
-              </div>
-              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-secondary h-full rounded-full" style={{ width: '100%' }} />
-              </div>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">JWT + bcrypt + CSRF attivo.</p>
           </div>
         </section>
 

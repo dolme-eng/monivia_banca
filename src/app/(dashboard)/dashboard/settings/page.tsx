@@ -4,11 +4,9 @@ import { useState, useEffect } from 'react';
 import { authFetch } from '@/lib/auth-client';
 import {
   User,
-  Mail,
   Shield,
   Lock,
   Fingerprint,
-  Bell,
   ChevronRight,
   Key,
   Loader2,
@@ -96,7 +94,6 @@ export default function SettingsPage() {
               <User size={16} className="text-secondary" />
               Informazioni Profilo
             </h2>
-            <button className="text-secondary text-xs font-black hover:underline px-3 py-2 min-h-[44px]">Modifica</button>
           </div>
           <div className="flex items-center gap-4 mb-6">
             <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-xl font-black">
@@ -135,39 +132,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Daily Limits */}
-        <div className="lg:col-span-4 bg-primary text-white rounded-xl p-6 shadow-lg flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute -right-6 -top-6 w-24 h-24 bg-secondary/10 rounded-full blur-3xl transition-all" aria-hidden />
-          <div className="relative z-10">
-            <h2 className="text-xs font-black text-secondary uppercase tracking-wider mb-4 flex items-center gap-2">
-              Limiti Giornalieri
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between text-[11px] mb-1">
-                  <span className="text-white/60">Trasferimento</span>
-                  <span className="font-black">0 / 10.000 €</span>
-                </div>
-                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-secondary rounded-full shadow-[0_0_8px_rgba(0,212,255,0.5)]" style={{ width: '0%' }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-[11px] mb-1">
-                  <span className="text-white/60">Prelievo</span>
-                  <span className="font-black">0 / 2.500 €</span>
-                </div>
-                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-white rounded-full" style={{ width: '0%' }} />
-                </div>
-              </div>
-            </div>
-          </div>
-          <button className="mt-5 w-full py-3 min-h-[44px] border border-white/20 rounded-lg text-xs font-black hover:bg-white/10 transition-colors relative z-10">
-            Richiedi Aumento
-          </button>
-        </div>
-
         {/* Security Center */}
         <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200/80 p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h2 className="text-sm font-black text-primary mb-5 flex items-center gap-2">
@@ -200,22 +164,6 @@ export default function SettingsPage() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Notification Preferences */}
-        <div className="lg:col-span-5 bg-white rounded-xl border border-slate-200/80 p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
-          <h2 className="text-sm font-black text-primary mb-5 flex items-center gap-2">
-            <Bell size={16} className="text-secondary" />
-            Preferenze Notifiche
-          </h2>
-          <div className="text-center py-6">
-            <p className="text-xs text-slate-400">Prossimamente</p>
-          </div>
-          <div className="mt-5 p-3 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-            <p className="text-[11px] text-slate-400 text-center italic">
-              Le notifiche di sistema critiche non possono essere disattivate.
-            </p>
           </div>
         </div>
       </div>
