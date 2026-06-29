@@ -18,6 +18,7 @@ import {
   Shield,
 } from 'lucide-react';
 import HeroBackground from '@/components/HeroBackground';
+import DashboardDemo from '@/components/DashboardDemo';
 
 function FadeIn({ children, className = '', delay = 0, style }: { children: React.ReactNode; className?: string; delay?: number; style?: React.CSSProperties }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -90,90 +91,9 @@ export default function Home() {
             </FadeIn>
           </div>
 
-          {/* Right — dashboard preview card */}
+          {/* Right — animated dashboard preview */}
           <FadeIn delay={200} className="relative mt-12 lg:mt-0">
-            <div className="absolute -inset-6 bg-secondary/8 rounded-[40px] blur-3xl" aria-hidden />
-            <div className="relative rounded-2xl border border-slate-200/80 bg-white/70 backdrop-blur-xl p-6 sm:p-8 shadow-2xl">
-              {/* Mini navbar inside card */}
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-                    <Wallet size={18} className="text-secondary" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-widest text-slate-400">Il mio conto</p>
-                    <p className="text-sm font-black text-primary">Conto Personale</p>
-                  </div>
-                </div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-emerald-600">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Attivo
-                </span>
-              </div>
-
-              {/* Balance */}
-              <div className="mb-8">
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Saldo disponibile</p>
-                <p className="text-3xl sm:text-5xl font-black text-primary tracking-tight">
-                  15.200<span className="text-2xl text-slate-400">,00 €</span>
-                </p>
-              </div>
-
-              {/* Progress bar — prestito */}
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-black text-slate-500">Prestito erogato</p>
-                  <p className="text-xs font-black text-secondary">25.000 €</p>
-                </div>
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-secondary to-accent rounded-full" style={{ width: '60.8%' }} />
-                </div>
-                <p className="text-[11px] text-slate-400 mt-1.5">15.200 € disponibili su 25.000 €</p>
-              </div>
-
-              {/* Mini transactions */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50/80">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center">
-                      <ArrowDownToLine size={16} className="text-emerald-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-black text-primary">Accredito prestito</p>
-                      <p className="text-[11px] text-slate-400">12 Giu 2026</p>
-                    </div>
-                  </div>
-                  <span className="text-sm font-black text-emerald-600">+25.000 €</span>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50/80">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center">
-                      <Banknote size={16} className="text-secondary" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-black text-primary">Prelievo</p>
-                      <p className="text-[11px] text-slate-400">In attesa di approvazione</p>
-                    </div>
-                  </div>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-black uppercase text-amber-600">
-                    <Clock size={10} />
-                    In Attesa
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50/80">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-slate-100 flex items-center justify-center">
-                      <CreditCard size={16} className="text-slate-500" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-black text-primary">Pagamento carta</p>
-                      <p className="text-[11px] text-slate-400">10 Giu 2026</p>
-                    </div>
-                  </div>
-                  <span className="text-sm font-black text-red-500">-340 €</span>
-                </div>
-              </div>
-            </div>
+            <DashboardDemo />
           </FadeIn>
         </div>
 
