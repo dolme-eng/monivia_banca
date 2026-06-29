@@ -11,6 +11,7 @@ import {
   Info,
   UserSearch,
   Loader2,
+  Lock,
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -24,6 +25,7 @@ interface UserData {
     id: string;
     iban: string;
     balance: number;
+    status: string;
     transactions: {
       id: string;
       type: string;
@@ -151,6 +153,28 @@ export default function PaymentsPage() {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 size={24} className="animate-spin text-secondary" />
+      </div>
+    );
+  }
+
+  const isRestricted = account?.status === 'PENDING' || account?.status === 'FROZEN';
+
+  if (isRestricted) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center max-w-md">
+          <div className={`mx-auto mb-4 w-16 h-16 rounded-full flex items-center justify-center ${account?.status === 'PENDING' ? 'bg-amber-50' : 'bg-blue-50'}`}>
+            {account?.status === 'PENDING' ? <Clock size={28} className="text-amber-500" /> : <Lock size={28} className="text-blue-500" />}
+          </div>
+          <h2 className="text-lg font-black text-primary mb-2">
+            {account?.status === 'PENDING' ? 'Conto in attesa di validazione' : 'Conto congelato'}
+          </h2>
+          <p className="text-sm text-slate-500">
+            {account?.status === 'PENDING'
+              ? 'Non è possibile effettuare trasferimenti fino a quando il conto non verrà validato.'
+              : 'Il tuo conto è congelato. Contatta il supporto per maggiori informazioni.'}
+          </p>
+        </div>
       </div>
     );
   }

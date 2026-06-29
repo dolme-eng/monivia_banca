@@ -145,7 +145,7 @@ export default function AccountsPage() {
             />
           </div>
           <div className="flex gap-2">
-            {['', 'PENDING', 'ACTIVE', 'FROZEN'].map((s) => (
+            {['', 'PENDING', 'ACTIVE', 'FROZEN', 'CLOSED'].map((s) => (
               <button
                 key={s}
                 onClick={() => setFilterStatus(s)}
@@ -155,7 +155,7 @@ export default function AccountsPage() {
                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                 }`}
               >
-                {s === '' ? 'Tutti' : s === 'PENDING' ? 'In attesa' : s === 'ACTIVE' ? 'Attivi' : 'Congelati'}
+                {s === '' ? 'Tutti' : s === 'PENDING' ? 'In attesa' : s === 'ACTIVE' ? 'Attivi' : s === 'FROZEN' ? 'Congelati' : 'Chiusi'}
               </button>
             ))}
           </div>

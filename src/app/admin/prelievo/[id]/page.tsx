@@ -134,7 +134,7 @@ export default function AdminPrelievoDetailPage() {
     const steps = [
       { label: 'Richiesta Ricevuta', icon: FileText, done: true },
       { label: 'In Revisione', icon: Clock, done: status !== 'PENDING' },
-      { label: status === 'APPROVED' ? 'Approvata' : status === 'REJECTED' ? 'Rifiutata' : 'In Attesa', icon: status === 'APPROVED' ? CheckCircle2 : status === 'REJECTED' ? XCircle : Clock, done: status !== 'PENDING' },
+      { label: status === 'APPROVED' ? 'Approvata' : status === 'REJECTED' ? 'Rifiutata' : status === 'CANCELLED' ? 'Annullata' : 'In Attesa', icon: status === 'APPROVED' ? CheckCircle2 : status === 'REJECTED' ? XCircle : status === 'CANCELLED' ? AlertCircle : Clock, done: status !== 'PENDING' },
     ];
     return steps;
   };
@@ -262,9 +262,10 @@ export default function AdminPrelievoDetailPage() {
               <span className={`text-xs font-black px-2 py-0.5 rounded ${
                 tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
                 tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
+                tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-500' :
                 'bg-amber-50 text-amber-600'
               }`}>
-                {tx.status === 'APPROVED' ? 'Approvata' : tx.status === 'REJECTED' ? 'Rifiutata' : 'In Attesa'}
+                {tx.status === 'APPROVED' ? 'Approvata' : tx.status === 'REJECTED' ? 'Rifiutata' : tx.status === 'CANCELLED' ? 'Annullata' : 'In Attesa'}
               </span>
             </div>
             <div className="flex justify-between">

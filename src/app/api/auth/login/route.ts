@@ -43,6 +43,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Credenziali non valide' }, { status: 401 });
     }
 
+    const account = await prisma.account.findFirst({
+      where: { userId: user.id },
+      select: { status: true },
+    });
+
+    if (account && account.status !== 'ACTIVE') {
+      const msg = account.status === 'PENDING'
+        ? 'Il conto è in attesa di validazione. Riprova più tardi.'
+        : account.status === 'FROZEN'
+        ? 'Il conto è stato congelato. Contatta il supporto.'
+        : 'Il conto non è attivo. Contatta il supporto.';
+      return NextResponse.json({ error: msg }, { status: 403 });
+    }
+
     const accessToken = await new SignJWT({
       name: `${user.nome} ${user.cognome}`,
       email: user.email,
