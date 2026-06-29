@@ -7,6 +7,7 @@ interface SessionUser {
   name: string;
   email: string;
   role: string;
+  accountStatus?: string;
 }
 
 interface Session {
@@ -31,6 +32,7 @@ export function useMySession() {
                 name: `${data.user.nome} ${data.user.cognome}`,
                 email: data.user.email,
                 role: 'USER',
+                accountStatus: data.user.accounts?.[0]?.status,
               },
             });
           }

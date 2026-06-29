@@ -15,6 +15,8 @@ import {
   Menu,
   X,
   LogOut,
+  Clock,
+  Lock,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -42,6 +44,8 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const initials = user?.name
     ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
     : '—';
+  const accountStatus = user?.accountStatus;
+  const isRestricted = accountStatus === 'PENDING' || accountStatus === 'FROZEN';
 
   useEffect(() => {
     if (mobileOpen) {
@@ -66,7 +70,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         </div>
 
         <nav className="flex flex-col gap-1 flex-grow">
-          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+          {(isRestricted ? NAV_ITEMS.slice(0, 1) : NAV_ITEMS).map(({ href, label, icon: Icon }) => {
             const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
             return (
               <Link
@@ -84,6 +88,15 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             );
           })}
         </nav>
+
+        {isRestricted && (
+          <div className={`mx-3 mb-3 p-3 rounded-lg text-[11px] font-black flex items-center gap-2 ${
+            accountStatus === 'PENDING' ? 'bg-amber-500/20 text-amber-300' : 'bg-blue-500/20 text-blue-300'
+          }`}>
+            {accountStatus === 'PENDING' ? <Clock size={14} /> : <Lock size={14} />}
+            {accountStatus === 'PENDING' ? 'Conto in attesa di validazione' : 'Conto congelato'}
+          </div>
+        )}
 
         <div className="mt-auto space-y-2">
           <div className="flex items-center gap-3 px-3 py-2">
@@ -119,7 +132,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               </button>
             </div>
             <nav className="flex flex-col gap-1 flex-grow">
-              {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+              {(isRestricted ? NAV_ITEMS.slice(0, 1) : NAV_ITEMS).map(({ href, label, icon: Icon }) => {
                 const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
                 return (
                   <Link
