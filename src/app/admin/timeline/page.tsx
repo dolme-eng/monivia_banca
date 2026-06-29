@@ -32,7 +32,7 @@ interface Transaction {
 
 export default function AdminTimelinePage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('ALL');
+  const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED'>('ALL');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,6 +65,7 @@ export default function AdminTimelinePage() {
     pending: transactions.filter((t) => t.status === 'PENDING').length,
     approved: transactions.filter((t) => t.status === 'APPROVED').length,
     rejected: transactions.filter((t) => t.status === 'REJECTED').length,
+    cancelled: transactions.filter((t) => t.status === 'CANCELLED').length,
   };
 
   const formatAmount = (amount: number) =>
@@ -83,6 +84,7 @@ export default function AdminTimelinePage() {
   const getProgressPercent = (tx: Transaction) => {
     if (tx.status === 'APPROVED') return 100;
     if (tx.status === 'REJECTED') return 100;
+    if (tx.status === 'CANCELLED') return 100;
     const age = Date.now() - new Date(tx.createdAt).getTime();
     const maxAge = 24 * 60 * 60 * 1000;
     return Math.min(Math.floor((age / maxAge) * 80), 80);
@@ -91,6 +93,7 @@ export default function AdminTimelinePage() {
   const getProgressColor = (status: string) => {
     if (status === 'APPROVED') return 'bg-emerald-500';
     if (status === 'REJECTED') return 'bg-red-500';
+    if (status === 'CANCELLED') return 'bg-slate-400';
     return 'bg-amber-400';
   };
 
@@ -111,12 +114,13 @@ export default function AdminTimelinePage() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
           { label: 'Totale', value: stats.total, color: 'text-primary' },
           { label: 'In Attesa', value: stats.pending, color: 'text-amber-600' },
           { label: 'Approvate', value: stats.approved, color: 'text-emerald-600' },
           { label: 'Rifiutate', value: stats.rejected, color: 'text-red-500' },
+          { label: 'Annullate', value: stats.cancelled, color: 'text-slate-500' },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-xl p-4 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">{stat.label}</p>
@@ -126,7 +130,7 @@ export default function AdminTimelinePage() {
       </div>
 
       <div className="flex gap-2 bg-white rounded-xl p-1.5 border border-slate-200/80 w-fit" style={{ boxShadow: 'var(--shadow-card)' }}>
-        {(['ALL', 'PENDING', 'APPROVED', 'REJECTED'] as const).map((f) => (
+        {(['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -136,7 +140,7 @@ export default function AdminTimelinePage() {
                 : 'text-slate-400 hover:text-primary hover:bg-slate-50'
             }`}
           >
-            {f === 'ALL' ? 'Tutte' : f === 'PENDING' ? 'In Attesa' : f === 'APPROVED' ? 'Approvate' : 'Rifiutate'}
+            {f === 'ALL' ? 'Tutte' : f === 'PENDING' ? 'In Attesa' : f === 'APPROVED' ? 'Approvate' : f === 'REJECTED' ? 'Rifiutate' : 'Annullate'}
           </button>
         ))}
       </div>
@@ -166,6 +170,7 @@ export default function AdminTimelinePage() {
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                       tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
                       tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
+                      tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-500' :
                       'bg-amber-50 text-amber-600'
                     }`}>
                       {tx.type === 'DEBIT' || tx.type === 'TRANSFER_OUT' ? (
@@ -201,9 +206,10 @@ export default function AdminTimelinePage() {
                     <span className={`text-[11px] font-black ${
                       tx.status === 'APPROVED' ? 'text-emerald-600' :
                       tx.status === 'REJECTED' ? 'text-red-500' :
+                      tx.status === 'CANCELLED' ? 'text-slate-500' :
                       'text-amber-600'
                     }`}>
-                      {tx.status === 'APPROVED' ? 'Completata' : tx.status === 'REJECTED' ? 'Rifiutata' : `${progress}%`}
+                      {tx.status === 'APPROVED' ? 'Completata' : tx.status === 'REJECTED' ? 'Rifiutata' : tx.status === 'CANCELLED' ? 'Annullata' : `${progress}%`}
                     </span>
                   </div>
                 </div>
