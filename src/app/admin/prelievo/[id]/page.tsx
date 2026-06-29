@@ -154,7 +154,7 @@ export default function AdminPrelievoDetailPage() {
   const isPending = tx.status === 'PENDING';
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-5xl">
       <div className="flex items-center gap-3">
         <button onClick={() => router.back()} className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-slate-100 rounded-lg transition-colors">
           <ArrowLeft size={18} className="text-slate-500" />

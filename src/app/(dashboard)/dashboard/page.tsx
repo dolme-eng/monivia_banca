@@ -15,6 +15,7 @@ import {
   Download,
   Receipt,
   Loader2,
+  BarChart3,
 } from 'lucide-react';
 import { authFetch } from '@/lib/auth-client';
 
@@ -167,26 +168,107 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <div className="flex-grow flex items-end gap-1 h-48 relative">
-            <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 200">
-              <path d="M0,150 Q100,120 200,140 T400,80 T600,100 T800,40 T1000,60" fill="none" stroke="#00d4ff" strokeLinecap="round" strokeWidth="4" />
-              <path d="M0,150 Q100,120 200,140 T400,80 T600,100 T800,40 T1000,60 L1000,200 L0,200 Z" fill="url(#grad)" fillOpacity="0.1" />
-              <defs>
-                <linearGradient id="grad" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stopColor="#00d4ff" />
-                  <stop offset="100%" stopColor="#00d4ff" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <circle cx="200" cy="140" fill="#00d4ff" r="5" stroke="white" strokeWidth="2" />
-              <circle cx="800" cy="40" fill="#00d4ff" r="5" stroke="white" strokeWidth="2" />
-            </svg>
-          </div>
-          <div className="flex justify-between mt-3 px-1">
-            <span className="text-[11px] text-slate-400">1 Giu</span>
-            <span className="text-[11px] text-slate-400">10 Giu</span>
-            <span className="text-[11px] text-slate-400">20 Giu</span>
-            <span className="text-[11px] text-slate-400">26 Giu</span>
-          </div>
+          {(() => {
+            const txs = user?.recentTransactions ?? [];
+            if (txs.length === 0) {
+              return (
+                <div className="flex-grow flex items-center justify-center h-64 text-slate-300">
+                  <BarChart3 size={32} />
+                </div>
+              );
+            }
+            const now = new Date();
+            const days = 28;
+            const dailySums: { date: string; label: string; income: number; expense: number }[] = [];
+            for (let i = days - 1; i >= 0; i--) {
+              const d = new Date(now);
+              d.setDate(d.getDate() - i);
+              const key = d.toISOString().slice(0, 10);
+              const label = d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+              dailySums.push({ date: key, label, income: 0, expense: 0 });
+            }
+            for (const tx of txs) {
+              const key = new Date(tx.createdAt).toISOString().slice(0, 10);
+              const bucket = dailySums.find((b) => b.date === key);
+              if (bucket) {
+                const isCredit = tx.type === 'CREDIT' || tx.type === 'TRANSFER_IN';
+                if (isCredit) bucket.income += Math.abs(tx.amount);
+                else bucket.expense += Math.abs(tx.amount);
+              }
+            }
+            const maxVal = Math.max(1, ...dailySums.map((b) => Math.max(b.income, b.expense)));
+            const svgH = 200;
+            const padTop = 10;
+            const padBot = 20;
+            const chartH = svgH - padTop - padBot;
+            const barW = 1000 / days;
+            const tickLabels = dailySums
+              .filter((_, i) => i % 7 === 0 || i === days - 1)
+              .map((b) => b.label);
+            return (
+              <>
+                <div className="flex-grow h-48 lg:h-64 relative">
+                  <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox={`0 0 1000 ${svgH}`}>
+                    {[0, 0.25, 0.5, 0.75, 1].map((pct) => (
+                      <g key={pct}>
+                        <line x1="0" y1={padTop + chartH * (1 - pct)} x2="1000" y2={padTop + chartH * (1 - pct)} stroke="#e2e8f0" strokeWidth="1" />
+                        <text x="-5" y={padTop + chartH * (1 - pct) + 4} textAnchor="end" className="fill-slate-300 text-[10px] font-black">
+                          {Math.round(maxVal * pct).toLocaleString('it-IT')}
+                        </text>
+                      </g>
+                    ))}
+                    {dailySums.map((b, i) => {
+                      const x = i * barW + 2;
+                      const w = barW - 4;
+                      const hExp = (b.expense / maxVal) * chartH;
+                      const hInc = (b.income / maxVal) * chartH;
+                      return (
+                        <g key={b.date}>
+                          {b.expense > 0 && (
+                            <rect
+                              x={x}
+                              y={padTop + chartH - hExp}
+                              width={w}
+                              height={hExp}
+                              rx="3"
+                              fill="#6366f1"
+                              opacity="0.8"
+                            />
+                          )}
+                          {b.income > 0 && (
+                            <rect
+                              x={x}
+                              y={padTop + chartH - hInc - hExp}
+                              width={w}
+                              height={hInc}
+                              rx="3"
+                              fill="#00d4ff"
+                              opacity="0.9"
+                            />
+                          )}
+                        </g>
+                      );
+                    })}
+                  </svg>
+                </div>
+                <div className="flex justify-between mt-3 px-1">
+                  {tickLabels.map((lbl) => (
+                    <span key={lbl} className="text-[11px] text-slate-400">{lbl}</span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-4 mt-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-secondary" />
+                    <span className="text-[11px] text-slate-400">Entrate</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-accent" />
+                    <span className="text-[11px] text-slate-400">Uscite</span>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </div>
 
         {/* Recent Transactions */}

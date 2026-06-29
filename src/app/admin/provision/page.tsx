@@ -119,7 +119,7 @@ export default function ProvisionPage() {
         </p>
       </div>
 
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-5xl">
         {/* Tabs */}
         <div className="mb-8 flex gap-2">
           <button
