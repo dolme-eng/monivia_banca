@@ -18,19 +18,6 @@ async function getSession(req: NextRequest) {
   }
 }
 
-function isTokenNearExpiry(req: NextRequest): boolean {
-  const token = req.cookies.get('authjs.session-token')?.value;
-  if (!token || !AUTH_SECRET) return false;
-  try {
-    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
-    const exp = payload.exp * 1000;
-    const now = Date.now();
-    return exp - now < 5 * 60 * 1000;
-  } catch {
-    return false;
-  }
-}
-
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
@@ -48,33 +35,7 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  let session = await getSession(req);
-
-  if (!session && isTokenNearExpiry(req)) {
-    const refreshToken = req.cookies.get('refresh-token')?.value;
-    if (refreshToken) {
-      try {
-        const refreshUrl = new URL('/api/auth/refresh', req.url);
-        const refreshResponse = await fetch(refreshUrl, {
-          method: 'POST',
-          headers: { cookie: `refresh-token=${refreshToken}` },
-        });
-
-        if (refreshResponse.ok) {
-          const setCookies = refreshResponse.headers.getSetCookie?.() || [];
-          session = await getSession(req);
-
-          if (session && setCookies.length > 0) {
-            const res = NextResponse.next();
-            for (const cookie of setCookies) {
-              res.headers.append('Set-Cookie', cookie);
-            }
-            return res;
-          }
-        }
-      } catch {}
-    }
-  }
+  const session = await getSession(req);
 
   if (!session) {
     if (pathname.startsWith('/api/')) {

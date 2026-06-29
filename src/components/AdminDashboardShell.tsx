@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useMySession } from '@/lib/use-my-session';
 
 import {
   LayoutDashboard,
@@ -28,7 +28,7 @@ const NAV_ITEMS = [
 
 export default function AdminDashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session } = useMySession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 

@@ -16,6 +16,7 @@ import {
   Receipt,
   Loader2,
 } from 'lucide-react';
+import { authFetch } from '@/lib/auth-client';
 
 interface UserData {
   nome: string;
@@ -48,7 +49,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('/api/user/account');
+        const res = await authFetch('/api/user/account');
         if (res.status === 401) {
           window.location.replace('/login');
           return;

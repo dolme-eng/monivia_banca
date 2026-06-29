@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { authFetch } from '@/lib/auth-client';
 import {
   ArrowDownToLine,
   Clock,
@@ -43,7 +44,7 @@ export default function PrelievoPage() {
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const res = await fetch('/api/user/account');
+        const res = await authFetch('/api/user/account');
         if (res.status === 401) {
           window.location.replace('/login');
           return;
