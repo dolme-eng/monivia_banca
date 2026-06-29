@@ -151,6 +151,7 @@ export async function POST(req: NextRequest) {
       account: result.account,
       card: result.card,
       isNew: result.isNew,
+      password: result.isNew ? password : undefined,
     });
   } catch (error) {
     console.error('Provision error:', error);
