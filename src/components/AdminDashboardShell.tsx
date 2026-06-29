@@ -33,6 +33,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
   const { data: session } = useMySession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
+  const [pendingAccountsCount, setPendingAccountsCount] = useState(0);
 
   const adminName = session?.user?.name || 'Admin';
   const initials = adminName.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
@@ -49,8 +50,19 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
         }
       } catch {}
     };
+    const fetchPendingAccounts = async () => {
+      try {
+        const res = await fetch('/api/admin/accounts?status=PENDING');
+        const data = await res.json();
+        setPendingAccountsCount(data.accounts?.length ?? 0);
+      } catch {}
+    };
     fetchPending();
-    const interval = setInterval(fetchPending, 30000);
+    fetchPendingAccounts();
+    const interval = setInterval(() => {
+      fetchPending();
+      fetchPendingAccounts();
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -106,6 +118,11 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
                 {href === '/admin/approvals' && pendingCount > 0 && (
                   <span className="ml-auto bg-amber-500 text-primary text-[11px] font-black px-1.5 py-0.5 rounded-full">
                     {pendingCount}
+                  </span>
+                )}
+                {href === '/admin/accounts' && pendingAccountsCount > 0 && (
+                  <span className="ml-auto bg-amber-500 text-primary text-[11px] font-black px-1.5 py-0.5 rounded-full">
+                    {pendingAccountsCount}
                   </span>
                 )}
               </Link>

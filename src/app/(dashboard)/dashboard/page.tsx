@@ -15,6 +15,7 @@ import {
   Download,
   Receipt,
   Loader2,
+  Lock,
 } from 'lucide-react';
 import { authFetch } from '@/lib/auth-client';
 
@@ -99,6 +100,28 @@ export default function DashboardPage() {
   const account = user?.accounts?.[0];
   const balance = account?.balance ?? 0;
   const firstName = user?.nome ?? 'Cliente';
+  const isPending = account?.status === 'PENDING';
+  const isFrozen = account?.status === 'FROZEN';
+
+  if (isPending || isFrozen) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center max-w-md">
+          <div className={`mx-auto mb-4 w-16 h-16 rounded-full flex items-center justify-center ${isPending ? 'bg-amber-50' : 'bg-blue-50'}`}>
+            {isPending ? <Clock size={28} className="text-amber-500" /> : <Lock size={28} className="text-blue-500" />}
+          </div>
+          <h2 className="text-lg font-black text-primary mb-2">
+            {isPending ? 'Conto in attesa di validazione' : 'Conto congelato'}
+          </h2>
+          <p className="text-sm text-slate-500">
+            {isPending
+              ? 'Il tuo conto è stato creato ed è in attesa di validazione da parte del nostro team. Riceverai una notizia via email una volta attivato.'
+              : 'Il tuo conto è stato congelato. Contatta il nostro supporto per maggiori informazioni.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
