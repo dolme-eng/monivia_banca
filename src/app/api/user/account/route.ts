@@ -1,17 +1,32 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { jwtVerify } from 'jose';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
-  const session = await auth();
+const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || process.env.CSRF_SECRET;
 
-  if (!session?.user?.id) {
+async function getSessionFromJWT(req: Request) {
+  if (!AUTH_SECRET) return null;
+  const cookie = req.headers.get('cookie') || '';
+  const match = cookie.match(/authjs\.session-token=([^;]+)/);
+  if (!match) return null;
+  try {
+    const { payload } = await jwtVerify(match[1], new TextEncoder().encode(AUTH_SECRET));
+    return payload as { userId?: string; role?: string };
+  } catch {
+    return null;
+  }
+}
+
+export async function GET(req: Request) {
+  const session = await getSessionFromJWT(req);
+
+  if (!session?.userId) {
     return NextResponse.json({ success: false, error: 'Non autenticato' }, { status: 401 });
   }
 
   try {
     const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { id: session.userId },
       select: {
         id: true,
         email: true,

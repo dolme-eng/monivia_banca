@@ -1,6 +1,5 @@
 'use client';
 
-import { SessionProvider } from 'next-auth/react';
 import AdminDashboardShell from '@/components/AdminDashboardShell';
 
 export default function AdminLayout({
@@ -8,9 +7,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
-      <AdminDashboardShell>{children}</AdminDashboardShell>
-    </SessionProvider>
-  );
+  return <AdminDashboardShell>{children}</AdminDashboardShell>;
 }

@@ -1,6 +1,5 @@
 'use client';
 
-import { SessionProvider } from 'next-auth/react';
 import DashboardShell from '@/components/DashboardShell';
 
 export default function DashboardLayout({
@@ -8,9 +7,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
-      <DashboardShell>{children}</DashboardShell>
-    </SessionProvider>
-  );
+  return <DashboardShell>{children}</DashboardShell>;
 }
