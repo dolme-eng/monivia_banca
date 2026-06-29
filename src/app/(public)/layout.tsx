@@ -25,6 +25,9 @@ export default function PublicLayout({
             <span className="text-2xl font-black tracking-tight text-primary">
               MO<span className="text-secondary">NIVIA</span>
             </span>
+            <span className="relative -top-2.5 ml-0.5 text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">
+              Banca
+            </span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             <Link href="/" className="rounded-full px-4 py-2 text-sm font-black text-slate-500 hover:bg-slate-100 hover:text-primary transition-colors">
@@ -46,8 +49,13 @@ export default function PublicLayout({
           <div className="border-t border-white/6 py-12 sm:py-16">
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
               <div>
-                <div className="mb-5 text-2xl font-black tracking-tight text-white">
-                  MO<span className="text-secondary">NIVIA</span>
+                <div className="mb-5 flex items-baseline">
+                  <span className="text-2xl font-black tracking-tight text-white">
+                    MO<span className="text-secondary">NIVIA</span>
+                  </span>
+                  <span className="relative -top-2.5 ml-0.5 text-[9px] font-black uppercase tracking-[0.25em] text-white/40">
+                    Banca
+                  </span>
                 </div>
                 <p className="text-sm leading-relaxed text-slate-500">
                   Piattaforma bancaria sicura per la gestione dei prestiti Monivia.

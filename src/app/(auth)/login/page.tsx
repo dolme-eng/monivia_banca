@@ -54,7 +54,7 @@ export default function LoginPage() {
               <span className="text-2xl font-black tracking-tight text-primary">
                 MO<span className="text-secondary">NIVIA</span>
               </span>
-              <span className="hidden sm:inline text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-l border-slate-200 pl-2 ml-2">
+              <span className="relative -top-2.5 ml-0.5 text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">
                 Banca
               </span>
             </Link>
