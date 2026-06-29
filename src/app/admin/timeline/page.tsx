@@ -129,7 +129,7 @@ export default function AdminTimelinePage() {
         ))}
       </div>
 
-      <div className="flex gap-2 bg-white rounded-xl p-1.5 border border-slate-200/80 w-fit" style={{ boxShadow: 'var(--shadow-card)' }}>
+      <div className="flex gap-2 bg-white rounded-xl p-1.5 border border-slate-200/80 w-fit overflow-x-auto" style={{ boxShadow: 'var(--shadow-card)' }}>
         {(['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'] as const).map((f) => (
           <button
             key={f}

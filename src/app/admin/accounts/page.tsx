@@ -42,6 +42,7 @@ export default function AccountsPage() {
   const [filterStatus, setFilterStatus] = useState<string>('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<ConfirmAction | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
@@ -93,7 +94,9 @@ export default function AccountsPage() {
         }
       }
     } catch {
-      // silent
+      setActionError('Errore durante l\'esecuzione dell\'azione.');
+      setActionLoading(null);
+      setConfirm(null);
     } finally {
       setActionLoading(null);
       setConfirm(null);
@@ -131,6 +134,16 @@ export default function AccountsPage() {
         )}
       </div>
 
+      {actionError && (
+        <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600 flex items-center gap-2">
+          <AlertTriangle size={16} />
+          {actionError}
+          <button onClick={() => setActionError(null)} className="ml-auto p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-400 hover:text-red-600">
+            <XCircle size={14} />
+          </button>
+        </div>
+      )}
+
       {/* Search + filters */}
       <div className="bg-white rounded-xl border border-slate-200/80 p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
         <div className="flex flex-col sm:flex-row gap-3">
@@ -141,7 +154,7 @@ export default function AccountsPage() {
               placeholder="Cerca per nome, email o IBAN…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-slate-200 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none"
+              className="w-full pl-10 pr-4 py-3 text-sm rounded-lg border border-slate-200 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none"
             />
           </div>
           <div className="flex gap-2">
@@ -149,7 +162,7 @@ export default function AccountsPage() {
               <button
                 key={s}
                 onClick={() => setFilterStatus(s)}
-                className={`px-3 py-2 text-[11px] font-black rounded-lg transition-colors ${
+                className={`px-3 py-3 min-h-[44px] text-[11px] font-black rounded-lg transition-colors ${
                   filterStatus === s
                     ? 'bg-primary text-white'
                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200'

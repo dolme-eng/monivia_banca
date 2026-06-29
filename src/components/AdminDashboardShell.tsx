@@ -92,10 +92,15 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
               <span className="text-sm font-black text-primary">A</span>
             </div>
             <div>
-              <span className="text-lg font-black tracking-tight text-white block leading-tight">
-                MO<span className="text-secondary">NIVIA</span>
+              <span className="flex items-center gap-1 leading-tight">
+                <span className="text-lg font-black tracking-tight text-white">
+                  MO<span className="text-secondary">NIVIA</span>
+                </span>
+                <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/40">
+                  Banca
+                </span>
               </span>
-              <span className="text-[11px] text-white/40 uppercase tracking-[0.18em]">Amministrazione</span>
+              <span className="text-[11px] text-white/40 uppercase tracking-[0.18em] block mt-0.5">Amministrazione</span>
             </div>
           </Link>
         </div>
@@ -153,8 +158,13 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
           <aside className="absolute left-0 top-0 bottom-0 w-64 bg-primary p-4 gap-3 flex flex-col shadow-xl">
             <div className="flex items-center justify-between mb-6 px-1">
-              <span className="text-xl font-black tracking-tight text-white">
-                MO<span className="text-secondary">NIVIA</span>
+              <span className="flex items-center gap-1">
+                <span className="text-xl font-black tracking-tight text-white">
+                  MO<span className="text-secondary">NIVIA</span>
+                </span>
+                <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/40">
+                  Banca
+                </span>
               </span>
               <button onClick={() => setMobileOpen(false)} className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-white/60 hover:text-white rounded-lg">
                 <X size={20} />
@@ -213,7 +223,9 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
               <input
                 type="text"
                 placeholder="Cerca..."
-                className="pl-10 pr-4 py-2 bg-slate-100 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-secondary/30"
+                disabled
+                readOnly
+                className="pl-10 pr-4 py-2 bg-slate-100 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-secondary/30 opacity-60 cursor-not-allowed"
               />
             </div>
           </div>
@@ -248,8 +260,8 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
               <Link
                 key={href}
                 href={href}
-                className={`flex flex-col items-center gap-1 py-2 px-2 min-w-[48px] text-[11px] ${
-                  active ? 'text-secondary font-black' : 'text-slate-400'
+                className={`flex flex-col items-center gap-1 py-2 px-2 min-w-[48px] text-[11px] rounded-lg transition-colors ${
+                  active ? 'text-secondary font-black bg-secondary/10' : 'text-slate-400'
                 }`}
               >
                 <div className="relative">

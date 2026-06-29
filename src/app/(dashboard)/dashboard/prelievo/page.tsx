@@ -165,12 +165,6 @@ export default function PrelievoPage() {
 
   return (
     <div className="space-y-6">
-      {error && (
-        <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm font-black text-red-600">
-          {error}
-        </div>
-      )}
-
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-primary">Prelievo</h1>
@@ -234,10 +228,11 @@ export default function PrelievoPage() {
 
               {/* Description */}
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 ml-1">
+                <label htmlFor="prelievo-desc" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 ml-1">
                   Descrizione *
                 </label>
                 <input
+                  id="prelievo-desc"
                   type="text"
                   required
                   value={description}
@@ -301,10 +296,6 @@ export default function PrelievoPage() {
             <div className="relative z-10">
               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-secondary mb-1">Saldo Disponibile</p>
               <p className="text-3xl font-black tracking-tight">{account?.balance.toLocaleString('it-IT') || '0'} €</p>
-              <div className="mt-4 pt-4 border-t border-white/10">
-                <p className="text-[11px] text-white/50">Ultimo prelievo</p>
-                <p className="text-sm font-black mt-0.5">22 Giu 2026 — 2.000 €</p>
-              </div>
             </div>
           </div>
 

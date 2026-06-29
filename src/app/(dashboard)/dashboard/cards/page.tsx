@@ -305,25 +305,8 @@ export default function CardsPage() {
                 </div>
                 <h3 className="text-xs font-black text-primary">Impostazioni Sicurezza</h3>
               </div>
-              <div className="space-y-4">
-                {[
-                  { label: 'Pagamenti online', desc: 'Attiva pagamenti web', on: true },
-                  { label: 'Prelievi ATM', desc: 'Accesso globale ATM', on: true },
-                  { label: 'Pagamenti contactless', desc: 'NFC tap to pay', on: false },
-                ].map(({ label, desc, on }) => (
-                  <div key={label} className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-black text-primary">{label}</p>
-                      <p className="text-[11px] text-slate-400">{desc}</p>
-                    </div>
-                    <button
-                      className={`w-11 h-6 rounded-full relative transition-colors ${on ? 'bg-secondary' : 'bg-slate-200'}`}
-                      aria-label={label}
-                    >
-                      <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${on ? 'right-0.5' : 'left-0.5'}`} />
-                    </button>
-                  </div>
-                ))}
+              <div className="text-center py-6">
+                <p className="text-xs text-slate-400">Prossimamente</p>
               </div>
             </div>
           </div>

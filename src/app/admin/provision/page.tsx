@@ -194,6 +194,17 @@ export default function ProvisionPage() {
                             ? 'border-secondary bg-secondary/5 shadow-md'
                             : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                         }`}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedAccount(selectedAccount?.id === account.id ? null : account);
+                            setTopupAmount('');
+                            setTopupResult(null);
+                            setTopupError(null);
+                          }
+                        }}
                         onClick={() => {
                           setSelectedAccount(selectedAccount?.id === account.id ? null : account);
                           setTopupAmount('');
@@ -331,6 +342,7 @@ export default function ProvisionPage() {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600"
+                      aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>

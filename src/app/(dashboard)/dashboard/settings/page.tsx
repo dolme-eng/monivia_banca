@@ -58,6 +58,18 @@ export default function SettingsPage() {
     );
   }
 
+  if (!user && !error) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center max-w-md">
+          <User size={32} className="text-slate-300 mx-auto mb-3" />
+          <h2 className="text-lg font-black text-primary mb-2">Nessun dato disponibile</h2>
+          <p className="text-sm text-slate-500">Impossibile caricare le impostazioni del profilo.</p>
+        </div>
+      </div>
+    );
+  }
+
   const initials = user
     ? `${user.nome[0]}${user.cognome[0]}`.toUpperCase()
     : '—';
@@ -197,25 +209,8 @@ export default function SettingsPage() {
             <Bell size={16} className="text-secondary" />
             Preferenze Notifiche
           </h2>
-          <div className="space-y-5">
-            {[
-              { label: 'Notifiche push', desc: 'Avvisi in tempo reale per transazioni', on: true },
-              { label: 'Email riepilogative', desc: 'Report mensili di riconciliazione', on: true },
-              { label: 'Newsletter', desc: 'Suggerimenti e aggiornamenti prodotto', on: false },
-            ].map(({ label, desc, on }) => (
-              <div key={label} className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-black text-primary">{label}</p>
-                  <p className="text-[11px] text-slate-400">{desc}</p>
-                </div>
-                <button
-                  className={`w-11 h-6 rounded-full relative transition-colors ${on ? 'bg-secondary' : 'bg-slate-200'}`}
-                  aria-label={label}
-                >
-                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${on ? 'right-0.5' : 'left-0.5'}`} />
-                </button>
-              </div>
-            ))}
+          <div className="text-center py-6">
+            <p className="text-xs text-slate-400">Prossimamente</p>
           </div>
           <div className="mt-5 p-3 bg-slate-50 rounded-lg border border-dashed border-slate-200">
             <p className="text-[11px] text-slate-400 text-center italic">

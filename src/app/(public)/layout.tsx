@@ -35,7 +35,7 @@ export default function PublicLayout({
             </Link>
           </nav>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link href="/login" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition-all hover:-translate-y-0.5 hover:bg-slate-800">
+            <Link href="/login" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 min-h-[44px] text-xs font-black uppercase tracking-widest text-white transition-all hover:-translate-y-0.5 hover:bg-slate-800">
               Accedi
             </Link>
           </div>
@@ -64,8 +64,8 @@ export default function PublicLayout({
               <div>
                 <h3 className="mb-5 text-[11px] font-black uppercase tracking-[0.2em] text-white">Navigazione</h3>
                 <ul className="space-y-1">
-                  <li><Link href="/" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary py-2 px-1 rounded"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Home</Link></li>
-                  <li><Link href="/login" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary py-2 px-1 rounded"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Accesso Riservato</Link></li>
+                  <li><Link href="/" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary py-2 px-1 rounded focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:outline-none"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Home</Link></li>
+                  <li><Link href="/login" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary py-2 px-1 rounded focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:outline-none"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Accesso Riservato</Link></li>
                 </ul>
               </div>
               <div>

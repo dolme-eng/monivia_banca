@@ -261,8 +261,9 @@ export default function PaymentsPage() {
 
               {/* Reference */}
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Causale *</label>
+                <label htmlFor="payment-desc" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Causale *</label>
                 <input
+                  id="payment-desc"
                   type="text"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
