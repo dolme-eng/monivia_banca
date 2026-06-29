@@ -54,17 +54,23 @@ export async function POST(req: NextRequest) {
       .setExpirationTime(ACCESS_TOKEN_TTL)
       .sign(secret);
 
-    const refreshTokenValue = randomBytes(40).toString('hex');
-    const refreshExpiresAt = new Date();
-    refreshExpiresAt.setDate(refreshExpiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
+    let refreshTokenValue: string | null = null;
+    try {
+      refreshTokenValue = randomBytes(40).toString('hex');
+      const refreshExpiresAt = new Date();
+      refreshExpiresAt.setDate(refreshExpiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
 
-    await prisma.refreshToken.create({
-      data: {
-        token: refreshTokenValue,
-        userId: user.id,
-        expiresAt: refreshExpiresAt,
-      },
-    });
+      await prisma.refreshToken.create({
+        data: {
+          token: refreshTokenValue,
+          userId: user.id,
+          expiresAt: refreshExpiresAt,
+        },
+      });
+    } catch (err) {
+      console.error('[LOGIN] Refresh token creation failed:', err);
+      refreshTokenValue = null;
+    }
 
     const response = NextResponse.json({ ok: true, role: user.role });
 
@@ -76,13 +82,15 @@ export async function POST(req: NextRequest) {
       maxAge: 60 * 15,
     });
 
-    response.cookies.set('refresh-token', refreshTokenValue, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * REFRESH_TOKEN_TTL_DAYS,
-    });
+    if (refreshTokenValue) {
+      response.cookies.set('refresh-token', refreshTokenValue, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * REFRESH_TOKEN_TTL_DAYS,
+      });
+    }
 
     return response;
   } catch (err) {
