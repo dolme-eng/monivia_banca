@@ -81,7 +81,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
               <span className="text-lg font-black tracking-tight text-white block leading-tight">
                 MO<span className="text-secondary">NIVIA</span>
               </span>
-              <span className="text-[10px] text-white/40 uppercase tracking-[0.18em]">Amministrazione</span>
+              <span className="text-[11px] text-white/40 uppercase tracking-[0.18em]">Amministrazione</span>
             </div>
           </Link>
         </div>
@@ -102,7 +102,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
                 <Icon size={18} />
                 {label}
                 {href === '/admin/approvals' && pendingCount > 0 && (
-                  <span className="ml-auto bg-amber-500 text-primary text-[10px] font-black px-1.5 py-0.5 rounded-full">
+                  <span className="ml-auto bg-amber-500 text-primary text-[11px] font-black px-1.5 py-0.5 rounded-full">
                     {pendingCount}
                   </span>
                 )}
@@ -158,7 +158,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
                     <Icon size={18} />
                     {label}
                     {href === '/admin/approvals' && pendingCount > 0 && (
-                      <span className="ml-auto bg-amber-500 text-primary text-[10px] font-black px-1.5 py-0.5 rounded-full">
+                      <span className="ml-auto bg-amber-500 text-primary text-[11px] font-black px-1.5 py-0.5 rounded-full">
                         {pendingCount}
                       </span>
                     )}
@@ -202,7 +202,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
             <Link href="/admin/approvals" className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-secondary transition-colors" aria-label="Notifiche">
               <Bell size={18} />
               {pendingCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-amber-500 rounded-full text-[9px] font-black text-primary flex items-center justify-center">
+                <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-amber-500 rounded-full text-[11px] font-black text-primary flex items-center justify-center">
                   {pendingCount > 9 ? '9+' : pendingCount}
                 </span>
               )}

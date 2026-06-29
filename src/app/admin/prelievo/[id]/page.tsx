@@ -303,7 +303,7 @@ export default function AdminPrelievoDetailPage() {
               Rifiuta
             </button>
           </div>
-          <p className="text-[10px] text-slate-400 mt-3 text-center">
+          <p className="text-[11px] text-slate-400 mt-3 text-center">
             L&apos;approvazione debiterà automaticamente il saldo del conto.
           </p>
         </div>

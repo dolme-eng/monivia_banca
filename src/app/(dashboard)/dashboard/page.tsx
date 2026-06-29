@@ -192,7 +192,7 @@ export default function DashboardPage() {
         <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200/80 rounded-xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
             <h3 className="text-sm font-black text-primary">Transazioni Recenti</h3>
-            <Link href="/dashboard/payments" className="text-secondary text-xs font-black hover:underline">
+            <Link href="/dashboard/payments" className="text-secondary text-xs font-black hover:underline py-2 px-1 min-h-[44px] flex items-center shrink-0">
               Vedi tutte
             </Link>
           </div>
@@ -214,8 +214,8 @@ export default function DashboardPage() {
                       }`}>
                         <Icon size={16} />
                       </div>
-                      <div>
-                        <p className="text-sm font-black text-primary">{tx.description}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-black text-primary truncate">{tx.description}</p>
                         <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
                       </div>
                     </div>

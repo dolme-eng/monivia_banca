@@ -140,7 +140,7 @@ export default function CardsPage() {
               </div>
               <div className="flex justify-between items-start z-10">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.2em] opacity-80">Carta Prepagata</p>
+                  <p className="text-[11px] uppercase tracking-[0.2em] opacity-80">Carta Prepagata</p>
                   <p className="text-lg font-black mt-1">Monivia Banca</p>
                 </div>
                 <Wifi size={24} className="text-secondary -rotate-90" />
@@ -149,11 +149,11 @@ export default function CardsPage() {
                 <p className="font-mono text-sm tracking-[0.2em] mb-4">{maskNumber(card.number)}</p>
                 <div className="flex justify-between items-end">
                   <div>
-                    <p className="text-[9px] opacity-50 uppercase">Titolare</p>
+                    <p className="text-[11px] opacity-50 uppercase">Titolare</p>
                     <p className="text-xs font-black uppercase">{card.holder}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] opacity-50 uppercase">Scade</p>
+                    <p className="text-[11px] opacity-50 uppercase">Scade</p>
                     <p className="text-xs font-black">{card.expiry}</p>
                   </div>
                 </div>
@@ -163,7 +163,7 @@ export default function CardsPage() {
             {/* Card Details */}
             <div className="flex-1 w-full">
               <div className="flex justify-between items-center mb-4">
-                <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase ${
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black uppercase ${
                   card.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
                 }`}>
                   <span className={`h-1.5 w-1.5 rounded-full ${card.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-red-500'}`} />
@@ -187,8 +187,8 @@ export default function CardsPage() {
                     <div className="h-full bg-secondary rounded-full" style={{ width: `${spentPercent}%` }} />
                   </div>
                   <div className="flex justify-between mt-1">
-                    <span className="text-[10px] text-slate-400">{spentPercent.toFixed(1)}% utilizzato</span>
-                    <span className="text-[10px] text-primary font-black">{formatAmount(balance)} € disponibili</span>
+                    <span className="text-[11px] text-slate-400">{spentPercent.toFixed(1)}% utilizzato</span>
+                    <span className="text-[11px] text-primary font-black">{formatAmount(balance)} € disponibili</span>
                   </div>
                 </div>
               </div>
@@ -206,7 +206,7 @@ export default function CardsPage() {
                 <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-secondary group-hover:text-primary transition-colors text-slate-500">
                   <Icon size={16} />
                 </div>
-                <span className="text-[10px] font-black text-primary">{label}</span>
+                <span className="text-[11px] font-black text-primary">{label}</span>
               </button>
             ))}
           </div>
@@ -235,7 +235,7 @@ export default function CardsPage() {
                         </div>
                         <div>
                           <p className="text-sm font-black text-primary">{tx.description}</p>
-                          <p className="text-[10px] text-slate-400">{formatTime(tx.createdAt)}</p>
+                          <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -243,11 +243,11 @@ export default function CardsPage() {
                           {isCredit ? '+' : '-'}{formatAmount(tx.amount)} €
                         </p>
                         {tx.status === 'PENDING' ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-amber-600">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-amber-600">
                             <Clock size={8} /> In sospeso
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-emerald-600">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-600">
                             <CheckCircle2 size={8} /> OK
                           </span>
                         )}
@@ -275,7 +275,7 @@ export default function CardsPage() {
                         : 'hover:bg-slate-50 border border-transparent'
                     }`}
                   >
-                    <div className={`w-10 h-6 rounded flex items-center justify-center text-[9px] font-black ${
+                    <div className={`w-10 h-6 rounded flex items-center justify-center text-[11px] font-black ${
                       i === 0 ? 'bg-primary text-secondary' : 'bg-accent text-white'
                     }`}>
                       {i === 0 ? 'FIS' : 'VRT'}
@@ -284,7 +284,7 @@ export default function CardsPage() {
                       <p className="text-xs font-black text-primary truncate">
                         {i === 0 ? 'Fisica' : 'Virtuale'} •• {c.number.slice(-4)}
                       </p>
-                      <p className="text-[10px] text-slate-400">{c.holder}</p>
+                      <p className="text-[11px] text-slate-400">{c.holder}</p>
                     </div>
                     {i === selectedCard && <CheckCircle2 size={14} className="text-secondary shrink-0" />}
                   </button>
@@ -309,13 +309,13 @@ export default function CardsPage() {
                   <div key={label} className="flex items-center justify-between">
                     <div>
                       <p className="text-xs font-black text-primary">{label}</p>
-                      <p className="text-[10px] text-slate-400">{desc}</p>
+                      <p className="text-[11px] text-slate-400">{desc}</p>
                     </div>
                     <button
-                      className={`w-10 h-5 rounded-full relative transition-colors ${on ? 'bg-secondary' : 'bg-slate-200'}`}
+                      className={`w-11 h-6 rounded-full relative transition-colors ${on ? 'bg-secondary' : 'bg-slate-200'}`}
                       aria-label={label}
                     >
-                      <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${on ? 'right-0.5' : 'left-0.5'}`} />
+                      <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${on ? 'right-0.5' : 'left-0.5'}`} />
                     </button>
                   </div>
                 ))}

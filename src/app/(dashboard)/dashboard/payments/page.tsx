@@ -299,8 +299,8 @@ export default function PaymentsPage() {
                         }`}>
                           <Send size={14} />
                         </div>
-                        <div>
-                          <p className="text-xs font-black text-primary">{tx.description}</p>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-black text-primary truncate">{tx.description}</p>
                           <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
                         </div>
                       </div>

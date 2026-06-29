@@ -113,7 +113,7 @@ export default function ApprovalsPage() {
         <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2">
           <AlertCircle size={16} />
           {error}
-          <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">
+          <button onClick={() => setError(null)} className="ml-auto p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-400 hover:text-red-600">
             <XCircle size={14} />
           </button>
         </div>
@@ -125,7 +125,7 @@ export default function ApprovalsPage() {
             <Clock size={14} />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">In Attesa</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">In Attesa</p>
             <p className="text-lg font-black text-primary">{loading ? '—' : transactions.length}</p>
           </div>
         </div>

@@ -217,7 +217,7 @@ export default function ProvisionPage() {
                             <p className="text-lg font-black text-primary">
                               {account.balance.toLocaleString('it-IT')} €
                             </p>
-                            <p className="text-[10px] font-mono text-slate-400">{account.iban}</p>
+                            <p className="text-[11px] font-mono text-slate-400">{account.iban}</p>
                           </div>
                         </div>
 
@@ -245,7 +245,7 @@ export default function ProvisionPage() {
                               )}
                               <div className="flex gap-3 items-end">
                                 <div className="flex-1">
-                                  <label className="mb-1 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                  <label className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-400">
                                     Importo da accreditare (€)
                                   </label>
                                   <input
@@ -360,33 +360,33 @@ export default function ProvisionPage() {
                 </div>
                 <div className="space-y-3">
                   <div className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Email</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Email</p>
                     <p className="mt-1 text-sm font-bold text-primary">{formData.email || createResult.account?.email}</p>
                   </div>
                   {createResult.password && (
                     <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-amber-600">Password</p>
+                      <p className="text-[11px] font-black uppercase tracking-widest text-amber-600">Password</p>
                       <p className="mt-1 font-mono text-sm font-bold text-primary">{createResult.password}</p>
-                      <p className="text-[10px] text-amber-600 mt-1">Comunica questa password al cliente via WhatsApp o email.</p>
+                      <p className="text-[11px] text-amber-600 mt-1">Comunica questa password al cliente via WhatsApp o email.</p>
                     </div>
                   )}
                   {!createResult.password && (
                     <div className="rounded-lg bg-slate-50 p-3">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Password</p>
+                      <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Password</p>
                       <p className="mt-1 text-sm font-bold text-primary">Imposta dall&apos;admin</p>
                     </div>
                   )}
                   <div className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">IBAN</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">IBAN</p>
                     <p className="mt-1 font-mono text-sm font-bold text-primary">{createResult.account.iban}</p>
                   </div>
                   <div className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Saldo attuale</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Saldo attuale</p>
                     <p className="mt-1 text-lg font-black text-primary">{Number(createResult.account.balance).toLocaleString('it-IT')} €</p>
                   </div>
                   {createResult.card && (
                     <div className="rounded-lg bg-slate-50 p-3">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Carta bancaria</p>
+                      <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Carta bancaria</p>
                       <p className="mt-1 font-mono text-sm font-bold text-primary">{createResult.card.number}</p>
                       <p className="text-xs text-slate-500">{createResult.card.holder}</p>
                     </div>

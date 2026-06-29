@@ -174,12 +174,12 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <p className="text-xs font-black text-primary">{title}</p>
-                    <p className="text-[10px] text-slate-400">{desc}</p>
+                    <p className="text-[11px] text-slate-400">{desc}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {status && (
-                    <span className={`px-2 py-0.5 text-[10px] font-black rounded uppercase ${statusColor}`}>
+                    <span className={`px-2 py-0.5 text-[11px] font-black rounded uppercase ${statusColor}`}>
                       {status}
                     </span>
                   )}
@@ -205,19 +205,19 @@ export default function SettingsPage() {
               <div key={label} className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-black text-primary">{label}</p>
-                  <p className="text-[10px] text-slate-400">{desc}</p>
+                  <p className="text-[11px] text-slate-400">{desc}</p>
                 </div>
                 <button
-                  className={`w-10 h-5 rounded-full relative transition-colors ${on ? 'bg-secondary' : 'bg-slate-200'}`}
+                  className={`w-11 h-6 rounded-full relative transition-colors ${on ? 'bg-secondary' : 'bg-slate-200'}`}
                   aria-label={label}
                 >
-                  <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${on ? 'right-0.5' : 'left-0.5'}`} />
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${on ? 'right-0.5' : 'left-0.5'}`} />
                 </button>
               </div>
             ))}
           </div>
           <div className="mt-5 p-3 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-            <p className="text-[10px] text-slate-400 text-center italic">
+            <p className="text-[11px] text-slate-400 text-center italic">
               Le notifiche di sistema critiche non possono essere disattivate.
             </p>
           </div>

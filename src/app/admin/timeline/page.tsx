@@ -105,7 +105,7 @@ export default function AdminTimelinePage() {
         <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2">
           <AlertCircle size={16} />
           {error}
-          <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">
+          <button onClick={() => setError(null)} className="ml-auto p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-400 hover:text-red-600">
             <XCircle size={14} />
           </button>
         </div>
@@ -119,7 +119,7 @@ export default function AdminTimelinePage() {
           { label: 'Rifiutate', value: stats.rejected, color: 'text-red-500' },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-xl p-4 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">{stat.label}</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">{stat.label}</p>
             <p className={`text-xl font-black ${stat.color}`}>{loading ? '—' : stat.value}</p>
           </div>
         ))}
@@ -130,7 +130,7 @@ export default function AdminTimelinePage() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${
+            className={`px-4 py-3 min-h-[44px] rounded-lg text-xs font-black transition-all ${
               filter === f
                 ? 'bg-primary text-white'
                 : 'text-slate-400 hover:text-primary hover:bg-slate-50'
@@ -178,14 +178,14 @@ export default function AdminTimelinePage() {
                       <p className="text-sm font-black text-primary">
                         {tx.account.user.nome} {tx.account.user.cognome}
                       </p>
-                      <p className="text-[10px] text-slate-400">
+                      <p className="text-[11px] text-slate-400">
                         {tx.type === 'DEBIT' ? 'Prelievo' : tx.type === 'TRANSFER_OUT' ? 'Trasferimento' : tx.type} — {tx.description}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-black text-primary">{formatAmount(tx.amount)} €</p>
-                    <p className="text-[10px] text-slate-400">{formatTime(tx.createdAt)}</p>
+                    <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
                   </div>
                 </div>
 
@@ -197,8 +197,8 @@ export default function AdminTimelinePage() {
                     />
                   </div>
                   <div className="flex justify-between mt-1.5">
-                    <span className="text-[10px] text-slate-500">Richiesta</span>
-                    <span className={`text-[10px] font-black ${
+                    <span className="text-[11px] text-slate-500">Richiesta</span>
+                    <span className={`text-[11px] font-black ${
                       tx.status === 'APPROVED' ? 'text-emerald-600' :
                       tx.status === 'REJECTED' ? 'text-red-500' :
                       'text-amber-600'

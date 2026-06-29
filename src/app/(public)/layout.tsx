@@ -25,7 +25,7 @@ export default function PublicLayout({
             <span className="text-2xl font-black tracking-tight text-primary">
               MO<span className="text-secondary">NIVIA</span>
             </span>
-            <span className="relative -top-2.5 ml-0.5 text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">
+            <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">
               Banca
             </span>
           </Link>
@@ -53,7 +53,7 @@ export default function PublicLayout({
                   <span className="text-2xl font-black tracking-tight text-white">
                     MO<span className="text-secondary">NIVIA</span>
                   </span>
-                  <span className="relative -top-2.5 ml-0.5 text-[9px] font-black uppercase tracking-[0.25em] text-white/40">
+                  <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/40">
                     Banca
                   </span>
                 </div>
@@ -63,9 +63,9 @@ export default function PublicLayout({
               </div>
               <div>
                 <h3 className="mb-5 text-[11px] font-black uppercase tracking-[0.2em] text-white">Navigazione</h3>
-                <ul className="space-y-3">
-                  <li><Link href="/" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Home</Link></li>
-                  <li><Link href="/login" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Accesso Riservato</Link></li>
+                <ul className="space-y-1">
+                  <li><Link href="/" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary py-2 px-1 rounded"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Home</Link></li>
+                  <li><Link href="/login" className="group flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-secondary py-2 px-1 rounded"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Accesso Riservato</Link></li>
                 </ul>
               </div>
               <div>

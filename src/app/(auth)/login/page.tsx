@@ -54,7 +54,7 @@ export default function LoginPage() {
               <span className="text-2xl font-black tracking-tight text-primary">
                 MO<span className="text-secondary">NIVIA</span>
               </span>
-              <span className="relative -top-2.5 ml-0.5 text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">
+              <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">
                 Banca
               </span>
             </Link>
@@ -130,7 +130,7 @@ export default function LoginPage() {
               <a
                 href="#"
                 onClick={(e) => { e.preventDefault(); alert('Contatta l\'amministrazione per reimpostare la password.'); }}
-                className="text-sm text-secondary hover:text-cyan-400 transition-colors py-2 px-1 inline-block"
+                className="text-sm text-secondary hover:text-cyan-400 transition-colors py-3 px-2 inline-block min-h-[44px] min-w-[44px]"
               >
                 Password dimenticata?
               </a>

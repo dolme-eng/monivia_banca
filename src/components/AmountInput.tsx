@@ -108,7 +108,7 @@ export default function AmountInput({
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text'}`}
         onClick={() => !disabled && inputRef.current?.focus()}
       >
-        <span className={`text-2xl font-black mr-2 transition-colors ${
+        <span className={`text-xl sm:text-2xl font-black mr-2 transition-colors ${
           isFocused ? 'text-secondary' : 'text-slate-400'
         }`}>
           {currency}
@@ -124,7 +124,7 @@ export default function AmountInput({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full bg-transparent text-4xl font-black text-primary text-center outline-none py-6 placeholder:text-slate-300"
+          className="w-full bg-transparent text-2xl sm:text-3xl md:text-4xl font-black text-primary text-center outline-none py-4 sm:py-6 placeholder:text-slate-300"
           aria-label="Importo"
           aria-invalid={!!error}
           aria-describedby={error ? 'amount-error' : undefined}

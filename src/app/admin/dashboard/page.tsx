@@ -73,14 +73,14 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-primary">Dashboard Amministrazione</h1>
           <p className="text-sm text-slate-500 mt-1">Panoramica dei conti e stato di sicurezza.</p>
         </div>
         <Link
           href="/admin/provision"
-          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-black hover:bg-slate-800 transition-colors"
+          className="flex items-center gap-2 bg-primary text-white px-4 py-3 min-h-[44px] rounded-lg text-sm font-black hover:bg-slate-800 transition-colors shrink-0"
         >
           <Plus size={14} />
           Nuovo Provisioning
@@ -91,7 +91,7 @@ export default function AdminDashboardPage() {
         <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2">
           <AlertCircle size={16} />
           {error}
-          <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">
+          <button onClick={() => setError(null)} className="ml-auto p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-400 hover:text-red-600">
             <XCircle size={14} />
           </button>
         </div>
@@ -107,28 +107,28 @@ export default function AdminDashboardPage() {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Conti Totali</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Conti Totali</p>
               <p className="text-xl font-black text-primary">{loading ? '—' : stats.totalAccounts}</p>
               <div className="flex items-center gap-1 mt-2 text-emerald-600">
                 <TrendingUp size={12} />
-                <span className="text-[10px] font-black">+{stats.newAccountsThisMonth} questo mese</span>
+                <span className="text-[11px] font-black">+{stats.newAccountsThisMonth} questo mese</span>
               </div>
             </div>
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">In Attesa</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">In Attesa</p>
               <p className="text-xl font-black text-primary">{loading ? '—' : stats.pendingTransactions}</p>
               {stats.pendingTransactions > 0 && (
                 <div className="flex items-center gap-1 mt-2 text-amber-600">
                   <AlertTriangle size={12} />
-                  <span className="text-[10px] font-black">Azione richiesta</span>
+                  <span className="text-[11px] font-black">Azione richiesta</span>
                 </div>
               )}
             </div>
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Clienti Attivi</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Clienti Attivi</p>
               <p className="text-xl font-black text-primary">{loading ? '—' : stats.activeClients}</p>
               <div className="flex items-center gap-1 mt-2 text-slate-400">
-                <span className="text-[10px] font-black">Su {stats.totalAccounts} conti</span>
+                <span className="text-[11px] font-black">Su {stats.totalAccounts} conti</span>
               </div>
             </div>
           </div>
@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-3 relative z-10">
             <div className="flex items-center justify-between">
               <span className="text-xs text-slate-500">Stato Sistema</span>
-              <span className="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded text-[10px] font-black flex items-center gap-1">
+              <span className="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded text-[11px] font-black flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 Ottimale
               </span>
@@ -158,7 +158,7 @@ export default function AdminDashboardPage() {
                 <div className="bg-secondary h-full rounded-full" style={{ width: '100%' }} />
               </div>
             </div>
-            <p className="text-[10px] text-slate-400 mt-1">JWT + bcrypt + CSRF attivo.</p>
+            <p className="text-[11px] text-slate-400 mt-1">JWT + bcrypt + CSRF attivo.</p>
           </div>
         </section>
 
@@ -166,7 +166,7 @@ export default function AdminDashboardPage() {
         <section className="md:col-span-3 lg:col-span-1 bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-black text-primary">Da Approvare</h3>
-            <Link href="/admin/approvals" className="text-secondary text-[10px] font-black hover:underline">
+            <Link href="/admin/approvals" className="text-secondary text-[11px] font-black hover:underline py-2 px-1 min-h-[44px] flex items-center">
               Vedi tutte
             </Link>
           </div>
@@ -196,15 +196,15 @@ export default function AdminDashboardPage() {
                       )}
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-primary">
+                      <p className="text-[11px] font-black text-primary">
                         {item.type === 'DEBIT' ? 'Prelievo' : item.type === 'TRANSFER_OUT' ? 'Trasferimento' : item.type}
                       </p>
-                      <p className="text-[9px] text-slate-400">
+                      <p className="text-[11px] text-slate-400">
                         {item.account?.user?.nome} {item.account?.user?.cognome}
                       </p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-black text-primary">
+                  <span className="text-[11px] font-black text-primary">
                     {Number(item.amount).toLocaleString('it-IT')} €
                   </span>
                 </Link>
@@ -217,7 +217,7 @@ export default function AdminDashboardPage() {
         <section className="md:col-span-3 lg:col-span-2 bg-white rounded-xl p-5 border border-slate-200/80 flex flex-col" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-black text-primary">Attività Recenti</h3>
-            <Link href="/admin/timeline" className="text-secondary text-xs font-black hover:underline">
+            <Link href="/admin/timeline" className="text-secondary text-xs font-black hover:underline py-2 px-1 min-h-[44px] flex items-center">
               Vedi tutto
             </Link>
           </div>
@@ -289,7 +289,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="text-left">
                 <p className="text-xs font-black">Nuovo Conto</p>
-                <p className="text-[9px] text-white/50">Provisioning prestito</p>
+                <p className="text-[11px] text-white/50">Provisioning prestito</p>
               </div>
               <ArrowRight size={12} className="ml-auto group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -299,7 +299,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="text-left">
                 <p className="text-xs font-black text-primary">Approva Transazioni</p>
-                <p className="text-[9px] text-slate-400">{stats.pendingTransactions} in sospeso</p>
+                <p className="text-[11px] text-slate-400">{stats.pendingTransactions} in sospeso</p>
               </div>
               <ArrowRight size={12} className="ml-auto text-slate-400 group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -309,7 +309,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="text-left">
                 <p className="text-xs font-black text-primary">Timeline</p>
-                <p className="text-[9px] text-slate-400">Stato transazioni</p>
+                <p className="text-[11px] text-slate-400">Stato transazioni</p>
               </div>
               <ArrowRight size={12} className="ml-auto text-slate-400 group-hover:translate-x-1 transition-transform" />
             </Link>

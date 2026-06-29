@@ -196,7 +196,7 @@ export default function PrelievoPage() {
                     key={qa}
                     type="button"
                     onClick={() => setAmount(qa)}
-                    className={`px-3 py-2.5 rounded-lg text-xs font-black transition-all min-h-[40px] ${
+                    className={`px-3 py-3 rounded-lg text-xs font-black transition-all min-h-[44px] ${
                       amount === qa
                         ? 'bg-secondary text-primary'
                         : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
@@ -274,10 +274,10 @@ export default function PrelievoPage() {
           <div className="bg-primary rounded-xl p-5 text-white shadow-lg relative overflow-hidden">
             <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} aria-hidden />
             <div className="relative z-10">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary mb-1">Saldo Disponibile</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-secondary mb-1">Saldo Disponibile</p>
               <p className="text-3xl font-black tracking-tight">{account?.balance.toLocaleString('it-IT') || '0'} €</p>
               <div className="mt-4 pt-4 border-t border-white/10">
-                <p className="text-[10px] text-white/50">Ultimo prelievo</p>
+                <p className="text-[11px] text-white/50">Ultimo prelievo</p>
                 <p className="text-sm font-black mt-0.5">22 Giu 2026 — 2.000 €</p>
               </div>
             </div>
@@ -299,12 +299,12 @@ export default function PrelievoPage() {
                       <ArrowDownToLine size={14} className="text-secondary" />
                       <div>
                         <p className="text-xs font-black text-primary">{p.description}</p>
-                        <p className="text-[10px] text-slate-400">
+                        <p className="text-[11px] text-slate-400">
                           {new Date(p.createdAt).toLocaleDateString('it-IT')}
                         </p>
                       </div>
                     </div>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-amber-600">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-amber-600">
                       <Clock size={8} /> In sospeso
                     </span>
                   </div>
@@ -323,7 +323,7 @@ export default function PrelievoPage() {
                 { step: '3', text: 'Il prelievo viene confermato e i fondi accreditati' },
               ].map(({ step, text }) => (
                 <div key={step} className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-[10px] font-black shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-[11px] font-black shrink-0">
                     {step}
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">{text}</p>
