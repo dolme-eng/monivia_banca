@@ -8,6 +8,8 @@ import {
   CheckCircle2,
   Clock,
   Loader2,
+  XCircle,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface CardData {
@@ -159,6 +161,18 @@ export default function CardsPage() {
 
             {/* Card Details */}
             <div className="flex-1 w-full">
+              {card.status !== 'ACTIVE' && (
+                <div className={`mb-4 p-3 rounded-lg flex items-center gap-2 text-sm font-black ${
+                  card.status === 'FROZEN'
+                    ? 'bg-blue-50 text-blue-600 border border-blue-200'
+                    : 'bg-red-50 text-red-500 border border-red-200'
+                }`}>
+                  <AlertTriangle size={16} />
+                  {card.status === 'FROZEN'
+                    ? 'La carta è congelata. Le transazioni con questa carta sono temporaneamente bloccate.'
+                    : 'La carta è scaduta. Le transazioni con questa carta non sono più disponibili.'}
+                </div>
+              )}
               <div className="flex justify-between items-center mb-4">
                 <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black uppercase ${
                   card.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
@@ -227,9 +241,13 @@ export default function CardsPage() {
                           <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-amber-600">
                             <Clock size={8} /> In sospeso
                           </span>
+                        ) : tx.status === 'REJECTED' ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-500">
+                            <XCircle size={8} /> Rifiutata
+                          </span>
                         ) : tx.status === 'CANCELLED' ? (
                           <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-slate-500">
-                            Annullato
+                            Annullata
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-600">
