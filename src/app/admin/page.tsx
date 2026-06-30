@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LayoutDashboard, Clock, Wallet, ShieldCheck, ArrowRight, Settings, Users } from 'lucide-react';
+import { LayoutDashboard, Clock, Wallet, ShieldCheck, ArrowRight, Settings, Users, CreditCard } from 'lucide-react';
 
 export default function AdminHub() {
   return (
@@ -52,6 +52,24 @@ export default function AdminHub() {
             </p>
             <div className="flex items-center text-secondary font-black text-sm gap-2 group-hover:gap-3 transition-all">
               Gestisci i conti <ArrowRight size={16} />
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/cards"
+            className="surface-card group relative overflow-hidden p-8 sm:p-10 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:rounded-xl"
+          >
+            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary transition-colors group-hover:bg-secondary group-hover:text-primary">
+              <CreditCard size={28} />
+            </div>
+            <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
+              Gestione Carte
+            </h3>
+            <p className="mb-6 text-sm leading-relaxed text-slate-500">
+              Congela, attiva, segna scadute ed elimina le carte dei clienti. Controllo totale sullo stato delle carte.
+            </p>
+            <div className="flex items-center text-secondary font-black text-sm gap-2 group-hover:gap-3 transition-all">
+              Gestisci le carte <ArrowRight size={16} />
             </div>
           </Link>
 

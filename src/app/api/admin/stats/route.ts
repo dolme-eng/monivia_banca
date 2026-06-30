@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const [totalAccounts, pendingTransactions, pendingAccounts, activeClients, totalTransactions, newAccountsThisMonth] =
+    const [totalAccounts, pendingTransactions, pendingAccounts, activeClients, totalTransactions, newAccountsThisMonth, frozenCards] =
       await Promise.all([
         prisma.account.count(),
         prisma.transaction.count({ where: { status: 'PENDING' } }),
@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
         prisma.user.count({ where: { role: 'USER' } }),
         prisma.transaction.count(),
         prisma.account.count({ where: { createdAt: { gte: startOfMonth } } }),
+        prisma.card.count({ where: { status: 'FROZEN' } }),
       ]);
 
     const pendingList = await prisma.transaction.findMany({
@@ -61,6 +62,7 @@ export async function GET(req: NextRequest) {
       activeClients,
       totalTransactions,
       newAccountsThisMonth,
+      frozenCards,
       pendingList,
       recentTransactions,
     });

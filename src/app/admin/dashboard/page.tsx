@@ -22,6 +22,7 @@ interface AdminStats {
   pendingAccounts: number;
   activeClients: number;
   newAccountsThisMonth: number;
+  frozenCards: number;
   recentTransactions: any[];
   pendingList: any[];
 }
@@ -33,6 +34,7 @@ export default function AdminDashboardPage() {
     pendingAccounts: 0,
     activeClients: 0,
     newAccountsThisMonth: 0,
+    frozenCards: 0,
     recentTransactions: [],
     pendingList: [],
   });
@@ -106,7 +108,7 @@ export default function AdminDashboardPage() {
             <Activity size={16} className="text-secondary" />
             Panoramica Generale
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Conti Totali</p>
               <p className="text-xl font-black text-primary">{loading ? '—' : stats.totalAccounts}</p>
@@ -141,6 +143,16 @@ export default function AdminDashboardPage() {
               <div className="flex items-center gap-1 mt-2 text-slate-400">
                 <span className="text-[11px] font-black">Su {stats.totalAccounts} conti</span>
               </div>
+            </div>
+            <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Carte Congelate</p>
+              <p className="text-xl font-black text-blue-600">{loading ? '—' : stats.frozenCards}</p>
+              {stats.frozenCards > 0 && (
+                <div className="flex items-center gap-1 mt-2 text-blue-600">
+                  <AlertTriangle size={12} />
+                  <span className="text-[11px] font-black">Da revisionare</span>
+                </div>
+              )}
             </div>
           </div>
         </section>

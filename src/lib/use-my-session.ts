@@ -31,7 +31,7 @@ export function useMySession() {
                 id: data.user.id || '',
                 name: `${data.user.nome} ${data.user.cognome}`,
                 email: data.user.email,
-                role: 'USER',
+                role: data.user.role || 'USER',
                 accountStatus: data.user.accounts?.[0]?.status,
               },
             });
