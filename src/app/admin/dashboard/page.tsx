@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { formatTime } from '@/lib/format';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -62,16 +63,6 @@ export default function AdminDashboardPage() {
     const interval = setInterval(fetchStats, 30000);
     return () => clearInterval(interval);
   }, []);
-
-  const formatTime = (dateStr: string) => {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'Adesso';
-    if (mins < 60) return `${mins} min fa`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours} ore fa`;
-    return `${Math.floor(hours / 24)} giorni fa`;
-  };
 
   return (
     <div className="space-y-6">

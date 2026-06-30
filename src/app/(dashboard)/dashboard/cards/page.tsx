@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { authFetch } from '@/lib/auth-client';
+import { formatAmount, formatDateTime } from '@/lib/format';
 import {
   CreditCard,
   Wifi,
@@ -86,15 +87,6 @@ export default function CardsPage() {
   const maskNumber = (num: string) => {
     const last4 = num.slice(-4);
     return `•••• •••• •••• ${last4}`;
-  };
-
-  const formatAmount = (amount: number) =>
-    Math.abs(amount).toLocaleString('it-IT', { minimumFractionDigits: 2 });
-
-  const formatTime = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }) + ', ' +
-      d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
   };
 
   const getIcon = (type: string) => {
@@ -230,7 +222,7 @@ export default function CardsPage() {
                         </div>
                         <div>
                           <p className="text-sm font-black text-primary">{tx.description}</p>
-                          <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
+                          <p className="text-[11px] text-slate-400">{formatDateTime(tx.createdAt)}</p>
                         </div>
                       </div>
                       <div className="text-right">

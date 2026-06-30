@@ -5,23 +5,12 @@ import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
+import { checkOrigin } from '@/lib/origin';
 
 const topupSchema = z.object({
   accountId: z.string(),
   amount: z.number().positive(),
 });
-
-function checkOrigin(req: Request): boolean {
-  const origin = req.headers.get('origin');
-  const host = req.headers.get('host');
-  if (!origin || !host) return false;
-  try {
-    const originUrl = new URL(origin);
-    return originUrl.host === host || originUrl.host.endsWith(`.${host}`);
-  } catch {
-    return false;
-  }
-}
 
 export async function POST(req: NextRequest) {
   const auth = await requireAdmin(req);

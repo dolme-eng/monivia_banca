@@ -23,6 +23,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Clean up expired refresh tokens (best-effort, non-blocking)
+    prisma.refreshToken.deleteMany({ where: { expiresAt: { lt: new Date() } } }).catch(() => {});
+
     const dbToken = await prisma.refreshToken.findUnique({
       where: { token: refreshTokenValue },
       include: { user: true },

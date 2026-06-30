@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAuth } from '@/lib/api-auth';
+import { checkOrigin } from '@/lib/origin';
 
 const transactionSchema = z.object({
   accountId: z.string(),
@@ -12,20 +13,6 @@ const transactionSchema = z.object({
   description: z.string().min(1),
   toIban: z.string().optional(),
 });
-
-function checkOrigin(req: Request): boolean {
-  const origin = req.headers.get('origin');
-  const host = req.headers.get('host');
-
-  if (!origin || !host) return false;
-
-  try {
-    const originUrl = new URL(origin);
-    return originUrl.host === host || originUrl.host.endsWith(`.${host}`);
-  } catch {
-    return false;
-  }
-}
 
 export async function POST(req: NextRequest) {
   const auth = await requireAuth(req);

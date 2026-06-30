@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import { validateCsrfToken } from '@/lib/csrf';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
+import { checkOrigin } from '@/lib/origin';
 
 const provisionSchema = z.object({
   email: z.string().email(),
@@ -14,20 +15,6 @@ const provisionSchema = z.object({
   amount: z.number().positive(),
   password: z.string().min(8, 'La password deve avere almeno 8 caratteri'),
 });
-
-function checkOrigin(req: Request): boolean {
-  const origin = req.headers.get('origin');
-  const host = req.headers.get('host');
-
-  if (!origin || !host) return false;
-
-  try {
-    const originUrl = new URL(origin);
-    return originUrl.host === host || originUrl.host.endsWith(`.${host}`);
-  } catch {
-    return false;
-  }
-}
 
 export async function POST(req: NextRequest) {
   const auth = await requireAdmin(req);

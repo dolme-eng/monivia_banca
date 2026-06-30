@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { formatAmount } from '@/lib/format';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -117,9 +118,6 @@ export default function AdminPrelievoDetailPage() {
     setConfirmAction(action);
     setConfirmOpen(true);
   };
-
-  const formatAmount = (amount: number) =>
-    Math.abs(Number(amount)).toLocaleString('it-IT', { minimumFractionDigits: 2 });
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleString('it-IT', {

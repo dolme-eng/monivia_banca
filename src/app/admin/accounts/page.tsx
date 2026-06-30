@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { formatAmount } from '@/lib/format';
 import {
   Search,
   CheckCircle2,
@@ -112,8 +113,6 @@ export default function AccountsPage() {
       default: return { text: s, cls: 'bg-slate-100 text-slate-500' };
     }
   };
-
-  const formatAmount = (n: number) => n.toLocaleString('it-IT', { minimumFractionDigits: 2 });
 
   const pendingCount = accounts.filter((a) => a.status === 'PENDING').length;
 
