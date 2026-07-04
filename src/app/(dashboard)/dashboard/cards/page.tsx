@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { authFetch } from '@/lib/auth-client';
 import { formatAmount, formatDateTime } from '@/lib/format';
+import { useSelectedAccount } from '@/lib/selected-account';
 import {
   CreditCard,
   Wifi,
@@ -45,6 +46,7 @@ export default function CardsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedCard, setSelectedCard] = useState(0);
+  const { selectedAccountId } = useSelectedAccount();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -77,7 +79,7 @@ export default function CardsPage() {
     );
   }
 
-  const account = user?.accounts?.[0];
+  const account = user?.accounts?.find((a) => a.id === selectedAccountId) || user?.accounts?.[0];
   const cards = account?.cards ?? [];
   const card = cards[selectedCard];
   const transactions = account?.transactions ?? [];

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { authFetch } from '@/lib/auth-client';
 import { csrfFetch } from '@/lib/csrf-client';
+import { useSelectedAccount } from '@/lib/selected-account';
 import {
   User,
   Shield,
@@ -28,6 +29,7 @@ export default function SettingsPage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { selectedAccountId } = useSelectedAccount();
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -173,10 +175,10 @@ export default function SettingsPage() {
                 {user?.role === 'ADMIN' ? 'Amministratore' : 'Cliente'}
               </span>
             </div>
-            {user?.accounts?.[0] && (
+            {user?.accounts?.find((a) => a.id === selectedAccountId) && (
               <div>
                 <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">IBAN</label>
-                <p className="text-sm font-black text-primary font-mono truncate">{user.accounts[0].iban}</p>
+                <p className="text-sm font-black text-primary font-mono truncate">{user.accounts.find((a) => a.id === selectedAccountId)?.iban}</p>
               </div>
             )}
           </div>

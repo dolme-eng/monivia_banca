@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMySession } from '@/lib/use-my-session';
+import { useSelectedAccount } from '@/lib/selected-account';
 import {
   Wallet,
   CreditCard,
@@ -18,6 +19,7 @@ import {
   Clock,
   Lock,
   History,
+  ChevronDown,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -33,7 +35,9 @@ const NAV_ITEMS = [
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: session } = useMySession();
+  const { accounts, selectedAccount, setSelectedAccount } = useSelectedAccount();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
 
   const handleSignOut = async () => {
     try {
@@ -72,6 +76,42 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             </span>
           </Link>
         </div>
+
+        {/* Account Switcher */}
+        {accounts.length > 1 && selectedAccount && (
+          <div className="px-3 mb-2">
+            <div className="relative">
+              <button
+                onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+                className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-white/10 text-white text-sm font-black hover:bg-white/15 transition-colors"
+              >
+                <span className="truncate">{selectedAccount.iban.slice(0, 12)}...</span>
+                <ChevronDown size={14} className={`shrink-0 transition-transform ${accountDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {accountDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 z-50 overflow-hidden">
+                  {accounts.map((acc) => (
+                    <button
+                      key={acc.id}
+                      onClick={() => { setSelectedAccount(acc.id); setAccountDropdownOpen(false); }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-slate-50 transition-colors ${
+                        acc.id === selectedAccount.id ? 'bg-secondary/10' : ''
+                      }`}
+                    >
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-black shrink-0">
+                        {acc.iban.slice(-2)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-black text-primary truncate">{acc.iban}</p>
+                        <p className="text-[11px] text-slate-500">{acc.balance.toLocaleString('it-IT')} €</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         <nav className="flex flex-col gap-1 flex-grow">
           {(isRestricted ? NAV_ITEMS.slice(0, 1) : NAV_ITEMS).map(({ href, label, icon: Icon }) => {

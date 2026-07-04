@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { formatAmount, formatTime } from '@/lib/format';
+import { useSelectedAccount } from '@/lib/selected-account';
 import {
   TrendingUp,
   ArrowDownToLine,
@@ -46,6 +47,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { selectedAccountId } = useSelectedAccount();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -84,7 +86,7 @@ export default function DashboardPage() {
     );
   }
 
-  const account = user?.accounts?.[0];
+  const account = user?.accounts?.find((a) => a.id === selectedAccountId) || user?.accounts?.[0];
   const balance = account?.balance ?? 0;
   const firstName = user?.nome ?? 'Cliente';
   const isPending = account?.status === 'PENDING';

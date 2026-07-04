@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { authFetch } from '@/lib/auth-client';
+import { useSelectedAccount } from '@/lib/selected-account';
 import {
   ArrowDownToLine,
   Clock,
@@ -42,6 +43,7 @@ export default function PrelievoPage() {
   const [error, setError] = useState('');
   const [recentPrelievi, setRecentPrelievi] = useState<RecentPrelievo[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const { selectedAccountId } = useSelectedAccount();
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -52,9 +54,13 @@ export default function PrelievoPage() {
           return;
         }
         const data = await res.json();
-        if (data.success && data.user?.accounts?.[0]) {
-          const acc = data.user.accounts[0];
-          setAccount({ id: acc.id, iban: acc.iban, balance: acc.balance, status: acc.status, user: { nome: data.user.nome, cognome: data.user.cognome } });
+        if (data.success && data.user?.accounts) {
+          const acc = data.user.accounts.find((a: Account) => a.id === selectedAccountId) || data.user.accounts[0];
+          if (acc) {
+            setAccount({ id: acc.id, iban: acc.iban, balance: acc.balance, status: acc.status, user: { nome: data.user.nome, cognome: data.user.cognome } });
+          } else {
+            setError('Impossibile caricare i dati del conto.');
+          }
         } else {
           setError('Impossibile caricare i dati del conto.');
         }
@@ -65,7 +71,7 @@ export default function PrelievoPage() {
       }
     };
     fetchAccount();
-  }, []);
+  }, [selectedAccountId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

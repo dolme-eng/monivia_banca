@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { authFetch } from '@/lib/auth-client';
 import { formatAmount, formatTime } from '@/lib/format';
+import { useSelectedAccount } from '@/lib/selected-account';
 import {
   Send,
   Clock,
@@ -43,6 +44,7 @@ export default function PaymentsPage() {
   const [success, setSuccess] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmAmount, setConfirmAmount] = useState(0);
+  const { selectedAccountId } = useSelectedAccount();
 
   const [form, setForm] = useState({
     iban: '',
@@ -73,7 +75,7 @@ export default function PaymentsPage() {
     fetchUser();
   }, []);
 
-  const account = user?.accounts?.[0];
+  const account = user?.accounts?.find((a) => a.id === selectedAccountId) || user?.accounts?.[0];
   const balance = account?.balance ?? 0;
   const transactions = account?.transactions ?? [];
 
