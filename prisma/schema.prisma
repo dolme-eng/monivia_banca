@@ -13,6 +13,8 @@ model User {
   nome           String
   cognome        String
   role           UserRole  @default(USER)
+  failedAttempts Int       @default(0)
+  lockedUntil    DateTime?
   accounts       Account[]
   refreshTokens  RefreshToken[]
   invites        InviteToken[]

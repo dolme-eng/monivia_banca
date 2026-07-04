@@ -13,6 +13,8 @@ const secret = AUTH_SECRET ? new TextEncoder().encode(AUTH_SECRET) : null;
 
 const ACCESS_TOKEN_TTL = '15m';
 const REFRESH_TOKEN_TTL_DAYS = 30;
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 
 export async function POST(req: NextRequest) {
   if (!secret) {
@@ -38,9 +40,42 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Credenziali non valide' }, { status: 401 });
     }
 
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      const remaining = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000);
+      return NextResponse.json({
+        error: `Account temporaneamente bloccato. Riprova tra ${remaining} minuti.`,
+      }, { status: 429 });
+    }
+
     const valid = await bcrypt.compare(password, user.hashedPassword);
     if (!valid) {
+      const newAttempts = user.failedAttempts + 1;
+      const lockUntil = newAttempts >= MAX_FAILED_ATTEMPTS
+        ? new Date(Date.now() + LOCKOUT_DURATION_MS)
+        : null;
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          failedAttempts: newAttempts,
+          lockedUntil: lockUntil,
+        },
+      });
+
+      if (lockUntil) {
+        return NextResponse.json({
+          error: `Troppi tentativi falliti. Account bloccato per 15 minuti.`,
+        }, { status: 429 });
+      }
+
       return NextResponse.json({ error: 'Credenziali non valide' }, { status: 401 });
+    }
+
+    if (user.failedAttempts > 0 || user.lockedUntil) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { failedAttempts: 0, lockedUntil: null },
+      });
     }
 
     const account = await prisma.account.findFirst({
