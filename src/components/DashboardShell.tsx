@@ -17,6 +17,7 @@ import {
   LogOut,
   Clock,
   Lock,
+  History,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/cards', label: 'Carte', icon: CreditCard },
   { href: '/dashboard/payments', label: 'Pagamenti', icon: ArrowRightLeft },
   { href: '/dashboard/prelievo', label: 'Prelievo', icon: ArrowDownToLine },
+  { href: '/dashboard/transactions', label: 'Storico', icon: History },
   { href: '/dashboard/settings', label: 'Impostazioni', icon: Settings },
 ];
 
