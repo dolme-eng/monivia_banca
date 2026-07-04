@@ -13,7 +13,6 @@ export async function GET(
       select: {
         id: true,
         email: true,
-        password: true,
         nome: true,
         cognome: true,
         expiresAt: true,
@@ -37,7 +36,6 @@ export async function GET(
       success: true,
       invite: {
         email: invite.email,
-        password: invite.password,
         nome: invite.nome,
         cognome: invite.cognome,
         expiresAt: invite.expiresAt,

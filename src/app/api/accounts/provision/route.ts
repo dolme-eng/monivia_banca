@@ -148,7 +148,6 @@ export async function POST(req: NextRequest) {
           token: inviteToken,
           userId: result.userId,
           email,
-          password,
           nome,
           cognome,
           expiresAt,

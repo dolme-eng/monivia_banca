@@ -90,7 +90,6 @@ model InviteToken {
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   email     String
-  password  String
   nome      String
   cognome   String
   expiresAt DateTime

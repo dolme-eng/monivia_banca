@@ -11,11 +11,11 @@ import {
   Loader2,
   AlertTriangle,
   Clock,
+  Mail,
 } from 'lucide-react';
 
 interface InviteData {
   email: string;
-  password: string;
   nome: string;
   cognome: string;
   expiresAt: string;
@@ -65,12 +65,6 @@ export default function InvitePage() {
     }
   };
 
-  const copyAll = () => {
-    if (!invite) return;
-    const text = `Email: ${invite.email}\nPassword: ${invite.password}\n\nAccedi a: ${window.location.origin}/login`;
-    copyToClipboard(text, 'all');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -109,9 +103,9 @@ export default function InvitePage() {
               Banca
             </span>
           </div>
-          <h1 className="text-xl font-black text-primary">Le tue credenziali</h1>
+          <h1 className="text-xl font-black text-primary">Benvenut{invite?.nome ? 'o' : 'a'}</h1>
           <p className="text-sm text-slate-500 mt-1">
-            Ecco i dati per accedere alla tua piattaforma bancaria.
+            Il tuo conto è stato creato. Accedi con le credenziali ricevute via email.
           </p>
         </div>
 
@@ -141,31 +135,18 @@ export default function InvitePage() {
               </div>
             </div>
 
-            {/* Password */}
-            <div>
-              <label className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-1">Password</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm font-mono text-primary">
-                  {invite?.password}
+            {/* Password info */}
+            <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
+              <div className="flex items-start gap-3">
+                <Mail size={18} className="text-amber-600 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-black text-amber-800">Password inviata via email</p>
+                  <p className="text-xs text-amber-600 mt-1">
+                    La password è stata inviata all&apos;amministratore. Contattalo per ottenerla.
+                  </p>
                 </div>
-                <button
-                  onClick={() => copyToClipboard(invite?.password || '', 'password')}
-                  className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
-                  aria-label="Copia password"
-                >
-                  {copied === 'password' ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Copy size={16} className="text-slate-400" />}
-                </button>
               </div>
             </div>
-
-            {/* Copy All */}
-            <button
-              onClick={copyAll}
-              className="w-full flex items-center justify-center gap-2 bg-slate-100 text-primary py-3 rounded-xl text-sm font-black hover:bg-slate-200 transition-colors min-h-[44px]"
-            >
-              {copied === 'all' ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Copy size={16} />}
-              Copia tutto
-            </button>
           </div>
         </div>
 
