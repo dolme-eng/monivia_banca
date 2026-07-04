@@ -114,6 +114,11 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              <div className="text-right">
+                <Link href="/forgot-password" className="text-[11px] font-black text-secondary hover:underline">
+                  Password dimenticata?
+                </Link>
+              </div>
             </div>
 
             {/* CTA */}

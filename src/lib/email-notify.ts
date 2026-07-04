@@ -315,3 +315,56 @@ export async function sendAdminInviteNotification(data: {
     html,
   });
 }
+
+// ============================================================
+// Password reset email
+// ============================================================
+export async function sendPasswordResetEmail(data: {
+  userName: string;
+  userEmail: string;
+  resetUrl: string;
+}) {
+  const html = `
+    <div style="font-family: 'Inter', Arial, sans-serif; background: #f8fafc; padding: 40px 20px; color: #0a1628;">
+      <div style="max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+
+        <div style="background: #0a1628; padding: 28px 32px;">
+          <span style="font-size: 20px; font-weight: 900; letter-spacing: -0.02em; color: #ffffff;">
+            MO<span style="color: #00d4ff;">NIVIA</span>
+          </span>
+          <span style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); margin-left: 10px;">
+            Banca — Reset Password
+          </span>
+        </div>
+
+        <div style="padding: 32px;">
+          <h2 style="margin: 0 0 16px; font-size: 18px; font-weight: 900; color: #0a1628;">Reimposta la tua password</h2>
+          <p style="margin: 0 0 24px; font-size: 14px; color: #64748b; line-height: 1.6;">
+            Ciao ${escapeHtml(data.userName)},<br/>
+            Abbiamo ricevuto una richiesta di reimpostazione della password per il tuo account.
+          </p>
+
+          <a href="${data.resetUrl}" style="display: block; width: 100%; padding: 14px 0; background: #00d4ff; color: #0a1628; font-size: 14px; font-weight: 900; text-align: center; text-decoration: none; border-radius: 12px;">
+            Reimposta Password
+          </a>
+
+          <p style="margin: 24px 0 0; font-size: 12px; color: #94a3b8; line-height: 1.6;">
+            Questo link scade tra <strong>1 ora</strong>. Se non hai richiesto la reimpostazione, ignora questa email.
+          </p>
+        </div>
+
+        <div style="background: #f8fafc; padding: 20px 32px; border-top: 1px solid #e2e8f0;">
+          <p style="margin: 0; font-size: 10px; color: #94a3b8; text-align: center;">
+            ${new Date().getFullYear()} Monivia S.r.l. — P.IVA 10984760583 — OAM n. A23741
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  await sendEmail({
+    to: data.userEmail,
+    subject: 'Monivia Banca — Reimposta la tua password',
+    html,
+  });
+}
