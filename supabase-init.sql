@@ -5,7 +5,7 @@ EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
 DO $$ BEGIN
-  CREATE TYPE "AccountStatus" AS ENUM ('ACTIVE', 'FROZEN', 'CLOSED');
+  CREATE TYPE "AccountStatus" AS ENUM ('PENDING', 'ACTIVE', 'FROZEN', 'CLOSED');
 EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
@@ -20,7 +20,7 @@ EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
 DO $$ BEGIN
-  CREATE TYPE "TransactionStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+  CREATE TYPE "TransactionStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED');
 EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
@@ -32,7 +32,10 @@ CREATE TABLE IF NOT EXISTS "User" (
   nome TEXT NOT NULL,
   cognome TEXT NOT NULL,
   role "UserRole" NOT NULL DEFAULT 'USER',
-  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now()
+  "failedAttempts" INTEGER NOT NULL DEFAULT 0,
+  "lockedUntil" TIMESTAMPTZ,
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
+  "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS "Account" (
@@ -41,8 +44,10 @@ CREATE TABLE IF NOT EXISTS "Account" (
   iban TEXT UNIQUE NOT NULL,
   balance DOUBLE PRECISION NOT NULL DEFAULT 0,
   currency TEXT NOT NULL DEFAULT 'EUR',
-  status "AccountStatus" NOT NULL DEFAULT 'ACTIVE',
-  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now()
+  status "AccountStatus" NOT NULL DEFAULT 'PENDING',
+  "blockedAt" TIMESTAMPTZ,
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
+  "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS "Card" (
@@ -53,7 +58,8 @@ CREATE TABLE IF NOT EXISTS "Card" (
   expiry TEXT NOT NULL,
   holder TEXT NOT NULL,
   status "CardStatus" NOT NULL DEFAULT 'ACTIVE',
-  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now()
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
+  "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS "Transaction" (
@@ -69,7 +75,43 @@ CREATE TABLE IF NOT EXISTS "Transaction" (
   "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS "RefreshToken" (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  token TEXT UNIQUE NOT NULL,
+  "userId" TEXT NOT NULL REFERENCES "User"(id),
+  "expiresAt" TIMESTAMPTZ NOT NULL,
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS "RefreshToken_userId_idx" ON "RefreshToken"("userId");
+CREATE INDEX IF NOT EXISTS "RefreshToken_token_idx" ON "RefreshToken"("token");
+CREATE INDEX IF NOT EXISTS "RefreshToken_expiresAt_idx" ON "RefreshToken"("expiresAt");
+
+CREATE TABLE IF NOT EXISTS "InviteToken" (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  token TEXT UNIQUE NOT NULL,
+  "userId" TEXT NOT NULL REFERENCES "User"(id),
+  email TEXT NOT NULL,
+  nome TEXT NOT NULL,
+  cognome TEXT NOT NULL,
+  "expiresAt" TIMESTAMPTZ NOT NULL,
+  "usedAt" TIMESTAMPTZ,
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS "InviteToken_token_idx" ON "InviteToken"("token");
+CREATE INDEX IF NOT EXISTS "InviteToken_userId_idx" ON "InviteToken"("userId");
+
+CREATE TABLE IF NOT EXISTS "RateLimitEntry" (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  key TEXT NOT NULL,
+  count INTEGER NOT NULL DEFAULT 1,
+  "expiresAt" TIMESTAMPTZ NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "RateLimitEntry_key_idx" ON "RateLimitEntry"("key");
+
 -- Create admin user
-INSERT INTO "User" (id, email, "hashedPassword", nome, cognome, role, "createdAt")
-VALUES (gen_random_uuid()::text, 'admin@monivia.it', '$2b$12$ICQtEGYtXy5hT/VwhsFH4uqnZbIkcaWaLuOTsRCQ67l0/.2C4ZoLu', 'Admin', 'Monivia', 'ADMIN', now())
+INSERT INTO "User" (id, email, "hashedPassword", nome, cognome, role, "createdAt", "updatedAt")
+VALUES (gen_random_uuid()::text, 'admin@monivia.it', '$2b$12$ICQtEGYtXy5hT/VwhsFH4uqnZbIkcaWaLuOTsRCQ67l0/.2C4ZoLu', 'Admin', 'Monivia', 'ADMIN', now(), now())
 ON CONFLICT (email) DO NOTHING;
