@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://monivia-banca.vercel.app';
+      const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL || 'https://banca.monivia.it';
       inviteUrl = `${origin}/invite/${inviteToken}`;
 
       try {

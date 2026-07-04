@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Monivia Banca',
     description: 'Gestione sicura dei fondi Monivia — conto, carte, pagamenti e trasferimenti.',
-    url: 'https://monivia-banca.vercel.app',
+    url: 'https://banca.monivia.it',
     siteName: 'Monivia Banca',
     images: [{ url: '/og-default.png', width: 1200, height: 630 }],
     locale: 'it_IT',
