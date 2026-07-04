@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { CheckCircle2, AlertCircle, Eye, EyeOff, Search, ArrowUpCircle, CreditCard, Banknote, User } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Eye, EyeOff, Search, CreditCard, Banknote, User, Copy, ExternalLink } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
 
@@ -37,6 +37,8 @@ export default function ProvisionPage() {
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [createConfirmOpen, setCreateConfirmOpen] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [submittedData, setSubmittedData] = useState<{ email: string; nome: string; cognome: string } | null>(null);
 
   const doSearch = useCallback(async () => {
     if (searchQuery.trim().length < 2) return;
@@ -91,6 +93,7 @@ export default function ProvisionPage() {
     setCreateError(null);
     setCreateResult(null);
     setCreateConfirmOpen(false);
+    setSubmittedData(null);
     try {
       const res = await csrfFetch('/api/accounts/provision', {
         method: 'POST',
@@ -99,6 +102,7 @@ export default function ProvisionPage() {
       const data = await res.json();
       if (data.success) {
         setCreateResult(data);
+        setSubmittedData({ email: formData.email, nome: formData.nome, cognome: formData.cognome });
         setFormData({ email: '', nome: '', cognome: '', amount: '', password: '' });
       } else {
         setCreateError(data.error || 'Errore durante il provisioning');
@@ -107,6 +111,23 @@ export default function ProvisionPage() {
       setCreateError('Errore di connessione. Riprova più tardi.');
     } finally {
       setCreateLoading(false);
+    }
+  };
+
+  const copyToClipboard = async (text: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(field);
+      setTimeout(() => setCopied(null), 2000);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      setCopied(field);
+      setTimeout(() => setCopied(null), 2000);
     }
   };
 
@@ -373,13 +394,30 @@ export default function ProvisionPage() {
                 <div className="space-y-3">
                   <div className="rounded-lg bg-slate-50 p-3">
                     <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Email</p>
-                    <p className="mt-1 text-sm font-bold text-primary">{formData.email || createResult.account?.email}</p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <p className="text-sm font-bold text-primary">{submittedData?.email || createResult.account?.email}</p>
+                      <button
+                        onClick={() => copyToClipboard(submittedData?.email || createResult.account?.email || '', 'email')}
+                        className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+                        aria-label="Copia email"
+                      >
+                        {copied === 'email' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
+                      </button>
+                    </div>
                   </div>
                   {createResult.password && (
                     <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
                       <p className="text-[11px] font-black uppercase tracking-widest text-amber-600">Password</p>
-                      <p className="mt-1 font-mono text-sm font-bold text-primary">{createResult.password}</p>
-                      <p className="text-[11px] text-amber-600 mt-1">Comunica questa password al cliente via WhatsApp o email.</p>
+                      <div className="mt-1 flex items-center gap-2">
+                        <p className="font-mono text-sm font-bold text-primary">{createResult.password}</p>
+                        <button
+                          onClick={() => copyToClipboard(createResult.password, 'password')}
+                          className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg border border-amber-200 hover:bg-amber-100 transition-colors"
+                          aria-label="Copia password"
+                        >
+                          {copied === 'password' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-amber-600" />}
+                        </button>
+                      </div>
                     </div>
                   )}
                   {!createResult.password && (
@@ -390,7 +428,16 @@ export default function ProvisionPage() {
                   )}
                   <div className="rounded-lg bg-slate-50 p-3">
                     <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">IBAN</p>
-                    <p className="mt-1 font-mono text-sm font-bold text-primary">{createResult.account.iban}</p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <p className="font-mono text-sm font-bold text-primary">{createResult.account.iban}</p>
+                      <button
+                        onClick={() => copyToClipboard(createResult.account.iban, 'iban')}
+                        className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+                        aria-label="Copia IBAN"
+                      >
+                        {copied === 'iban' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
+                      </button>
+                    </div>
                   </div>
                   <div className="rounded-lg bg-slate-50 p-3">
                     <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Saldo attuale</p>
@@ -399,20 +446,75 @@ export default function ProvisionPage() {
                   {createResult.card && (
                     <div className="rounded-lg bg-slate-50 p-3">
                       <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Carta bancaria</p>
-                      <p className="mt-1 font-mono text-sm font-bold text-primary">{createResult.card.number}</p>
+                      <div className="mt-1 flex items-center gap-2">
+                        <p className="font-mono text-sm font-bold text-primary">{createResult.card.number}</p>
+                        <button
+                          onClick={() => copyToClipboard(createResult.card.number, 'card')}
+                          className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+                          aria-label="Copia numero carta"
+                        >
+                          {copied === 'card' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
+                        </button>
+                      </div>
                       <p className="text-xs text-slate-500">{createResult.card.holder}</p>
                     </div>
                   )}
                 </div>
-                <p className="mt-4 text-xs italic text-slate-400">
-                  Invia queste credenziali al cliente via email o WhatsApp.
-                </p>
-                <button
-                  onClick={() => setCreateResult(null)}
-                  className="mt-4 w-full btn-primary px-6 py-3 text-sm"
-                >
-                  Nuovo Provisioning
-                </button>
+
+                {/* Invite Link */}
+                {createResult.inviteUrl && (
+                  <div className="mt-4 rounded-lg bg-secondary/5 border border-secondary/20 p-4">
+                    <p className="text-[11px] font-black uppercase tracking-widest text-secondary mb-2">Link di invito (scade tra 24 ore)</p>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-primary truncate">
+                        {createResult.inviteUrl}
+                      </div>
+                      <button
+                        onClick={() => copyToClipboard(createResult.inviteUrl, 'invite')}
+                        className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-secondary/30 hover:bg-secondary/10 transition-colors"
+                        aria-label="Copia link invito"
+                      >
+                        {copied === 'invite' ? <CheckCircle2 size={14} className="text-emerald-500" /> : <Copy size={14} className="text-secondary" />}
+                      </button>
+                      <a
+                        href={createResult.inviteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-secondary/30 hover:bg-secondary/10 transition-colors"
+                        aria-label="Apri link invito"
+                      >
+                        <ExternalLink size={14} className="text-secondary" />
+                      </a>
+                    </div>
+                    <p className="mt-2 text-[11px] text-slate-400">
+                      Inoltra questa email al cliente con credenziali e link, oppure copia tutto qui sotto.
+                    </p>
+                  </div>
+                )}
+
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={() => {
+                      const lines = [
+                        `Email: ${submittedData?.email || createResult.account?.email}`,
+                        createResult.password ? `Password: ${createResult.password}` : '',
+                        createResult.inviteUrl ? `\nLink di invito: ${createResult.inviteUrl}` : '',
+                        `\nAccedi a: ${window.location.origin}/login`,
+                      ].filter(Boolean);
+                      copyToClipboard(lines.join('\n'), 'all');
+                    }}
+                    className="flex-1 btn-primary px-6 py-3 text-sm flex items-center justify-center gap-2"
+                  >
+                    {copied === 'all' ? <CheckCircle2 size={14} /> : <Copy size={14} />}
+                    Copia tutto
+                  </button>
+                  <button
+                    onClick={() => setCreateResult(null)}
+                    className="px-6 py-3 text-sm font-black rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors"
+                  >
+                    Nuovo
+                  </button>
+                </div>
               </div>
             )}
           </form>

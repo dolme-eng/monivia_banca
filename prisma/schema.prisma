@@ -15,6 +15,7 @@ model User {
   role           UserRole  @default(USER)
   accounts       Account[]
   refreshTokens  RefreshToken[]
+  invites        InviteToken[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 }
@@ -81,6 +82,23 @@ model RefreshToken {
   @@index([userId])
   @@index([token])
   @@index([expiresAt])
+}
+
+model InviteToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  email     String
+  password  String
+  nome      String
+  cognome   String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
 }
 
 enum UserRole {

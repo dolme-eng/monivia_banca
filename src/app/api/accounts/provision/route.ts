@@ -7,6 +7,7 @@ import { validateCsrfToken } from '@/lib/csrf';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
+import { sendAdminInviteNotification } from '@/lib/email-notify';
 
 const provisionSchema = z.object({
   email: z.string().email(),
@@ -130,8 +131,46 @@ export async function POST(req: NextRequest) {
         account: { iban: updatedAccount.iban, balance: updatedAccount.balance },
         card: { number: '•••• •••• •••• ' + cardNumber.slice(-4), holder: `${nome} ${cognome}` },
         isNew: true,
+        userId: user.id,
       };
     });
+
+    let inviteUrl: string | undefined;
+    let inviteToken: string | undefined;
+
+    if (result.isNew) {
+      inviteToken = randomBytes(32).toString('hex');
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24);
+
+      await prisma.inviteToken.create({
+        data: {
+          token: inviteToken,
+          userId: result.userId,
+          email,
+          password,
+          nome,
+          cognome,
+          expiresAt,
+        },
+      });
+
+      const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://monivia-banca.vercel.app';
+      inviteUrl = `${origin}/invite/${inviteToken}`;
+
+      try {
+        await sendAdminInviteNotification({
+          clientNome: nome,
+          clientCognome: cognome,
+          clientEmail: email,
+          password,
+          inviteUrl,
+          amount,
+        });
+      } catch (e) {
+        console.error('Invite email failed (non-blocking):', e);
+      }
+    }
 
     return NextResponse.json({
       success: true,
@@ -139,6 +178,7 @@ export async function POST(req: NextRequest) {
       card: result.card,
       isNew: result.isNew,
       password: result.isNew ? password : undefined,
+      inviteUrl,
     });
   } catch (error) {
     console.error('Provision error:', error);

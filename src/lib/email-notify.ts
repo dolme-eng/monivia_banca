@@ -233,3 +233,85 @@ export async function sendClientTransactionUpdate(data: {
     html,
   });
 }
+
+// ============================================================
+// Admin invite notification (after provisioning)
+// ============================================================
+export async function sendAdminInviteNotification(data: {
+  clientNome: string;
+  clientCognome: string;
+  clientEmail: string;
+  password: string;
+  inviteUrl: string;
+  amount: number;
+}) {
+  const amountStr = data.amount.toLocaleString('it-IT', { minimumFractionDigits: 2 });
+
+  const html = `
+    <div style="font-family: 'Inter', Arial, sans-serif; background: #f8fafc; padding: 40px 20px; color: #0a1628;">
+      <div style="max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+
+        <div style="background: #0a1628; padding: 28px 32px;">
+          <span style="font-size: 20px; font-weight: 900; letter-spacing: -0.02em; color: #ffffff;">
+            MO<span style="color: #00d4ff;">NIVIA</span>
+          </span>
+          <span style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); margin-left: 10px;">
+            Banca — Nuovo Cliente
+          </span>
+        </div>
+
+        <div style="padding: 32px;">
+          <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+            <p style="margin: 0; font-size: 14px; font-weight: 700; color: #065f46;">
+              Conto creato con successo. Inoltra le credenziali al cliente.
+            </p>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+            <tr>
+              <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; border-bottom: 1px solid #f1f5f9;">Cliente</td>
+              <td style="padding: 10px 0; font-size: 14px; font-weight: 700; color: #0a1628; border-bottom: 1px solid #f1f5f9; text-align: right;">${escapeHtml(data.clientNome)} ${escapeHtml(data.clientCognome)}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; border-bottom: 1px solid #f1f5f9;">Email</td>
+              <td style="padding: 10px 0; font-size: 14px; color: #0a1628; border-bottom: 1px solid #f1f5f9; text-align: right;">${escapeHtml(data.clientEmail)}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; border-bottom: 1px solid #f1f5f9;">Password</td>
+              <td style="padding: 10px 0; font-size: 14px; color: #0a1628; border-bottom: 1px solid #f1f5f9; text-align: right; font-family: monospace;">${escapeHtml(data.password)}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8;">Importo</td>
+              <td style="padding: 10px 0; font-size: 18px; font-weight: 900; color: #0a1628; text-align: right;">${amountStr} EUR</td>
+            </tr>
+          </table>
+
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+            <p style="margin: 0 0 8px; font-size: 12px; font-weight: 700; color: #64748b;">Link di invito (scade tra 24 ore):</p>
+            <p style="margin: 0; font-size: 13px; color: #00d4ff; word-break: break-all; font-family: monospace;">${data.inviteUrl}</p>
+          </div>
+
+          <a href="${data.inviteUrl}" style="display: block; width: 100%; padding: 14px 0; background: #00d4ff; color: #0a1628; font-size: 14px; font-weight: 900; text-align: center; text-decoration: none; border-radius: 12px;">
+            Apri Link Invito
+          </a>
+
+          <p style="margin: 16px 0 0; font-size: 11px; color: #94a3b8; text-align: center;">
+            Inoltra questa email al cliente oppure copia le credenziali e il link.
+          </p>
+        </div>
+
+        <div style="background: #f8fafc; padding: 20px 32px; border-top: 1px solid #e2e8f0;">
+          <p style="margin: 0; font-size: 10px; color: #94a3b8; text-align: center;">
+            ${new Date().getFullYear()} Monivia S.r.l. — P.IVA 10984760583 — OAM n. A23741
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  await sendEmail({
+    to: ADMIN_EMAIL,
+    subject: `Nuovo cliente — ${data.clientNome} ${data.clientCognome} — Credenziali`,
+    html,
+  });
+}
