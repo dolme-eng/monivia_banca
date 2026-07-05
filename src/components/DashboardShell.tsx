@@ -64,6 +64,9 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   return (
     <div className="flex min-h-screen bg-slate-50/50">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-white focus:text-primary focus:underline">
+        Vai al contenuto principale
+      </a>
       {/* ===== Sidebar (desktop) ===== */}
       <aside className="hidden md:flex flex-col h-screen w-64 bg-primary p-4 gap-3 shadow-md fixed left-0 top-0 z-40">
         <div className="mb-6 px-3">
@@ -248,7 +251,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 pb-24 md:pb-8 w-full">
+        <main id="main-content" className="flex-1 p-4 md:p-6 lg:p-8 pb-24 md:pb-8 w-full">
           {children}
         </main>
 

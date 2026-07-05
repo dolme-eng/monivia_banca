@@ -27,7 +27,7 @@ export default function LoginPage() {
 
       const data = await res.json();
 
-      if (!res.ok || !data.ok) {
+      if (!res.ok || !data.success) {
         setError('Credenziali non valide. Riprova.');
         setLoading(false);
       } else {

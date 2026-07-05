@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { randomBytes } from 'node:crypto';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
-const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+const AUTH_SECRET = process.env.AUTH_SECRET;
 if (!AUTH_SECRET) {
   console.error('[SECURITY] AUTH_SECRET non configurato — login impossibile');
 }
@@ -18,31 +18,32 @@ const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 
 export async function POST(req: NextRequest) {
   if (!secret) {
-    return NextResponse.json({ error: 'Configurazione di sicurezza mancante' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Configurazione di sicurezza mancante' }, { status: 500 });
   }
   try {
     const ip = getClientIp(req);
     const rl = await checkRateLimit(`login:${ip}`, 5, 15 * 60 * 1000);
     if (!rl.allowed) {
-      return NextResponse.json({ error: 'Troppi tentativi. Riprova tra 15 minuti.' }, { status: 429 });
+      return NextResponse.json({ success: false, error: 'Troppi tentativi. Riprova tra 15 minuti.' }, { status: 429 });
     }
 
     const { email, password } = await req.json();
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Credenziali mancanti' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Credenziali mancanti' }, { status: 400 });
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user || !user.hashedPassword) {
       await bcrypt.compare('dummy_hash_to_prevent_timing_attack', '$2a$12$x' + '0'.repeat(53));
-      return NextResponse.json({ error: 'Credenziali non valide' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
     }
 
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       const remaining = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000);
       return NextResponse.json({
+        success: false,
         error: `Account temporaneamente bloccato. Riprova tra ${remaining} minuti.`,
       }, { status: 429 });
     }
@@ -64,11 +65,12 @@ export async function POST(req: NextRequest) {
 
       if (lockUntil) {
         return NextResponse.json({
+          success: false,
           error: `Troppi tentativi falliti. Account bloccato per 15 minuti.`,
         }, { status: 429 });
       }
 
-      return NextResponse.json({ error: 'Credenziali non valide' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
     }
 
     if (user.failedAttempts > 0 || user.lockedUntil) {
@@ -89,7 +91,7 @@ export async function POST(req: NextRequest) {
         : account.status === 'FROZEN'
         ? 'Il conto è stato congelato. Contatta il supporto.'
         : 'Il conto non è attivo. Contatta il supporto.';
-      return NextResponse.json({ error: msg }, { status: 403 });
+      return NextResponse.json({ success: false, error: msg }, { status: 403 });
     }
 
     const accessToken = await new SignJWT({
@@ -121,7 +123,7 @@ export async function POST(req: NextRequest) {
       refreshTokenValue = null;
     }
 
-    const response = NextResponse.json({ ok: true, role: user.role });
+    const response = NextResponse.json({ success: true, role: user.role });
 
     response.cookies.set('authjs.session-token', accessToken, {
       httpOnly: true,
@@ -144,6 +146,6 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (err) {
     console.error('[LOGIN]', err);
-    return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Errore interno' }, { status: 500 });
   }
 }

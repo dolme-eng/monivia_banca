@@ -162,7 +162,6 @@ export async function POST(req: NextRequest) {
           clientNome: nome,
           clientCognome: cognome,
           clientEmail: email,
-          password,
           inviteUrl,
           amount,
         });
@@ -176,7 +175,6 @@ export async function POST(req: NextRequest) {
       account: result.account,
       card: result.card,
       isNew: result.isNew,
-      password: result.isNew ? password : undefined,
       inviteUrl,
     });
   } catch (error) {

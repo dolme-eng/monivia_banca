@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
+import { checkOrigin } from '@/lib/origin';
 import { z } from 'zod';
 
 const statusSchema = z.object({
@@ -14,6 +15,10 @@ export async function PATCH(
 ) {
   const auth = await requireAdmin(req);
   if ('error' in auth) return auth.error;
+
+  if (!checkOrigin(req)) {
+    return NextResponse.json({ success: false, error: 'Accesso negato' }, { status: 403 });
+  }
 
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`admin-card-action:${ip}`, 30, 10 * 60 * 1000);

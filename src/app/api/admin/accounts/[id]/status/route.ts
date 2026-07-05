@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
+import { checkOrigin } from '@/lib/origin';
 import { z } from 'zod';
 
 const statusSchema = z.object({
@@ -14,6 +15,10 @@ export async function PATCH(
 ) {
   const auth = await requireAdmin(req);
   if ('error' in auth) return auth.error;
+
+  if (!checkOrigin(req)) {
+    return NextResponse.json({ success: false, error: 'Accesso negato' }, { status: 403 });
+  }
 
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`admin-account-action:${ip}`, 30, 10 * 60 * 1000);
@@ -70,11 +75,18 @@ export async function PATCH(
         break;
       case 'delete':
         await prisma.$transaction(async (tx) => {
+          const account = await tx.account.findUnique({ where: { id }, select: { userId: true } });
           await tx.transaction.deleteMany({ where: { accountId: id } });
           await tx.card.deleteMany({ where: { accountId: id } });
           await tx.account.delete({ where: { id } });
+          if (account) {
+            await tx.refreshToken.deleteMany({ where: { userId: account.userId } });
+            await tx.inviteToken.deleteMany({ where: { userId: account.userId } });
+            await tx.passwordResetToken.deleteMany({ where: { userId: account.userId } });
+            await tx.user.delete({ where: { id: account.userId } });
+          }
         });
-        return NextResponse.json({ success: true, message: 'Conto eliminato definitivamente' });
+        return NextResponse.json({ success: true, message: 'Conto e utente eliminati definitivamente' });
     }
 
     const updated = await prisma.account.update({

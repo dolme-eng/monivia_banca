@@ -241,7 +241,6 @@ export async function sendAdminInviteNotification(data: {
   clientNome: string;
   clientCognome: string;
   clientEmail: string;
-  password: string;
   inviteUrl: string;
   amount: number;
 }) {
@@ -275,10 +274,6 @@ export async function sendAdminInviteNotification(data: {
             <tr>
               <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; border-bottom: 1px solid #f1f5f9;">Email</td>
               <td style="padding: 10px 0; font-size: 14px; color: #0a1628; border-bottom: 1px solid #f1f5f9; text-align: right;">${escapeHtml(data.clientEmail)}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; border-bottom: 1px solid #f1f5f9;">Password</td>
-              <td style="padding: 10px 0; font-size: 14px; color: #0a1628; border-bottom: 1px solid #f1f5f9; text-align: right; font-family: monospace;">${escapeHtml(data.password)}</td>
             </tr>
             <tr>
               <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8;">Importo</td>

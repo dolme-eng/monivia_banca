@@ -7,6 +7,9 @@ export default function PublicLayout({
 }) {
   return (
     <>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-white focus:text-primary focus:underline">
+        Vai al contenuto principale
+      </a>
       <header className="fixed left-0 top-0 z-50 w-full border-b border-slate-200/70 bg-white text-primary shadow-sm">
         <div className="hidden border-b border-slate-100 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 md:block">
           <div className="site-container flex h-9 items-center justify-between">
@@ -41,7 +44,7 @@ export default function PublicLayout({
           </div>
         </div>
       </header>
-      <main className="min-h-screen pt-[68px] md:pt-[108px]">
+      <main id="main-content" className="min-h-screen pt-[68px] md:pt-[108px]">
         {children}
       </main>
       <footer className="relative overflow-hidden bg-[#050d1a] text-slate-400">

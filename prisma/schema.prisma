@@ -72,6 +72,7 @@ model Transaction {
   @@index([accountId])
   @@index([status])
   @@index([createdAt])
+  @@index([accountId, status])
 }
 
 model RefreshToken {
@@ -114,6 +115,16 @@ model PasswordResetToken {
 
   @@index([token])
   @@index([userId])
+}
+
+model RateLimitEntry {
+  id      String   @id @default(uuid())
+  key     String   @unique
+  count   Int
+  resetAt DateTime
+
+  @@index([key])
+  @@index([resetAt])
 }
 
 enum UserRole {
