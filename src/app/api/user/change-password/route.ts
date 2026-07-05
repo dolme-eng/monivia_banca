@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const { currentPassword, newPassword } = changePasswordSchema.parse(body);
 
     const user = await prisma.user.findUnique({
-      where: { id: auth.user.userId },
+      where: { id: auth.session.userId },
       select: { id: true, hashedPassword: true },
     });
 
