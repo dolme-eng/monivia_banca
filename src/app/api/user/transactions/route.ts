@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
 
     const account = await prisma.account.findFirst({
-      where: { userId: auth.user.userId },
+      where: { userId: auth.session.userId },
       select: { id: true },
     });
 
