@@ -413,7 +413,7 @@ export default function ProvisionPage() {
 
             {/* Success card */}
             {createResult && createResult.success && (
-              <div className="surface-card p-6 border-l-4 border-emerald-500" role="status">
+              <div className="surface-card p-6" role="status">
                 <div className="mb-4 flex items-center gap-2">
                   <CheckCircle2 size={20} className="text-emerald-500" />
                   <h3 className="font-black text-primary">
