@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { CheckCircle2, AlertCircle, Eye, EyeOff, Search, CreditCard, Banknote, User, Copy, ExternalLink } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Eye, EyeOff, Search, CreditCard, Banknote, User, Copy, ExternalLink, Mail, Loader2 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
 
@@ -39,6 +39,8 @@ export default function ProvisionPage() {
   const [createConfirmOpen, setCreateConfirmOpen] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [submittedData, setSubmittedData] = useState<{ email: string; nome: string; cognome: string } | null>(null);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const doSearch = useCallback(async () => {
     if (searchQuery.trim().length < 2) return;
@@ -128,6 +130,33 @@ export default function ProvisionPage() {
       document.body.removeChild(ta);
       setCopied(field);
       setTimeout(() => setCopied(null), 2000);
+    }
+  };
+
+  const sendEmailToClient = async () => {
+    if (!createResult || !submittedData) return;
+    setEmailSending(true);
+    setEmailSent(false);
+    try {
+      const res = await csrfFetch('/api/admin/send-credentials', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: submittedData.email,
+          nome: submittedData.nome,
+          cognome: submittedData.cognome,
+          iban: createResult.account?.iban || '',
+          cardLast4: createResult.card?.number?.slice(-4) || '',
+          inviteUrl: createResult.inviteUrl || '',
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEmailSent(true);
+      }
+    } catch {
+      // Silent fail — user can retry
+    } finally {
+      setEmailSending(false);
     }
   };
 
@@ -494,6 +523,24 @@ export default function ProvisionPage() {
 
                 <div className="mt-4 flex gap-2">
                   <button
+                    onClick={sendEmailToClient}
+                    disabled={emailSending || emailSent}
+                    className={`flex items-center justify-center gap-2 px-5 py-3 text-sm font-black rounded-xl transition-colors min-h-[44px] ${
+                      emailSent
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-secondary/10 text-secondary border border-secondary/30 hover:bg-secondary/20'
+                    }`}
+                  >
+                    {emailSending ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : emailSent ? (
+                      <CheckCircle2 size={14} />
+                    ) : (
+                      <Mail size={14} />
+                    )}
+                    {emailSent ? 'Inviata' : 'Invia email'}
+                  </button>
+                  <button
                     onClick={() => {
                       const lines = [
                         `Email: ${submittedData?.email || createResult.account?.email}`,
@@ -509,7 +556,7 @@ export default function ProvisionPage() {
                     Copia tutto
                   </button>
                   <button
-                    onClick={() => setCreateResult(null)}
+                    onClick={() => { setCreateResult(null); setEmailSent(false); }}
                     className="px-6 py-3 text-sm font-black rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors"
                   >
                     Nuovo

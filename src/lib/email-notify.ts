@@ -363,3 +363,90 @@ export async function sendPasswordResetEmail(data: {
     html,
   });
 }
+
+// ============================================================
+// Client welcome email (sent manually by admin)
+// ============================================================
+export async function sendClientWelcomeEmail(data: {
+  clientEmail: string;
+  clientNome: string;
+  clientCognome: string;
+  iban: string;
+  cardLast4: string;
+  inviteUrl: string;
+}) {
+  const html = `
+    <div style="font-family: 'Inter', Arial, sans-serif; background: #f8fafc; padding: 40px 20px; color: #0a1628;">
+      <div style="max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+
+        <div style="background: #0a1628; padding: 28px 32px;">
+          <span style="font-size: 20px; font-weight: 900; letter-spacing: -0.02em; color: #ffffff;">
+            MO<span style="color: #00d4ff;">NIVIA</span>
+          </span>
+          <span style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); margin-left: 10px;">
+            Banca — Benvenuto
+          </span>
+        </div>
+
+        <div style="padding: 32px;">
+          <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+            <p style="margin: 0; font-size: 14px; font-weight: 700; color: #065f46;">
+              Il tuo conto è pronto. Accedi per gestire i tuoi fondi.
+            </p>
+          </div>
+
+          <p style="margin: 0 0 20px; font-size: 14px; color: #334155;">
+            Ciao ${escapeHtml(data.clientNome)},
+          </p>
+          <p style="margin: 0 0 24px; font-size: 14px; color: #334155; line-height: 1.6;">
+            Il tuo conto Monivia Banca è stato creato con successo. Qui sotto trovi le tue credenziali di accesso.
+          </p>
+
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+            <tr>
+              <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; border-bottom: 1px solid #f1f5f9;">Email</td>
+              <td style="padding: 10px 0; font-size: 14px; color: #0a1628; border-bottom: 1px solid #f1f5f9; text-align: right;">${escapeHtml(data.clientEmail)}</td>
+            </tr>
+            ${data.iban ? `
+            <tr>
+              <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; border-bottom: 1px solid #f1f5f9;">IBAN</td>
+              <td style="padding: 10px 0; font-size: 13px; color: #0a1628; border-bottom: 1px solid #f1f5f9; text-align: right; font-family: monospace;">${escapeHtml(data.iban)}</td>
+            </tr>
+            ` : ''}
+            ${data.cardLast4 ? `
+            <tr>
+              <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; border-bottom: 1px solid #f1f5f9;">Carta</td>
+              <td style="padding: 10px 0; font-size: 14px; color: #0a1628; border-bottom: 1px solid #f1f5f9; text-align: right; font-family: monospace;">**** **** **** ${escapeHtml(data.cardLast4)}</td>
+            </tr>
+            ` : ''}
+          </table>
+
+          ${data.inviteUrl ? `
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+            <p style="margin: 0 0 8px; font-size: 12px; font-weight: 700; color: #64748b;">Per prima accedi, imposta la tua password:</p>
+            <a href="${escapeHtml(data.inviteUrl)}" style="display: block; width: 100%; padding: 14px 0; background: #00d4ff; color: #0a1628; font-size: 14px; font-weight: 900; text-align: center; text-decoration: none; border-radius: 12px;">
+              Imposta la tua password
+            </a>
+          </div>
+          ` : ''}
+
+          <p style="margin: 0; font-size: 13px; color: #64748b; line-height: 1.6;">
+            Una volta impostata la password, potrai accedere alla tua area personale per gestire il tuo conto, le carte e i trasferimenti.
+          </p>
+        </div>
+
+        <div style="background: #f8fafc; padding: 20px 32px; border-top: 1px solid #e2e8f0;">
+          <p style="margin: 0; font-size: 10px; color: #94a3b8; text-align: center;">
+            ${new Date().getFullYear()} Monivia S.r.l. — P.IVA 10984760583 — OAM n. A23741
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  await sendEmail({
+    to: data.clientEmail,
+    subject: 'Benvenuto su Monivia Banca — Le tue credenziali',
+    html,
+  });
+}
