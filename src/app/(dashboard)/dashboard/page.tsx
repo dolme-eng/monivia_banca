@@ -151,7 +151,7 @@ export default function DashboardPage() {
               <p className="text-[11px] text-white/50">IBAN</p>
               <p className="text-xs font-black font-mono truncate">{account?.iban ?? '—'}</p>
             </div>
-            <div className="flex-1 border-l border-white/10 pl-4">
+            <div className="flex-1 pl-4">
               <p className="text-[11px] text-white/50">Valuta</p>
               <p className="text-lg font-black">{account?.currency ?? 'EUR'}</p>
             </div>
