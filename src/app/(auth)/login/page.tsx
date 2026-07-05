@@ -32,9 +32,9 @@ export default function LoginPage() {
         setLoading(false);
       } else {
         if (data.role === 'ADMIN') {
-          window.location.href = '/admin/dashboard';
+          window.location.replace('/admin/dashboard');
         } else {
-          window.location.href = '/dashboard';
+          window.location.replace('/dashboard');
         }
       }
     } catch {

@@ -40,16 +40,22 @@ export default function AccountsPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<ConfirmAction | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery), 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (searchQuery.trim().length >= 2) params.set('q', searchQuery.trim());
+      if (debouncedQuery.trim().length >= 2) params.set('q', debouncedQuery.trim());
       if (filterStatus) params.set('status', filterStatus);
       const res = await fetch(`/api/admin/accounts?${params.toString()}`);
       const data = await res.json();
@@ -59,7 +65,7 @@ export default function AccountsPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, filterStatus]);
+  }, [debouncedQuery, filterStatus]);
 
   useEffect(() => {
     fetchAccounts();

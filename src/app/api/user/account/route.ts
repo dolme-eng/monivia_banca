@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { prisma } from '@/lib/prisma';
 
-const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || process.env.CSRF_SECRET;
+const AUTH_SECRET = process.env.AUTH_SECRET;
 
 async function getSessionFromJWT(req: Request) {
   if (!AUTH_SECRET) return null;

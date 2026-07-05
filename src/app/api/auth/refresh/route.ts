@@ -3,7 +3,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { prisma } from '@/lib/prisma';
 import { randomBytes } from 'node:crypto';
 
-const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+const AUTH_SECRET = process.env.AUTH_SECRET;
 if (!AUTH_SECRET) {
   console.error('[SECURITY] AUTH_SECRET non configurato — refresh impossibile');
 }
@@ -14,12 +14,12 @@ const REFRESH_TOKEN_TTL_DAYS = 30;
 
 export async function POST(req: NextRequest) {
   if (!secret) {
-    return NextResponse.json({ error: 'Configurazione di sicurezza mancante' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Configurazione di sicurezza mancante' }, { status: 500 });
   }
 
   const refreshTokenValue = req.cookies.get('refresh-token')?.value;
   if (!refreshTokenValue) {
-    return NextResponse.json({ error: 'Refresh token mancante' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Refresh token mancante' }, { status: 401 });
   }
 
   try {
@@ -32,12 +32,12 @@ export async function POST(req: NextRequest) {
     });
 
     if (!dbToken) {
-      return NextResponse.json({ error: 'Refresh token non valido' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Refresh token non valido' }, { status: 401 });
     }
 
     if (new Date() > dbToken.expiresAt) {
       await prisma.refreshToken.delete({ where: { id: dbToken.id } });
-      return NextResponse.json({ error: 'Refresh token scaduto' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Refresh token scaduto' }, { status: 401 });
     }
 
     const user = dbToken.user;
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       }),
     ]);
 
-    const response = NextResponse.json({ ok: true, role: user.role });
+    const response = NextResponse.json({ success: true, role: user.role });
 
     response.cookies.set('authjs.session-token', accessToken, {
       httpOnly: true,
@@ -89,6 +89,6 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (err) {
     console.error('[REFRESH]', err);
-    return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Errore interno' }, { status: 500 });
   }
 }

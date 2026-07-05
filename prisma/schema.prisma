@@ -120,7 +120,7 @@ model PasswordResetToken {
 model RateLimitEntry {
   id      String   @id @default(uuid())
   key     String   @unique
-  count   Int
+  count   Int      @default(0)
   resetAt DateTime
 
   @@index([key])

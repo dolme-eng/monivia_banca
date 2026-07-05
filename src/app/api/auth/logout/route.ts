@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     await prisma.refreshToken.deleteMany({ where: { token: refreshToken } }).catch(() => {});
   }
 
-  const response = NextResponse.json({ ok: true });
+  const response = NextResponse.json({ success: true });
 
   const cookieAttrs = {
     httpOnly: true,
