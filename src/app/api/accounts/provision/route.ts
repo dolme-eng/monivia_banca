@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) {
       await prisma.inviteToken.create({
         data: {
           token: inviteToken,
-          userId: result.userId,
+          userId: result.userId!,
           email,
           nome,
           cognome,
