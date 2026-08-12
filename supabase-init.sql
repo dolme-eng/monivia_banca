@@ -113,5 +113,5 @@ CREATE INDEX IF NOT EXISTS "RateLimitEntry_key_idx" ON "RateLimitEntry"("key");
 
 -- Create admin user
 INSERT INTO "User" (id, email, "hashedPassword", nome, cognome, role, "createdAt", "updatedAt")
-VALUES (gen_random_uuid()::text, 'admin@monivia.it', '$2b$12$ICQtEGYtXy5hT/VwhsFH4uqnZbIkcaWaLuOTsRCQ67l0/.2C4ZoLu', 'Admin', 'Monivia', 'ADMIN', now(), now())
+VALUES (gen_random_uuid()::text, 'admin@monivia.it', '$2b$12$qmG0cPaJia3VMWAoLsefo.zxnChYtuoc9Kb6ukqte.qLb7m6AizJ2', 'Admin', 'Monivia', 'ADMIN', now(), now())
 ON CONFLICT (email) DO NOTHING;
