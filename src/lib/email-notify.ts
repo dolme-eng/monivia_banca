@@ -46,6 +46,7 @@ async function sendEmail(options: {
         subject: options.subject,
         html: options.html,
         replyTo: options.replyTo,
+        tracking: { open: false, click: false },
       });
       return;
     } catch (err) {
