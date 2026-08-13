@@ -22,6 +22,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { csrfFetch } from '@/lib/csrf-client';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Conto', icon: Wallet },
@@ -41,7 +42,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   const handleSignOut = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await csrfFetch('/api/auth/logout', { method: 'POST' });
     } catch {}
     window.location.replace('/login');
   };

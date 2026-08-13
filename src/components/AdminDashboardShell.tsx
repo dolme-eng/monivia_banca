@@ -20,6 +20,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { csrfFetch } from '@/lib/csrf-client';
 
 const NAV_ITEMS = [
   { href: '/admin/dashboard', label: 'Panoramica', icon: LayoutDashboard },
@@ -79,7 +80,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
 
   const handleSignOut = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await csrfFetch('/api/auth/logout', { method: 'POST' });
     } catch {}
     window.location.replace('/login');
   };
