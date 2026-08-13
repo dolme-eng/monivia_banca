@@ -29,7 +29,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setError('Credenziali non valide. Riprova.');
+        setError(data.error || 'Credenziali non valide. Riprova.');
         setLoading(false);
       } else {
         if (data.role === 'ADMIN') {
