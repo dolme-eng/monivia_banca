@@ -18,8 +18,8 @@ test.describe('Login Flow', () => {
 
   test('redirects authenticated user from login to dashboard', async ({ page }) => {
     await page.goto('/login');
-    await page.getByLabel('Email').fill('admin@monivia.it');
-    await page.getByLabel('Password').fill('Admin@2026!');
+    await page.getByLabel('Email').fill(process.env.ADMIN_EMAIL || 'admin@monivia.it');
+    await page.getByLabel('Password').fill(process.env.ADMIN_PASSWORD!);
     await page.getByRole('button', { name: /accedi/i }).click();
     await expect(page).toHaveURL(/\/admin\/dashboard/);
   });

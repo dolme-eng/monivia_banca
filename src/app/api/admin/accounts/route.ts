@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const q = searchParams.get('q')?.trim();
+    const q = searchParams.get('q')?.trim().slice(0, 100);
     const status = searchParams.get('status') as 'PENDING' | 'ACTIVE' | 'FROZEN' | 'CLOSED' | null;
 
     // If no search query and no status filter, return all accounts

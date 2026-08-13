@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-const ADMIN_EMAIL = 'admin@monivia.it';
-const ADMIN_PASSWORD = 'Admin@2026!';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@monivia.it';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD!;
 
 test.describe('Admin Flow', () => {
   test.beforeEach(async ({ page }) => {
