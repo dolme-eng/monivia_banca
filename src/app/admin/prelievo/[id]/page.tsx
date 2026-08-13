@@ -55,13 +55,11 @@ export default function AdminPrelievoDetailPage() {
 
   const fetchTx = useCallback(async () => {
     try {
-      const res = await fetch(`/api/admin/transactions`);
+      const res = await fetch(`/api/admin/transactions/${txId}`);
       if (!res.ok) throw new Error('Errore del server');
       const data = await res.json();
-      const allTx = data.transactions || [];
-      const found = allTx.find((t: any) => t.id === txId);
-      if (found) {
-        setTx(found);
+      if (data.transaction) {
+        setTx(data.transaction);
       }
     } catch {
       setResult({ type: 'error', message: 'Impossibile caricare i dettagli della transazione' });

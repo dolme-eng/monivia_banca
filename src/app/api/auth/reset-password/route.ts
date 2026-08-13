@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { validateCsrfToken } from '@/lib/csrf';
 
 const resetPasswordSchema = z.object({
   token: z.string().min(1),
@@ -16,6 +17,12 @@ const resetPasswordSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    const csrfToken = req.headers.get('x-csrf-token');
+    if (!validateCsrfToken(csrfToken)) {
+      return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
+    }
+
     const { token, password } = resetPasswordSchema.parse(body);
 
     const resetToken = await prisma.passwordResetToken.findUnique({

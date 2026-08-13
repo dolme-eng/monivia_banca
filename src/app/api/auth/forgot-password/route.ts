@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { sendPasswordResetEmail } from '@/lib/email-notify';
+import { validateCsrfToken } from '@/lib/csrf';
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Email non valida'),
@@ -14,6 +15,11 @@ export async function POST(req: NextRequest) {
   const rl = await checkRateLimit(`forgot-password:${ip}`, 3, 60 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Troppe richieste. Riprova più tardi.' }, { status: 429 });
+  }
+
+  const csrfToken = req.headers.get('x-csrf-token');
+  if (!validateCsrfToken(csrfToken)) {
+    return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
   }
 
   try {

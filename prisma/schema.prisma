@@ -45,9 +45,9 @@ model Card {
   id        String     @id @default(uuid())
   accountId String
   account   Account    @relation(fields: [accountId], references: [id])
-  number    String     @unique
-  cvv       String
-  expiry    String
+  numberHash String     @unique
+  last4      String
+  expiry     String
   holder    String
   status    CardStatus @default(ACTIVE)
   createdAt DateTime   @default(now())

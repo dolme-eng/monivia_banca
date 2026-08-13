@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
             select: { id: true, email: true, nome: true, cognome: true },
           },
           cards: {
-            select: { number: true, holder: true },
+            select: { last4: true, holder: true },
             take: 1,
           },
         },
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
         ...a,
         balance: Number(a.balance),
         cards: a.cards.map((c) => ({
-          number: '•••• •••• •••• ' + c.number.slice(-4),
+          number: '•••• •••• •••• ' + c.last4,
           holder: c.holder,
         })),
       }));
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
           select: { id: true, email: true, nome: true, cognome: true },
         },
         cards: {
-          select: { number: true, holder: true },
+          select: { last4: true, holder: true },
           take: 1,
         },
       },
@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
       ...a,
       balance: Number(a.balance),
       cards: a.cards.map((c) => ({
-        number: '•••• •••• •••• ' + c.number.slice(-4),
+        number: '•••• •••• •••• ' + c.last4,
         holder: c.holder,
       })),
     }));

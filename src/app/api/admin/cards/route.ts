@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     if (q.trim().length >= 2) {
       where.OR = [
         { holder: { contains: q.trim(), mode: 'insensitive' } },
-        { number: { contains: q.trim() } },
+        { last4: { contains: q.trim() } },
         { account: { user: { email: { contains: q.trim(), mode: 'insensitive' } } } },
       ];
     }
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
 
     const masked = cards.map((c) => ({
       id: c.id,
-      number: '•••• •••• •••• ' + c.number.slice(-4),
+      number: '•••• •••• •••• ' + c.last4,
       holder: c.holder,
       expiry: c.expiry,
       status: c.status,

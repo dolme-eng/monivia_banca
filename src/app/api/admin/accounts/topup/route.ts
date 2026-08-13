@@ -9,7 +9,7 @@ import { checkOrigin } from '@/lib/origin';
 
 const topupSchema = z.object({
   accountId: z.string(),
-  amount: z.number().positive(),
+  amount: z.number().positive().max(100000),
 });
 
 export async function POST(req: NextRequest) {

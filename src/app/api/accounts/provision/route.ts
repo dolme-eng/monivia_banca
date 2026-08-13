@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, createHash } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
@@ -8,6 +8,51 @@ import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 import { sendAdminInviteNotification } from '@/lib/email-notify';
+
+function luhnCheck(num: string): boolean {
+  let sum = 0;
+  let alternate = false;
+  for (let i = num.length - 1; i >= 0; i--) {
+    let n = parseInt(num[i], 10);
+    if (alternate) { n *= 2; if (n > 9) n -= 9; }
+    sum += n;
+    alternate = !alternate;
+  }
+  return sum % 10 === 0;
+}
+
+function generateLuhnCard(): string {
+  const digits = Array.from({ length: 15 }, () => Math.floor(Math.random() * 10)).join('');
+  for (let d = 0; d <= 9; d++) {
+    const candidate = digits + d;
+    if (luhnCheck(candidate)) return candidate;
+  }
+  return digits + '0';
+}
+
+function generateItalianIban(): string {
+  // Italian IBAN: IT + 2 check digits + 23 alphanumeric chars (CIN + ABI + CAB + account)
+  // Generate 23 chars from random bytes (using only alphanumeric chars A-Z, 0-9)
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const body = Array.from({ length: 23 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  
+  // Compute check digits using mod-97 algorithm
+  // IBAN validation: move first 4 chars to end, convert letters to numbers (A=10, B=11, ...), then mod 97
+  const rearranged = body + 'IT' + '00'; // Replace check digits with 00 for calculation
+  const numeric = rearranged.split('').map(c => {
+    if (c >= '0' && c <= '9') return c;
+    return (c.charCodeAt(0) - 55).toString(); // A=10, B=11, ...
+  }).join('');
+  
+  // Compute mod 97
+  let remainder = 0;
+  for (const digit of numeric) {
+    remainder = (remainder * 10 + parseInt(digit, 10)) % 97;
+  }
+  const checkDigits = (98 - remainder).toString().padStart(2, '0');
+  
+  return `IT${checkDigits}${body}`;
+}
 
 const provisionSchema = z.object({
   email: z.string().email(),
@@ -84,20 +129,19 @@ export async function POST(req: NextRequest) {
 
         const card = await tx.card.findFirst({
           where: { accountId: existingAccount.id },
-          select: { number: true, holder: true },
+          select: { last4: true, holder: true },
         });
 
         return {
           account: { iban: updatedAccount.iban, balance: updatedAccount.balance },
           card: card
-            ? { number: '•••• •••• •••• ' + card.number.slice(-4), holder: card.holder }
+            ? { number: '•••• •••• •••• ' + card.last4, holder: card.holder }
             : null,
           isNew: false,
         };
       }
 
-      const ibanRandom = randomBytes(12).toString('hex').toUpperCase().slice(0, 23);
-      const iban = `IT00${ibanRandom}`;
+      const iban = generateItalianIban();
       const account = await tx.account.create({
         data: { userId: user.id, iban, balance: 0, status: 'PENDING' },
       });
@@ -119,14 +163,14 @@ export async function POST(req: NextRequest) {
         select: { iban: true, balance: true },
       });
 
-      const cardBytes = randomBytes(8);
-      const cardNumber = Array.from(cardBytes).map(b => b % 10).join('').padStart(16, '0').slice(0, 16);
-      const cvvNum = randomBytes(3).readUIntBE(0, 3) % 900 + 100;
+      const cardNumber = generateLuhnCard();
+      const numberHash = createHash('sha256').update(cardNumber).digest('hex');
+      const last4 = cardNumber.slice(-4);
       const card = await tx.card.create({
         data: {
           accountId: account.id,
-          number: cardNumber,
-          cvv: cvvNum.toString(),
+          numberHash,
+          last4,
           expiry: '12/29',
           holder: `${nome} ${cognome}`,
         },
@@ -134,7 +178,7 @@ export async function POST(req: NextRequest) {
 
       return {
         account: { iban: updatedAccount.iban, balance: updatedAccount.balance },
-        card: { number: '•••• •••• •••• ' + cardNumber.slice(-4), holder: `${nome} ${cognome}` },
+        card: { number: '•••• •••• •••• ' + last4, holder: `${nome} ${cognome}` },
         isNew: true,
         userId: user.id,
       };

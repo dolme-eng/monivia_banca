@@ -35,8 +35,8 @@ export async function checkRateLimit(
 
     return { allowed: true, remaining: maxRequests - newCount, resetAt: existing.resetAt.getTime() };
   } catch (err) {
-    console.error('[RATE-LIMIT] Errore Supabase, fallback permesso:', err);
-    return { allowed: true, remaining: maxRequests - 1, resetAt: resetAt.getTime() };
+    console.error('[RATE-LIMIT] Errore Supabase, fallback bloccato:', err);
+    return { allowed: false, remaining: 0, resetAt: resetAt.getTime() };
   }
 }
 

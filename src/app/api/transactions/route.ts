@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
@@ -12,9 +13,11 @@ const transactionSchema = z.object({
   amount: z.number().positive(),
   description: z.string().min(1),
   toIban: z.string().optional(),
+  idempotencyKey: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
+  const idempotencyKey = randomUUID();
   const auth = await requireAuth(req);
   if ('error' in auth) return auth.error;
 
@@ -44,7 +47,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { accountId, type, amount, description, toIban } = transactionSchema.parse(body);
+    const { accountId, type, amount, description, toIban, idempotencyKey: clientKey } = transactionSchema.parse(body);
+    const reference = clientKey || idempotencyKey;
 
     if (type === 'TRANSFER_OUT' && !toIban) {
       return NextResponse.json({ success: false, error: 'IBAN destinatario obbligatorio per i trasferimenti' }, { status: 400 });
@@ -62,6 +66,14 @@ export async function POST(req: NextRequest) {
 
     if (account.blockedAt) {
       return NextResponse.json({ success: false, error: 'I trasferimenti sono bloccati sul tuo conto.' }, { status: 403 });
+    }
+
+    // Idempotency check - if transaction with this reference already exists, return success
+    const existingTransaction = await prisma.transaction.findFirst({
+      where: { reference },
+    });
+    if (existingTransaction) {
+      return NextResponse.json({ success: true, message: 'Transazione già elaborata' });
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -83,6 +95,7 @@ export async function POST(req: NextRequest) {
           amount: -amount,
           description,
           status: 'PENDING',
+          reference: reference || `TX-${Date.now()}`,
         },
       });
 

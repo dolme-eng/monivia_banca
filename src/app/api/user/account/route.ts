@@ -7,7 +7,7 @@ const AUTH_SECRET = process.env.AUTH_SECRET;
 async function getSessionFromJWT(req: Request) {
   if (!AUTH_SECRET) return null;
   const cookie = req.headers.get('cookie') || '';
-  const match = cookie.match(/authjs\.session-token=([^;]+)/);
+  const match = cookie.match(/(?:__Secure-)?authjs\.session-token=([^;]+)/);
   if (!match) return null;
   try {
     const { payload } = await jwtVerify(match[1], new TextEncoder().encode(AUTH_SECRET));
@@ -43,7 +43,7 @@ export async function GET(req: Request) {
             cards: {
               select: {
                 id: true,
-                number: true,
+                last4: true,
                 expiry: true,
                 holder: true,
                 status: true,
@@ -69,7 +69,7 @@ export async function GET(req: Request) {
         balance: Number(acc.balance),
         cards: acc.cards.map((card) => ({
           ...card,
-          number: '•••• •••• •••• ' + card.number.slice(-4),
+          number: '•••• •••• •••• ' + card.last4,
         })),
         transactions: acc.transactions.map((tx) => ({
           ...tx,

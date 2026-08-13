@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS "Account" (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "userId" TEXT NOT NULL REFERENCES "User"(id),
   iban TEXT UNIQUE NOT NULL,
-  balance DOUBLE PRECISION NOT NULL DEFAULT 0,
+  balance NUMERIC(12,2) NOT NULL DEFAULT 0,
   currency TEXT NOT NULL DEFAULT 'EUR',
   status "AccountStatus" NOT NULL DEFAULT 'PENDING',
   "blockedAt" TIMESTAMPTZ,
@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS "Account" (
 CREATE TABLE IF NOT EXISTS "Card" (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "accountId" TEXT NOT NULL REFERENCES "Account"(id),
-  number TEXT UNIQUE NOT NULL,
-  cvv TEXT NOT NULL,
+  "numberHash" TEXT UNIQUE NOT NULL,
+  "last4" TEXT NOT NULL,
   expiry TEXT NOT NULL,
   holder TEXT NOT NULL,
   status "CardStatus" NOT NULL DEFAULT 'ACTIVE',
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS "Transaction" (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "accountId" TEXT NOT NULL REFERENCES "Account"(id),
   type "TransactionType" NOT NULL,
-  amount DOUBLE PRECISION NOT NULL,
+  amount NUMERIC(12,2) NOT NULL,
   description TEXT NOT NULL,
   status "TransactionStatus" NOT NULL DEFAULT 'PENDING',
   reference TEXT UNIQUE,
@@ -104,12 +104,25 @@ CREATE INDEX IF NOT EXISTS "InviteToken_userId_idx" ON "InviteToken"("userId");
 
 CREATE TABLE IF NOT EXISTS "RateLimitEntry" (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-  key TEXT NOT NULL,
-  count INTEGER NOT NULL DEFAULT 1,
-  "expiresAt" TIMESTAMPTZ NOT NULL
+  key TEXT UNIQUE NOT NULL,
+  count INTEGER NOT NULL DEFAULT 0,
+  "resetAt" TIMESTAMPTZ NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS "RateLimitEntry_key_idx" ON "RateLimitEntry"("key");
+CREATE INDEX IF NOT EXISTS "RateLimitEntry_resetAt_idx" ON "RateLimitEntry"("resetAt");
+
+CREATE TABLE IF NOT EXISTS "PasswordResetToken" (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  token TEXT UNIQUE NOT NULL,
+  "userId" TEXT NOT NULL REFERENCES "User"(id),
+  "expiresAt" TIMESTAMPTZ NOT NULL,
+  "usedAt" TIMESTAMPTZ,
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS "PasswordResetToken_token_idx" ON "PasswordResetToken"("token");
+CREATE INDEX IF NOT EXISTS "PasswordResetToken_userId_idx" ON "PasswordResetToken"("userId");
 
 -- Create admin user
 -- The $ in bcrypt hashes is safe inside single-quoted strings in PostgreSQL.
