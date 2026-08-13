@@ -144,6 +144,7 @@ export async function POST(req: NextRequest) {
             ? { number: '•••• •••• •••• ' + card.last4, holder: card.holder }
             : null,
           isNew: false,
+          userId: user.id,
         };
       }
 
@@ -230,6 +231,7 @@ export async function POST(req: NextRequest) {
       account: result.account,
       card: result.card,
       isNew: result.isNew,
+      userId: result.userId,
       inviteUrl,
     });
   } catch (error) {

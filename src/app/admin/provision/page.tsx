@@ -141,6 +141,7 @@ export default function ProvisionPage() {
       const res = await csrfFetch('/api/admin/send-credentials', {
         method: 'POST',
         body: JSON.stringify({
+          userId: createResult.userId || '',
           email: submittedData.email,
           nome: submittedData.nome,
           cognome: submittedData.cognome,
