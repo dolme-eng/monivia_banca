@@ -18,6 +18,7 @@ export async function verifySession(req: NextRequest): Promise<SessionPayload | 
   if (!token || !AUTH_SECRET) return null;
   try {
     const { payload } = await jwtVerify(token, new TextEncoder().encode(AUTH_SECRET));
+    if (!payload.userId || !payload.role) return null;
     return payload as SessionPayload;
   } catch {
     return null;

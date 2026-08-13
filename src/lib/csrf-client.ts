@@ -29,8 +29,8 @@ export async function csrfFetch(url: string, options: RequestInit = {}): Promise
     },
   });
 
-  // If CSRF expired, refresh and retry once (only for idempotent methods)
-  if (res.status === 403 && (!options.method || !['POST', 'PUT', 'PATCH', 'DELETE'].includes(options.method.toUpperCase()))) {
+  // If CSRF expired, refresh and retry once (for state-changing methods)
+  if (res.status === 403 && options.method && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(options.method.toUpperCase())) {
     cachedToken = null;
     const newToken = await getCsrfToken();
     return fetch(url, {

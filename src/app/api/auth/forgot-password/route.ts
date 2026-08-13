@@ -53,8 +53,18 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL || 'https://banca.monivia.it';
-    const resetUrl = `${origin}/reset-password/${token}`;
+    const allowedOrigins = ['https://banca.monivia.it', 'https://monivia.it'];
+    const originHeader = req.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL || 'https://banca.monivia.it';
+    let validatedOrigin = originHeader;
+    try {
+      const originUrl = new URL(originHeader);
+      if (!allowedOrigins.includes(originUrl.origin)) {
+        validatedOrigin = 'https://banca.monivia.it';
+      }
+    } catch {
+      validatedOrigin = 'https://banca.monivia.it';
+    }
+    const resetUrl = `${validatedOrigin}/reset-password/${token}`;
 
     try {
       await sendPasswordResetEmail({

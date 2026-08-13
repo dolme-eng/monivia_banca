@@ -21,8 +21,13 @@ export async function POST(req: NextRequest) {
   try {
     const { userId, email, nome, cognome, iban, cardLast4, inviteUrl } = await req.json();
 
-    if (!email || !nome || !cognome) {
+    if (!userId || !email || !nome || !cognome) {
       return NextResponse.json({ success: false, error: 'Dati mancanti' }, { status: 400 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true } });
+    if (!user || user.email !== email) {
+      return NextResponse.json({ success: false, error: 'Utente non trovato o email non corrispondente' }, { status: 400 });
     }
 
     await sendClientWelcomeEmail({

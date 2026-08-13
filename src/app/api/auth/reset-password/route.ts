@@ -31,15 +31,11 @@ export async function POST(req: NextRequest) {
     });
 
     if (!resetToken) {
-      return NextResponse.json({ success: false, error: 'Link non valido' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Link non valido o scaduto' }, { status: 400 });
     }
 
-    if (new Date() > resetToken.expiresAt) {
-      return NextResponse.json({ success: false, error: 'Link scaduto. Richiedi un nuovo link.' }, { status: 410 });
-    }
-
-    if (resetToken.usedAt) {
-      return NextResponse.json({ success: false, error: 'Link già utilizzato. Richiedi un nuovo link.' }, { status: 410 });
+    if (new Date() > resetToken.expiresAt || resetToken.usedAt) {
+      return NextResponse.json({ success: false, error: 'Link non valido o scaduto' }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);

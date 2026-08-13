@@ -4,8 +4,13 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@monivia.it';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@2026!';
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminEmail || !adminPassword) {
+    console.error('[SEED] ADMIN_EMAIL and ADMIN_PASSWORD must be set');
+    process.exit(1);
+  }
 
   const existing = await prisma.user.findUnique({ where: { email: adminEmail } });
   if (existing) {

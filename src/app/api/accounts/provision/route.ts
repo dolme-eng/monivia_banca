@@ -22,19 +22,18 @@ function luhnCheck(num: string): boolean {
 }
 
 function generateLuhnCard(): string {
-  const digits = Array.from({ length: 15 }, () => Math.floor(Math.random() * 10)).join('');
+  const randomDigits = Array.from(crypto.getRandomValues(new Uint8Array(15)), (b) => b % 10).join('');
   for (let d = 0; d <= 9; d++) {
-    const candidate = digits + d;
+    const candidate = randomDigits + d;
     if (luhnCheck(candidate)) return candidate;
   }
-  return digits + '0';
+  return randomDigits + '0';
 }
 
 function generateItalianIban(): string {
-  // Italian IBAN: IT + 2 check digits + 23 alphanumeric chars (CIN + ABI + CAB + account)
-  // Generate 23 chars from random bytes (using only alphanumeric chars A-Z, 0-9)
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const body = Array.from({ length: 23 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  const randomValues = crypto.getRandomValues(new Uint8Array(23));
+  const body = Array.from(randomValues, (b) => chars[b % chars.length]).join('');
   
   // Compute check digits using mod-97 algorithm
   // IBAN validation: move first 4 chars to end, convert letters to numbers (A=10, B=11, ...), then mod 97
@@ -98,11 +97,18 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const result = await prisma.$transaction(async (tx) => {
-      const user = await tx.user.upsert({
-        where: { email },
-        update: { hashedPassword, nome, cognome },
-        create: { email, nome, cognome, hashedPassword },
-      });
+      const existingUser = await tx.user.findUnique({ where: { email } });
+      let user;
+      if (existingUser) {
+        user = await tx.user.update({
+          where: { id: existingUser.id },
+          data: { nome, cognome },
+        });
+      } else {
+        user = await tx.user.create({
+          data: { email, nome, cognome, hashedPassword },
+        });
+      }
 
       const existingAccount = await tx.account.findFirst({
         where: { userId: user.id },

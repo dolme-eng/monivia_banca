@@ -13,7 +13,7 @@ if (!AUTH_SECRET) {
 const secret = AUTH_SECRET ? new TextEncoder().encode(AUTH_SECRET) : null;
 
 const ACCESS_TOKEN_TTL = '15m';
-const REFRESH_TOKEN_TTL_DAYS = 30;
+const REFRESH_TOKEN_TTL_DAYS = 7;
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 

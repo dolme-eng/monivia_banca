@@ -10,7 +10,7 @@ if (!AUTH_SECRET) {
 const secret = AUTH_SECRET ? new TextEncoder().encode(AUTH_SECRET) : null;
 
 const ACCESS_TOKEN_TTL = '15m';
-const REFRESH_TOKEN_TTL_DAYS = 30;
+const REFRESH_TOKEN_TTL_DAYS = 7;
 
 export async function POST(req: NextRequest) {
   if (!secret) {

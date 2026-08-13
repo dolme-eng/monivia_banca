@@ -56,7 +56,9 @@ export async function POST(req: NextRequest) {
     const result = await prisma.$transaction(async (tx) => {
       if (action === 'APPROVE') {
         if (transaction.type === 'DEBIT' || transaction.type === 'TRANSFER_OUT') {
-          const currentAccount = await tx.account.findUnique({ where: { id: transaction.accountId } });
+          const [currentAccount] = await tx.$queryRaw<[{ id: string; balance: unknown }]>`
+            SELECT id, balance FROM "Account" WHERE id = ${transaction.accountId} FOR UPDATE
+          `;
           if (!currentAccount || Number(currentAccount.balance) < Number(transaction.amount)) {
             return { success: false, error: 'Fondi insufficienti per questa transazione' };
           }

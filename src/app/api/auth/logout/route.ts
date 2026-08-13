@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { validateCsrfToken } from '@/lib/csrf';
 
 export async function POST(req: Request) {
-  const refreshToken = req.headers.get('cookie')?.match(/refresh-token=([^;]+)/)?.[1];
+  const csrfToken = req.headers.get('x-csrf-token');
+  if (!validateCsrfToken(csrfToken)) {
+    return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
+  }
+
+  const refreshToken = req.headers.get('cookie')?.match(/(?:__Secure-)?refresh-token=([^;]+)/)?.[1];
 
   if (refreshToken) {
     await prisma.refreshToken.deleteMany({ where: { token: refreshToken } }).catch(() => {});

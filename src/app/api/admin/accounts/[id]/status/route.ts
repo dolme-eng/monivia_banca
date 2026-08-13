@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
+import { validateCsrfToken } from '@/lib/csrf';
 import { z } from 'zod';
 
 const statusSchema = z.object({
@@ -18,6 +19,11 @@ export async function PATCH(
 
   if (!checkOrigin(req)) {
     return NextResponse.json({ success: false, error: 'Accesso negato' }, { status: 403 });
+  }
+
+  const csrfToken = req.headers.get('x-csrf-token');
+  if (!validateCsrfToken(csrfToken)) {
+    return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
   }
 
   const ip = getClientIp(req);
