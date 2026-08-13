@@ -7,7 +7,12 @@ import { validateCsrfToken } from '@/lib/csrf';
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'Password attuale richiesta'),
-  newPassword: z.string().min(8, 'La nuova password deve avere almeno 8 caratteri'),
+  newPassword: z.string()
+    .min(8, 'La nuova password deve avere almeno 8 caratteri')
+    .regex(/[A-Z]/, 'La password deve contenere almeno una lettera maiuscola')
+    .regex(/[a-z]/, 'La password deve contenere almeno una lettera minuscola')
+    .regex(/[0-9]/, 'La password deve contenere almeno un numero')
+    .regex(/[^A-Za-z0-9]/, 'La password deve contenere almeno un carattere speciale'),
 });
 
 export async function POST(req: NextRequest) {
@@ -38,10 +43,15 @@ export async function POST(req: NextRequest) {
     }
 
     const hashedNew = await bcrypt.hash(newPassword, 12);
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { hashedPassword: hashedNew },
-    });
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: { hashedPassword: hashedNew },
+      }),
+      prisma.refreshToken.deleteMany({
+        where: { userId: user.id },
+      }),
+    ]);
 
     return NextResponse.json({ success: true, message: 'Password aggiornata con successo' });
   } catch (error) {

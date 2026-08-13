@@ -7,7 +7,12 @@ import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const registerSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string()
+    .min(8, 'La password deve avere almeno 8 caratteri')
+    .regex(/[A-Z]/, 'La password deve contenere almeno una lettera maiuscola')
+    .regex(/[a-z]/, 'La password deve contenere almeno una lettera minuscola')
+    .regex(/[0-9]/, 'La password deve contenere almeno un numero')
+    .regex(/[^A-Za-z0-9]/, 'La password deve contenere almeno un carattere speciale'),
   nome: z.string().min(1),
   cognome: z.string().min(1),
 });

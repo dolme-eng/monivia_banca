@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { csrfFetch } from '@/lib/csrf-client';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +20,7 @@ export default function LoginPage() {
     const password = formData.get('password') as string;
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await csrfFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

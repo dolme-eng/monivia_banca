@@ -112,6 +112,10 @@ CREATE TABLE IF NOT EXISTS "RateLimitEntry" (
 CREATE INDEX IF NOT EXISTS "RateLimitEntry_key_idx" ON "RateLimitEntry"("key");
 
 -- Create admin user
+-- NOTE: The $$ wrapper prevents PostgreSQL from interpreting bcrypt $ as dollar-quoting.
+-- To update the password hash later, run:
+--   UPDATE "User" SET "hashedPassword" = '$2b$12$...'::text WHERE email = 'admin@monivia.it';
+-- or use: SELECT "hashedPassword" FROM "User" WHERE email = 'admin@monivia.it';
 INSERT INTO "User" (id, email, "hashedPassword", nome, cognome, role, "createdAt", "updatedAt")
-VALUES (gen_random_uuid()::text, 'admin@monivia.it', '$2b$12$qmG0cPaJia3VMWAoLsefo.zxnChYtuoc9Kb6ukqte.qLb7m6AizJ2', 'Admin', 'Monivia', 'ADMIN', now(), now())
+VALUES (gen_random_uuid()::text, 'admin@monivia.it', '$$2b$12$qmG0cPaJia3VMWAoLsefo.zxnChYtuoc9Kb6ukqte.qLb7m6AizJ2$$', 'Admin', 'Monivia', 'ADMIN', now(), now())
 ON CONFLICT (email) DO NOTHING;

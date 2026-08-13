@@ -4,6 +4,7 @@ import { SignJWT } from 'jose';
 import { prisma } from '@/lib/prisma';
 import { randomBytes } from 'node:crypto';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { validateCsrfToken } from '@/lib/csrf';
 
 const AUTH_SECRET = process.env.AUTH_SECRET;
 if (!AUTH_SECRET) {
@@ -25,6 +26,11 @@ export async function POST(req: NextRequest) {
     const rl = await checkRateLimit(`login:${ip}`, 5, 15 * 60 * 1000);
     if (!rl.allowed) {
       return NextResponse.json({ success: false, error: 'Troppi tentativi. Riprova tra 15 minuti.' }, { status: 429 });
+    }
+
+    const csrfToken = req.headers.get('x-csrf-token');
+    if (!validateCsrfToken(csrfToken)) {
+      return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
     }
 
     const { email, password } = await req.json();
