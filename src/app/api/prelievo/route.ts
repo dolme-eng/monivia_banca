@@ -55,12 +55,19 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await prisma.$transaction(async (tx) => {
+      const [lockedAccount] = await tx.$queryRaw<[{ id: string; balance: unknown }]>`
+        SELECT id, balance FROM "Account" WHERE id = ${accountId} FOR UPDATE
+      `;
+      if (!lockedAccount) {
+        return { success: false as const, error: 'Conto non trovato' };
+      }
+
       const pendingSum = await tx.transaction.aggregate({
         where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },
         _sum: { amount: true },
       });
       const pendingTotal = Number(pendingSum._sum.amount ?? 0);
-      const availableBalance = Number(account.balance) - pendingTotal;
+      const availableBalance = Number(lockedAccount.balance) - pendingTotal;
 
       if (availableBalance < amount) {
         return { success: false as const, error: 'Fondi insufficienti (transazioni in sospeso incluse)' };

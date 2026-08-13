@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { SignJWT, jwtVerify } from 'jose';
 import { prisma } from '@/lib/prisma';
 import { randomBytes } from 'node:crypto';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const AUTH_SECRET = process.env.AUTH_SECRET;
 if (!AUTH_SECRET) {
@@ -15,6 +16,12 @@ const REFRESH_TOKEN_TTL_DAYS = 7;
 export async function POST(req: NextRequest) {
   if (!secret) {
     return NextResponse.json({ success: false, error: 'Configurazione di sicurezza mancante' }, { status: 500 });
+  }
+
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`refresh:${ip}`, 20, 15 * 60 * 1000);
+  if (!rl.allowed) {
+    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
   }
 
   const refreshTokenValue = req.cookies.get('refresh-token')?.value;
