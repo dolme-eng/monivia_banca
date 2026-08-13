@@ -46,7 +46,7 @@ async function sendEmail(options: {
         subject: options.subject,
         html: options.html,
         replyTo: options.replyTo,
-        tracking: { open: false, click: false },
+        headers: { 'X-Entity-View-ID': 'no-track' },
       });
       return;
     } catch (err) {
