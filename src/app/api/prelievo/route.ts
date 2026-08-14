@@ -8,9 +8,9 @@ import { requireAuth } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 
 const prelievoSchema = z.object({
-  accountId: z.string(),
-  amount: z.number().positive(),
-  description: z.string().min(1),
+  accountId: z.string().uuid(),
+  amount: z.number().positive().max(1000000, 'Importo massimo 1.000.000'),
+  description: z.string().min(1).max(255).trim(),
 });
 
 export async function POST(req: NextRequest) {

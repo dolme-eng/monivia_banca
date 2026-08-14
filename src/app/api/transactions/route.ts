@@ -7,13 +7,15 @@ import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAuth } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 
+const IBAN_REGEX = /^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/;
+
 const transactionSchema = z.object({
-  accountId: z.string(),
+  accountId: z.string().uuid(),
   type: z.enum(['DEBIT', 'TRANSFER_OUT']),
-  amount: z.number().positive(),
-  description: z.string().min(1),
-  toIban: z.string().optional(),
-  idempotencyKey: z.string().optional(),
+  amount: z.number().positive().max(1000000, 'Importo massimo 1.000.000'),
+  description: z.string().min(1).max(255).trim(),
+  toIban: z.string().regex(IBAN_REGEX, 'IBAN non valido').optional(),
+  idempotencyKey: z.string().uuid().optional(),
 });
 
 export async function POST(req: NextRequest) {
