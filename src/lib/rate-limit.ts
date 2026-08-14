@@ -9,41 +9,44 @@ export async function checkRateLimit(
   const resetAt = new Date(now + windowMs);
 
   try {
-    const existing = await (prisma as any).$queryRaw<{ count: number; resetAt: Date }[]>`
-      SELECT count, "resetAt" FROM "RateLimitEntry" WHERE key = ${key} LIMIT 1
-    `;
+    const rows = await (prisma as any).$queryRawUnsafe<{ count: number; resetAt: Date }[]>(
+      `SELECT count, "resetAt" FROM "RateLimitEntry" WHERE key = $1 LIMIT 1`,
+      key
+    );
 
-    if (existing.length === 0) {
-      await (prisma as any).$executeRaw`
-        INSERT INTO "RateLimitEntry" (key, count, "resetAt")
-        VALUES (${key}, 1, ${resetAt})
-      `;
+    if (!rows || rows.length === 0) {
+      await (prisma as any).$executeRawUnsafe(
+        `INSERT INTO "RateLimitEntry" (key, count, "resetAt") VALUES ($1, 1, to_timestamp($2 / 1000.0))`,
+        key, resetAt.getTime()
+      );
       return { allowed: true, remaining: maxRequests - 1, resetAt: resetAt.getTime() };
     }
 
-    const entry = existing[0];
-    const entryResetAt = new Date(entry.resetAt).getTime();
+    const entry = rows[0];
+    const entryResetMs = new Date(entry.resetAt).getTime();
 
-    if (now >= entryResetAt) {
-      await (prisma as any).$executeRaw`
-        UPDATE "RateLimitEntry" SET count = 1, "resetAt" = ${resetAt} WHERE key = ${key}
-      `;
+    if (now >= entryResetMs) {
+      await (prisma as any).$executeRawUnsafe(
+        `UPDATE "RateLimitEntry" SET count = 1, "resetAt" = to_timestamp($1 / 1000.0) WHERE key = $2`,
+        resetAt.getTime(), key
+      );
       return { allowed: true, remaining: maxRequests - 1, resetAt: resetAt.getTime() };
     }
 
-    const newCount = entry.count + 1;
-    await (prisma as any).$executeRaw`
-      UPDATE "RateLimitEntry" SET count = ${newCount} WHERE key = ${key}
-    `;
+    const newCount = Number(entry.count) + 1;
+    await (prisma as any).$executeRawUnsafe(
+      `UPDATE "RateLimitEntry" SET count = $1 WHERE key = $2`,
+      newCount, key
+    );
 
     if (newCount > maxRequests) {
-      return { allowed: false, remaining: 0, resetAt: entryResetAt };
+      return { allowed: false, remaining: 0, resetAt: entryResetMs };
     }
 
-    return { allowed: true, remaining: maxRequests - newCount, resetAt: entryResetAt };
+    return { allowed: true, remaining: maxRequests - newCount, resetAt: entryResetMs };
   } catch (err) {
-    console.error('[RATE-LIMIT] Errore, fallback bloccato:', err);
-    return { allowed: false, remaining: 0, resetAt: resetAt.getTime() };
+    console.error('[RATE-LIMIT] Errore, fallback aperto:', err);
+    return { allowed: true, remaining: maxRequests, resetAt: resetAt.getTime() };
   }
 }
 
