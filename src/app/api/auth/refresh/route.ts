@@ -53,6 +53,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Refresh token scaduto' }, { status: 401 });
     }
 
+    // REUSE DETECTION: if token was already consumed, it's stolen — revoke ALL user tokens
+    if (dbToken.consumedAt) {
+      console.error(`[SECURITY] Refresh token reuse detected for user ${dbToken.userId}, token ${dbToken.id}`);
+      await prisma.refreshToken.deleteMany({ where: { userId: dbToken.userId } });
+      return NextResponse.json({ success: false, error: 'Token non valido' }, { status: 401 });
+    }
+
     const user = dbToken.user;
 
     const accessToken = await new SignJWT({
@@ -70,8 +77,12 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
 
+    // Mark old token as consumed instead of deleting — enables reuse detection
     await prisma.$transaction([
-      prisma.refreshToken.delete({ where: { id: dbToken.id } }),
+      prisma.refreshToken.update({
+        where: { id: dbToken.id },
+        data: { consumedAt: new Date() },
+      }),
       prisma.refreshToken.create({
         data: {
           token: newRefreshToken,
