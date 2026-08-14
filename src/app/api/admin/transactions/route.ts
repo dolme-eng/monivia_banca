@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
           const [currentAccount] = await tx.$queryRaw<[{ id: string; balance: unknown }]>`
             SELECT id, balance FROM "Account" WHERE id = ${transaction.accountId} FOR UPDATE
           `;
-          if (!currentAccount || Number(currentAccount.balance) < Number(transaction.amount)) {
+          if (!currentAccount || Number(currentAccount.balance) < Math.abs(Number(transaction.amount))) {
             return { success: false, error: 'Fondi insufficienti per questa transazione' };
           }
         }
