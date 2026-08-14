@@ -2,14 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/api-auth';
 
+const VALID_STATUSES = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'];
+const VALID_TYPES = ['CREDIT', 'DEBIT', 'TRANSFER_IN', 'TRANSFER_OUT'];
+
 export async function GET(req: NextRequest) {
   const auth = await requireAuth(req);
   if ('error' in auth) return auth.error;
 
   try {
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10) || 20));
     const status = searchParams.get('status');
     const type = searchParams.get('type');
     const skip = (page - 1) * limit;
@@ -24,10 +27,10 @@ export async function GET(req: NextRequest) {
     }
 
     const where: Record<string, unknown> = { accountId: account.id };
-    if (status && status !== 'ALL') {
+    if (status && status !== 'ALL' && VALID_STATUSES.includes(status)) {
       where.status = status;
     }
-    if (type && type !== 'ALL') {
+    if (type && type !== 'ALL' && VALID_TYPES.includes(type)) {
       where.type = type;
     }
 

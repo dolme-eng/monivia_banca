@@ -3,11 +3,13 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { validateCsrfToken } from '@/lib/csrf';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const resetPasswordSchema = z.object({
-  token: z.string().min(1),
+  token: z.string().min(1).max(256).trim(),
   password: z.string()
     .min(8, 'La password deve avere almeno 8 caratteri')
+    .max(128, 'La password non può superare 128 caratteri')
     .regex(/[A-Z]/, 'La password deve contenere almeno una lettera maiuscola')
     .regex(/[a-z]/, 'La password deve contenere almeno una lettera minuscola')
     .regex(/[0-9]/, 'La password deve contenere almeno un numero')
@@ -15,6 +17,12 @@ const resetPasswordSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`reset-password:${ip}`, 10, 15 * 60 * 1000);
+  if (!rl.allowed) {
+    return NextResponse.json({ success: false, error: 'Troppe richieste.' }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
 

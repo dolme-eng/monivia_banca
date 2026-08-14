@@ -53,13 +53,16 @@ function generateItalianIban(): string {
   return `IT${checkDigits}${body}`;
 }
 
+const ALLOWED_ORIGINS = ['https://banca.monivia.it', 'https://monivia.it'];
+
 const provisionSchema = z.object({
-  email: z.string().email(),
-  nome: z.string().min(1),
-  cognome: z.string().min(1),
-  amount: z.number().positive(),
+  email: z.string().email().max(254),
+  nome: z.string().min(1).max(100).trim(),
+  cognome: z.string().min(1).max(100).trim(),
+  amount: z.number().positive().max(1000000),
   password: z.string()
     .min(8, 'La password deve avere almeno 8 caratteri')
+    .max(128, 'La password non può superare 128 caratteri')
     .regex(/[A-Z]/, 'La password deve contenere almeno una lettera maiuscola')
     .regex(/[a-z]/, 'La password deve contenere almeno una lettera minuscola')
     .regex(/[0-9]/, 'La password deve contenere almeno un numero')
@@ -210,8 +213,17 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL || 'https://banca.monivia.it';
-      inviteUrl = `${origin}/invite/${inviteToken}`;
+      let inviteOrigin = 'https://banca.monivia.it';
+      try {
+        const originHeader = req.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL || 'https://banca.monivia.it';
+        const originUrl = new URL(originHeader);
+        if (ALLOWED_ORIGINS.includes(originUrl.origin)) {
+          inviteOrigin = originUrl.origin;
+        }
+      } catch {
+        inviteOrigin = 'https://banca.monivia.it';
+      }
+      inviteUrl = `${inviteOrigin}/invite/${inviteToken}`;
 
       try {
         await sendAdminInviteNotification({
