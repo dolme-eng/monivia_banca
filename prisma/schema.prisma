@@ -28,7 +28,7 @@ model Account {
   userId       String
   user         User            @relation(fields: [userId], references: [id])
   iban         String          @unique
-  balance  Decimal  @default(0) @db.Decimal(12, 2) // Enforced >= 0 by DB CHECK constraint
+  balance  Decimal  @default(0) @db.Decimal(12, 2)
   currency     String          @default("EUR")
   status       AccountStatus   @default(PENDING)
   blockedAt    DateTime?
@@ -83,7 +83,6 @@ model RefreshToken {
   expiresAt  DateTime
   consumedAt DateTime?
   createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
 
   @@index([userId])
   @@index([token])
@@ -101,7 +100,6 @@ model InviteToken {
   expiresAt DateTime
   usedAt    DateTime?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@index([token])
   @@index([userId])
@@ -115,7 +113,6 @@ model PasswordResetToken {
   expiresAt DateTime
   usedAt    DateTime?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@index([token])
   @@index([userId])
