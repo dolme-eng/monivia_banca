@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
+import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { randomBytes } from 'node:crypto';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { validateCsrfToken } from '@/lib/csrf';
+
+const loginSchema = z.object({
+  email: z.string().email('Email non valida').max(254).trim().toLowerCase(),
+  password: z.string().min(1, 'Password richiesta').max(128),
+});
 
 const AUTH_SECRET = process.env.AUTH_SECRET;
 if (!AUTH_SECRET) {
@@ -33,11 +39,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
     }
 
-    const { email, password } = await req.json();
-
-    if (!email || !password) {
-      return NextResponse.json({ success: false, error: 'Credenziali mancanti' }, { status: 400 });
+    const body = await req.json();
+    const parsed = loginSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: 'Dati non validi' }, { status: 400 });
     }
+    const { email, password } = parsed.data;
 
     const user = await prisma.user.findUnique({ where: { email } });
 
