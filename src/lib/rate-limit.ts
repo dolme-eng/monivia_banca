@@ -9,7 +9,7 @@ export async function checkRateLimit(
   const resetAt = new Date(now + windowMs);
 
   try {
-    const rows = await (prisma as any).$queryRawUnsafe(
+    const rows: any[] = await (prisma as any).$queryRawUnsafe(
       `SELECT count, "resetAt" FROM "RateLimitEntry" WHERE key = $1 LIMIT 1`,
       key
     );
