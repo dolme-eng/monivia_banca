@@ -224,6 +224,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               className="md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-500 hover:text-primary rounded-lg"
               onClick={() => setMobileOpen(true)}
               aria-label="Apri menu"
+              aria-expanded={mobileOpen}
             >
               <Menu size={20} />
             </button>

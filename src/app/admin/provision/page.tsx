@@ -428,7 +428,7 @@ export default function ProvisionPage() {
                       <p className="text-sm font-bold text-primary">{submittedData?.email || createResult.account?.email}</p>
                       <button
                         onClick={() => copyToClipboard(submittedData?.email || createResult.account?.email || '', 'email')}
-                        className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+                        className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
                         aria-label="Copia email"
                       >
                         {copied === 'email' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
@@ -442,7 +442,7 @@ export default function ProvisionPage() {
                         <p className="font-mono text-sm font-bold text-primary">{createResult.password}</p>
                         <button
                           onClick={() => copyToClipboard(createResult.password, 'password')}
-                          className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg border border-amber-200 hover:bg-amber-100 transition-colors"
+                          className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-amber-200 hover:bg-amber-100 transition-colors"
                           aria-label="Copia password"
                         >
                           {copied === 'password' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-amber-600" />}
@@ -462,7 +462,7 @@ export default function ProvisionPage() {
                       <p className="font-mono text-sm font-bold text-primary">{createResult.account.iban}</p>
                       <button
                         onClick={() => copyToClipboard(createResult.account.iban, 'iban')}
-                        className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+                        className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
                         aria-label="Copia IBAN"
                       >
                         {copied === 'iban' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
@@ -480,7 +480,7 @@ export default function ProvisionPage() {
                         <p className="font-mono text-sm font-bold text-primary">{createResult.card.number}</p>
                         <button
                           onClick={() => copyToClipboard(createResult.card.number, 'card')}
-                          className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+                          className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
                           aria-label="Copia numero carta"
                         >
                           {copied === 'card' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
@@ -522,7 +522,7 @@ export default function ProvisionPage() {
                   </div>
                 )}
 
-                <div className="mt-4 flex gap-2">
+                <div className="mt-4 flex flex-col sm:flex-row gap-2">
                   <button
                     onClick={sendEmailToClient}
                     disabled={emailSending || emailSent}

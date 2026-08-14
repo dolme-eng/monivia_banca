@@ -162,7 +162,7 @@ export default function AccountsPage() {
               className="w-full pl-10 pr-4 py-3 text-sm rounded-lg border border-slate-200 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto">
             {['', 'PENDING', 'ACTIVE', 'FROZEN', 'CLOSED'].map((s) => (
               <button
                 key={s}
@@ -217,7 +217,7 @@ export default function AccountsPage() {
                         {st.text}
                       </span>
                     </div>
-                    <div className="flex flex-wrap gap-x-6 gap-y-1 ml-13">
+                    <div className="flex flex-wrap gap-x-6 gap-y-1 ml-14">
                       <div>
                         <span className="text-[10px] text-slate-400 uppercase">IBAN</span>
                         <p className="text-xs font-mono text-slate-600">{acc.iban}</p>
