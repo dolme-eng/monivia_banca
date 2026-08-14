@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/api-auth';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const VALID_STATUSES = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'];
 const VALID_TYPES = ['CREDIT', 'DEBIT', 'TRANSFER_IN', 'TRANSFER_OUT'];
@@ -8,6 +9,12 @@ const VALID_TYPES = ['CREDIT', 'DEBIT', 'TRANSFER_IN', 'TRANSFER_OUT'];
 export async function GET(req: NextRequest) {
   const auth = await requireAuth(req);
   if ('error' in auth) return auth.error;
+
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`user-tx:${auth.session.userId}:${ip}`, 30, 10 * 60 * 1000);
+  if (!rl.allowed) {
+    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+  }
 
   try {
     const { searchParams } = new URL(req.url);

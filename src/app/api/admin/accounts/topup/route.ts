@@ -8,7 +8,7 @@ import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 
 const topupSchema = z.object({
-  accountId: z.string(),
+  accountId: z.string().uuid(),
   amount: z.number().positive().max(100000),
 });
 

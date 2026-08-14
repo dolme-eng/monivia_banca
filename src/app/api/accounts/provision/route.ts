@@ -243,7 +243,6 @@ export async function POST(req: NextRequest) {
       account: result.account,
       card: result.card,
       isNew: result.isNew,
-      userId: result.userId,
       inviteUrl,
     });
   } catch (error) {
