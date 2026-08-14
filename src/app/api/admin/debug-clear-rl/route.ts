@@ -1,0 +1,18 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+export async function POST(req: Request) {
+  const auth = req.headers.get('authorization');
+  if (auth !== `Bearer ${process.env.CSRF_SECRET}`) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  try {
+    await (prisma as any).$executeRawUnsafe(`DELETE FROM "RateLimitEntry"`);
+    await (prisma as any).$executeRawUnsafe(
+      `UPDATE "User" SET "failedAttempts" = 0, "lockedUntil" = NULL WHERE email = 'admin@monivia.it'`
+    );
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return NextResponse.json({ error: String(e) }, { status: 500 });
+  }
+}
