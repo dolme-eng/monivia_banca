@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateCsrfToken } from '@/lib/csrf';
 import { jwtVerify } from 'jose';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const AUTH_SECRET = process.env.AUTH_SECRET;
 const secret = AUTH_SECRET ? new TextEncoder().encode(AUTH_SECRET) : null;
@@ -10,6 +11,12 @@ export async function POST(req: Request) {
   const csrfToken = req.headers.get('x-csrf-token');
   if (!validateCsrfToken(csrfToken)) {
     return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
+  }
+
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`logout:${ip}`, 30, 15 * 60 * 1000);
+  if (!rl.allowed) {
+    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
   }
 
   const accessToken = req.headers.get('cookie')?.match(/(?:__Secure-)?authjs\.session-token=([^;]+)/)?.[1];
