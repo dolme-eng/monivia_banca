@@ -5,35 +5,44 @@ export async function checkRateLimit(
   maxRequests: number,
   windowMs: number
 ): Promise<{ allowed: boolean; remaining: number; resetAt: number }> {
-  const now = new Date();
-  const resetAt = new Date(now.getTime() + windowMs);
+  const now = Date.now();
+  const resetAt = new Date(now + windowMs);
 
   try {
-    const [result] = await (prisma as any).$queryRaw<[{ count: bigint; reset_at: Date }]>`
-      INSERT INTO "RateLimitEntry" (key, count, "resetAt")
-      VALUES (${key}, 1, ${resetAt})
-      ON CONFLICT (key) DO UPDATE
-      SET count = CASE
-        WHEN "RateLimitEntry"."resetAt" <= NOW() THEN 1
-        ELSE "RateLimitEntry".count + 1
-      END,
-      "resetAt" = CASE
-        WHEN "RateLimitEntry"."resetAt" <= NOW() THEN ${resetAt}
-        ELSE "RateLimitEntry"."resetAt"
-      END
-      RETURNING count, "resetAt" as reset_at
+    const existing = await (prisma as any).$queryRaw<{ count: number; resetAt: Date }[]>`
+      SELECT count, "resetAt" FROM "RateLimitEntry" WHERE key = ${key} LIMIT 1
     `;
 
-    const currentCount = Number(result.count);
-    const currentResetAt = new Date(result.reset_at).getTime();
-
-    if (currentCount > maxRequests) {
-      return { allowed: false, remaining: 0, resetAt: currentResetAt };
+    if (existing.length === 0) {
+      await (prisma as any).$executeRaw`
+        INSERT INTO "RateLimitEntry" (key, count, "resetAt")
+        VALUES (${key}, 1, ${resetAt})
+      `;
+      return { allowed: true, remaining: maxRequests - 1, resetAt: resetAt.getTime() };
     }
 
-    return { allowed: true, remaining: maxRequests - currentCount, resetAt: currentResetAt };
+    const entry = existing[0];
+    const entryResetAt = new Date(entry.resetAt).getTime();
+
+    if (now >= entryResetAt) {
+      await (prisma as any).$executeRaw`
+        UPDATE "RateLimitEntry" SET count = 1, "resetAt" = ${resetAt} WHERE key = ${key}
+      `;
+      return { allowed: true, remaining: maxRequests - 1, resetAt: resetAt.getTime() };
+    }
+
+    const newCount = entry.count + 1;
+    await (prisma as any).$executeRaw`
+      UPDATE "RateLimitEntry" SET count = ${newCount} WHERE key = ${key}
+    `;
+
+    if (newCount > maxRequests) {
+      return { allowed: false, remaining: 0, resetAt: entryResetAt };
+    }
+
+    return { allowed: true, remaining: maxRequests - newCount, resetAt: entryResetAt };
   } catch (err) {
-    console.error('[RATE-LIMIT] Errore Supabase, fallback bloccato:', err);
+    console.error('[RATE-LIMIT] Errore, fallback bloccato:', err);
     return { allowed: false, remaining: 0, resetAt: resetAt.getTime() };
   }
 }
