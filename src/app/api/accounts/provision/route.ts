@@ -253,8 +253,9 @@ export async function POST(req: NextRequest) {
       isNew: result.isNew,
       inviteUrl,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Provision error:', error);
-    return NextResponse.json({ success: false, error: 'Errore durante il provisioning' }, { status: 500 });
+    const msg = error instanceof Error ? error.message : 'Errore durante il provisioning';
+    return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { CheckCircle2, AlertCircle, Eye, EyeOff, Search, CreditCard, Banknote, User, Copy, ExternalLink, Mail, Loader2 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -41,6 +41,17 @@ export default function ProvisionPage() {
   const [submittedData, setSubmittedData] = useState<{ email: string; nome: string; cognome: string } | null>(null);
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+
+  const passwordChecks = useMemo(() => {
+    const p = formData.password;
+    return [
+      { label: 'Almeno 8 caratteri', ok: p.length >= 8 },
+      { label: 'Una lettera maiuscola', ok: /[A-Z]/.test(p) },
+      { label: 'Una lettera minuscola', ok: /[a-z]/.test(p) },
+      { label: 'Un numero', ok: /[0-9]/.test(p) },
+      { label: 'Un carattere speciale', ok: /[^A-Za-z0-9]/.test(p) },
+    ];
+  }, [formData.password]);
 
   const doSearch = useCallback(async () => {
     if (searchQuery.trim().length < 2) return;
@@ -398,6 +409,15 @@ export default function ProvisionPage() {
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
+                  {formData.password.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                      {passwordChecks.map((c) => (
+                        <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-600' : 'text-red-500'}`}>
+                          {c.ok ? '✓' : '○'} {c.label}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Importo del prestito approvato (€) *</label>
