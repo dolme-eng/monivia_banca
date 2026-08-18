@@ -95,7 +95,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email, nome, cognome, amount, password } = provisionSchema.parse(body);
+    const parsed = provisionSchema.safeParse(body);
+    if (!parsed.success) {
+      const firstError = parsed.error.issues[0];
+      return NextResponse.json(
+        { success: false, error: firstError?.message || 'Dati non validi' },
+        { status: 400 }
+      );
+    }
+    const { email, nome, cognome, amount, password } = parsed.data;
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
