@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { hashToken } from '@/lib/tokens';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 
 export async function GET(
   req: NextRequest,
@@ -9,14 +10,14 @@ export async function GET(
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`invite:${ip}`, 10, 15 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   try {
     const { token } = await params;
 
     const invite = await prisma.inviteToken.findUnique({
-      where: { token },
+      where: { token: hashToken(token) },
       select: {
         id: true,
         email: true,

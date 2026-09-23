@@ -1,22 +1,26 @@
 const bcrypt = require('bcryptjs');
-const password = 'Admin@2026!';
+
+// Usage: node verify-hash.cjs "<password>" "<bcrypt-hash>"
+// Verifies a password against a hash passed as arguments — nothing hardcoded.
+const password = process.argv[2];
+const dbHash = process.argv[3];
+
+if (!password || !dbHash) {
+  console.error('Usage: node verify-hash.cjs "<password>" "<bcrypt-hash>"');
+  process.exit(1);
+}
 
 // Generate fresh hash
 bcrypt.hash(password, 12).then(hash => {
-  console.log('Fresh hash:', hash);
-  
+  console.log('Fresh hash generated.');
+
   // Verify it
   bcrypt.compare(password, hash).then(ok => {
     console.log('Verify fresh hash:', ok);
-    
-    // Now test the DB hash from screenshot
-    const dbHash = '$2b$12$mq4uD46QhgTXMEhAOTMoeOdSkAAfThLdhWKTbG6itaM4WTX4sVSPW';
-    console.log('DB hash:', dbHash);
+
+    console.log('Verifying provided hash...');
     bcrypt.compare(password, dbHash).then(ok2 => {
-      console.log('Verify DB hash:', ok2);
-      console.log('');
-      console.log('=== USE THIS HASH IN SQL ===');
-      console.log(hash);
+      console.log('Verify provided hash:', ok2);
     });
   });
 });

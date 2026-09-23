@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 import { validateCsrfToken } from '@/lib/csrf';
@@ -27,15 +27,19 @@ export async function PATCH(
   }
 
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`admin-card-action:${ip}`, 30, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`admin-card-action:${auth.session.userId}:${ip}`, 30, 10 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   try {
     const { id } = await params;
     const body = await req.json();
-    const { action } = statusSchema.parse(body);
+    const parsed = statusSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: 'Azione non valida' }, { status: 400 });
+    }
+    const { action } = parsed.data;
 
     const card = await prisma.card.findUnique({
       where: { id },

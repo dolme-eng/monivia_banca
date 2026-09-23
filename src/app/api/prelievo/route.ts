@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { sendAdminPrelievoNotification } from '@/lib/email-notify';
 import { requireAuth } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
@@ -32,14 +33,18 @@ export async function POST(req: NextRequest) {
   }
 
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`prelievo:${ip}`, 5, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`prelievo:${auth.session.userId}:${ip}`, 5, 10 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   try {
     const body = await req.json();
-    const { accountId, amount, description } = prelievoSchema.parse(body);
+    const parsed = prelievoSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: 'Dati non validi' }, { status: 400 });
+    }
+    const { accountId, amount, description } = parsed.data;
 
     const account = await prisma.account.findUnique({ where: { id: accountId } });
     if (!account || account.userId !== auth.session.userId) {
@@ -66,7 +71,8 @@ export async function POST(req: NextRequest) {
         where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },
         _sum: { amount: true },
       });
-      const pendingTotal = Number(pendingSum._sum.amount ?? 0);
+      // PENDING debits are stored negative — use abs() so they REDUCE available balance
+      const pendingTotal = Math.abs(Number(pendingSum._sum.amount ?? 0));
       const availableBalance = Number(lockedAccount.balance) - pendingTotal;
 
       if (availableBalance < amount) {
@@ -80,7 +86,7 @@ export async function POST(req: NextRequest) {
           amount: -amount,
           description,
           status: 'PENDING',
-          reference: `PRELIEVO-${Date.now()}`,
+          reference: `PRELIEVO-${randomUUID()}`,
         },
         include: { account: { include: { user: true } } },
       });

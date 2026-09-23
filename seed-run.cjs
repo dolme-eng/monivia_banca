@@ -1,11 +1,19 @@
 require('dotenv/config');
-const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
+const { PrismaClient } = require('@prisma/client');
 
+// Usage: node seed-run.cjs
+// Credentials come from ADMIN_EMAIL / ADMIN_PASSWORD env vars — never hardcoded.
 async function main() {
   const prisma = new PrismaClient({});
-  const email = 'admin@monivia.it';
-  const pass = 'Admin@2026!';
+  const email = process.env.ADMIN_EMAIL;
+  const pass = process.env.ADMIN_PASSWORD;
+
+  if (!email || !pass || pass.length < 12) {
+    console.error('ADMIN_EMAIL and ADMIN_PASSWORD (min 12 chars) must be set in env');
+    await prisma.$disconnect();
+    process.exit(1);
+  }
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {

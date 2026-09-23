@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/api-auth';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 
 export async function GET(req: Request) {
   const auth = await requireAuth(req as any);
@@ -10,6 +11,13 @@ export async function GET(req: Request) {
 
   if (!session?.userId) {
     return NextResponse.json({ success: false, error: 'Non autenticato' }, { status: 401 });
+  }
+
+  // Read-only endpoint: fail-open to preserve availability on store outage
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`user-account:${session.userId}:${ip}`, 60, 10 * 60 * 1000, { failClosed: false });
+  if (!rl.allowed) {
+    return rateLimitedResponse(rl);
   }
 
   try {

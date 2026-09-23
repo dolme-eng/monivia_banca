@@ -119,4 +119,5 @@ git push origin main
 ## Credenziali admin
 
 - Email: `admin@monivia.it`
-- Password: `Admin@2026!`
+- Password: definita via `ADMIN_PASSWORD` (env, mai committata).
+  Generazione hash: `node gen-hash.cjs "<password>"`

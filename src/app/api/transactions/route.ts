@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { requireAuth } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 
@@ -40,16 +40,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
   }
 
-  // 4. Rate limiting (20 requests per 10 minutes per IP)
+  // 4. Rate limiting (20 requests per 10 minutes per user+IP)
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`tx:${ip}`, 20, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`tx:${auth.session.userId}:${ip}`, 20, 10 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   try {
     const body = await req.json();
-    const { accountId, type, amount, description, toIban, idempotencyKey: clientKey } = transactionSchema.parse(body);
+    const parsed = transactionSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: 'Dati non validi' }, { status: 400 });
+    }
+    const { accountId, type, amount, description, toIban, idempotencyKey: clientKey } = parsed.data;
     const reference = clientKey || idempotencyKey;
 
     if (type === 'TRANSFER_OUT' && !toIban) {
@@ -70,9 +74,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'I trasferimenti sono bloccati sul tuo conto.' }, { status: 403 });
     }
 
-    // Idempotency check - if transaction with this reference already exists, return success
+    // Idempotency check — scoped per account so one client cannot squat another's reference
     const existingTransaction = await prisma.transaction.findFirst({
-      where: { reference },
+      where: { reference, accountId },
     });
     if (existingTransaction) {
       return NextResponse.json({ success: true, message: 'Transazione già elaborata' });
@@ -90,7 +94,8 @@ export async function POST(req: NextRequest) {
         where: { accountId, status: 'PENDING', type: { in: ['DEBIT', 'TRANSFER_OUT'] } },
         _sum: { amount: true },
       });
-      const pendingTotal = Number(pendingSum._sum.amount ?? 0);
+      // PENDING debits are stored negative — use abs() so they REDUCE available balance
+      const pendingTotal = Math.abs(Number(pendingSum._sum.amount ?? 0));
       const availableBalance = Number(lockedAccount.balance) - pendingTotal;
 
       if (availableBalance < amount) {
@@ -104,7 +109,7 @@ export async function POST(req: NextRequest) {
           amount: -amount,
           description,
           status: 'PENDING',
-          reference: reference || `TX-${Date.now()}`,
+          reference,
         },
       });
 

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { randomBytes, createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
+import { hashToken, newToken } from '@/lib/tokens';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { validateCsrfToken } from '@/lib/csrf';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 import { sendAdminInviteNotification } from '@/lib/email-notify';
@@ -88,9 +89,9 @@ export async function POST(req: NextRequest) {
   }
 
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`provision:${ip}`, 10, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`provision:${auth.session.userId}:${ip}`, 10, 10 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   try {
@@ -134,7 +135,7 @@ export async function POST(req: NextRequest) {
             amount,
             description: 'Accredito aggiuntivo - Prestito Monivia',
             status: 'APPROVED',
-            reference: `TOPUP-${Date.now()}`,
+            reference: `TOPUP-${randomUUID()}`,
           },
         });
 
@@ -171,7 +172,7 @@ export async function POST(req: NextRequest) {
           amount,
           description: 'Accredito iniziale - Prestito Monivia',
           status: 'APPROVED',
-          reference: `LOAN-${Date.now()}`,
+          reference: `LOAN-${randomUUID()}`,
         },
       });
 
@@ -206,13 +207,14 @@ export async function POST(req: NextRequest) {
     let inviteToken: string | undefined;
 
     if (result.isNew) {
-      inviteToken = randomBytes(32).toString('hex');
+      inviteToken = newToken(32);
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + 24);
 
+      // Store only the hash — the raw value goes into the invite link once
       await prisma.inviteToken.create({
         data: {
-          token: inviteToken,
+          token: hashToken(inviteToken),
           userId: result.userId!,
           email,
           nome,
@@ -254,8 +256,8 @@ export async function POST(req: NextRequest) {
       inviteUrl,
     });
   } catch (error: unknown) {
-    console.error('Provision error:', error);
-    const msg = error instanceof Error ? error.message : 'Errore durante il provisioning';
-    return NextResponse.json({ success: false, error: msg }, { status: 500 });
+    // Server log keeps details for debugging; the client only gets a generic message.
+    console.error('Provision error:', error instanceof Error ? error.message : error);
+    return NextResponse.json({ success: false, error: 'Errore durante il provisioning' }, { status: 500 });
   }
 }

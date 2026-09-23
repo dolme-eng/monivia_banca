@@ -3,8 +3,8 @@ import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { randomBytes } from 'node:crypto';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { hashToken, newToken } from '@/lib/tokens';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { validateCsrfToken } from '@/lib/csrf';
 
 const loginSchema = z.object({
@@ -28,12 +28,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'Configurazione di sicurezza mancante' }, { status: 500 });
   }
   try {
-    const ip = getClientIp(req);
-    const rl = await checkRateLimit(`login:${ip}`, 5, 15 * 60 * 1000);
-    if (!rl.allowed) {
-      return NextResponse.json({ success: false, error: 'Troppi tentativi. Riprova tra 15 minuti.' }, { status: 429 });
-    }
-
     const csrfToken = req.headers.get('x-csrf-token');
     if (!validateCsrfToken(csrfToken)) {
       return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
@@ -46,10 +40,26 @@ export async function POST(req: NextRequest) {
     }
     const { email, password } = parsed.data;
 
+    // Keyed by email + IP so X-Forwarded-For spoofing alone cannot bypass throttling
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`login:${email}:${ip}`, 5, 15 * 60 * 1000);
+    if (!rl.allowed) {
+      return rateLimitedResponse(rl, 'Troppi tentativi. Riprova tra 15 minuti.');
+    }
+
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user || !user.hashedPassword) {
-      await bcrypt.compare('dummy_hash_to_prevent_timing_attack', '$2a$12$x' + '0'.repeat(53));
+      // Validly-formatted dummy hash (cost 10) so a missing user costs ~same time
+      // as a real bcrypt comparison; never throws on malformed salt.
+      try {
+        await bcrypt.compare(
+          'dummy_password_never_matches_7f3a',
+          '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdLPAZq'
+        );
+      } catch {
+        /* ignore — timing mitigation only */
+      }
       return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
     }
 
@@ -120,19 +130,20 @@ export async function POST(req: NextRequest) {
 
     let refreshTokenValue: string | null = null;
     try {
-      refreshTokenValue = randomBytes(40).toString('hex');
+      refreshTokenValue = newToken(40);
       const refreshExpiresAt = new Date();
       refreshExpiresAt.setDate(refreshExpiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
 
+      // Store only the hash — the raw value goes to the httpOnly cookie once
       await prisma.refreshToken.create({
         data: {
-          token: refreshTokenValue,
+          token: hashToken(refreshTokenValue),
           userId: user.id,
           expiresAt: refreshExpiresAt,
         },
       });
     } catch (err) {
-      console.error('[LOGIN] Refresh token creation failed:', err);
+      console.error('[LOGIN] Refresh token creation failed');
       refreshTokenValue = null;
     }
 

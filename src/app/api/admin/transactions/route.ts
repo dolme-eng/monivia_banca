@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { sendClientTransactionUpdate } from '@/lib/email-notify';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 
 const approvalSchema = z.object({
-  transactionId: z.string(),
+  transactionId: z.string().uuid('ID transazione non valido'),
   action: z.enum(['APPROVE', 'REJECT']),
 });
 
@@ -33,16 +33,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
   }
 
-  // 4. Rate limiting (30 requests per 10 minutes per IP)
+  // 4. Rate limiting (30 requests per 10 minutes per admin+IP)
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`admin:${ip}`, 30, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`admin:${auth.session.userId}:${ip}`, 30, 10 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   try {
     const body = await req.json();
-    const { transactionId, action } = approvalSchema.parse(body);
+    const parsed = approvalSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: 'Dati non validi' }, { status: 400 });
+    }
+    const { transactionId, action } = parsed.data;
 
     const transaction = await prisma.transaction.findUnique({
       where: { id: transactionId },
@@ -64,10 +68,15 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        await tx.transaction.update({
-          where: { id: transactionId },
+        // Atomic claim: only a PENDING transaction can transition.
+        // Concurrent approves/cancels: exactly one wins, others get count 0.
+        const claim = await tx.transaction.updateMany({
+          where: { id: transactionId, status: 'PENDING' },
           data: { status: 'APPROVED' },
         });
+        if (claim.count !== 1) {
+          return { success: false, error: 'Transazione non trovata o non in sospeso' };
+        }
 
         if (transaction.type === 'DEBIT' || transaction.type === 'TRANSFER_OUT') {
           await tx.account.update({
@@ -81,10 +90,13 @@ export async function POST(req: NextRequest) {
           });
         }
       } else {
-        await tx.transaction.update({
-          where: { id: transactionId },
+        const claim = await tx.transaction.updateMany({
+          where: { id: transactionId, status: 'PENDING' },
           data: { status: 'REJECTED' },
         });
+        if (claim.count !== 1) {
+          return { success: false, error: 'Transazione non trovata o non in sospeso' };
+        }
       }
 
       return { success: true, message: `Transazione ${action === 'APPROVE' ? 'approvata' : 'rifiutata'}` };
@@ -116,7 +128,7 @@ export async function GET(req: NextRequest) {
 
   // Rate limiting (read endpoint, less restrictive)
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`admin-read:${ip}`, 60, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`admin-read:${ip}`, 60, 10 * 60 * 1000, { failClosed: false });
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
   }

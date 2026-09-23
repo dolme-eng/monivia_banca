@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 import { validateCsrfToken } from '@/lib/csrf';
@@ -27,15 +27,19 @@ export async function PATCH(
   }
 
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`admin-tx-action:${ip}`, 30, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`admin-tx-action:${auth.session.userId}:${ip}`, 30, 10 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   try {
     const { id } = await params;
     const body = await req.json();
-    const { action } = txActionSchema.parse(body);
+    const parsed = txActionSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: 'Azione non valida' }, { status: 400 });
+    }
+    const { action } = parsed.data;
 
     const tx = await prisma.transaction.findUnique({
       where: { id },
@@ -54,12 +58,18 @@ export async function PATCH(
     }
 
     if (action === 'cancel') {
-      const updated = await prisma.transaction.update({
-        where: { id },
+      // Atomic claim: only a PENDING transaction can be cancelled (approve-vs-cancel race safe)
+      const updated = await prisma.transaction.updateMany({
+        where: { id, status: 'PENDING' },
         data: { status: 'CANCELLED' },
-        select: { id: true, status: true },
       });
-      return NextResponse.json({ success: true, transaction: updated });
+      if (updated.count !== 1) {
+        return NextResponse.json(
+          { success: false, error: 'Solo le transazioni in attesa possono essere modificate' },
+          { status: 400 }
+        );
+      }
+      return NextResponse.json({ success: true, transaction: { id, status: 'CANCELLED' } });
     }
 
     // action === 'pause' — keeps it PENDING (no-op, just confirmation)

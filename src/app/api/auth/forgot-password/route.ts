@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { randomBytes } from 'node:crypto';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { hashToken, newToken } from '@/lib/tokens';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { sendPasswordResetEmail } from '@/lib/email-notify';
 import { validateCsrfToken } from '@/lib/csrf';
 
@@ -11,12 +11,6 @@ const forgotPasswordSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const ip = getClientIp(req);
-  const rl = await checkRateLimit(`forgot-password:${ip}`, 3, 60 * 60 * 1000);
-  if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste. Riprova più tardi.' }, { status: 429 });
-  }
-
   const csrfToken = req.headers.get('x-csrf-token');
   if (!validateCsrfToken(csrfToken)) {
     return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
@@ -24,7 +18,18 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email } = forgotPasswordSchema.parse(body);
+    const parsed = forgotPasswordSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: 'Email non valida' }, { status: 400 });
+    }
+    const { email } = parsed.data;
+
+    // Keyed by email + IP so header spoofing alone cannot bypass throttling
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`forgot-password:${email.toLowerCase()}:${ip}`, 3, 60 * 60 * 1000);
+    if (!rl.allowed) {
+      return rateLimitedResponse(rl, 'Troppe richieste. Riprova più tardi.');
+    }
 
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
@@ -41,19 +46,20 @@ export async function POST(req: NextRequest) {
       where: { userId: user.id },
     });
 
-    const token = randomBytes(32).toString('hex');
+    const token = newToken(32);
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 1);
 
+    // Store only the hash — the raw value goes into the emailed link once
     await prisma.passwordResetToken.create({
       data: {
-        token,
+        token: hashToken(token),
         userId: user.id,
         expiresAt,
       },
     });
 
-    const allowedOrigins = ['https://banca.monivia.it', 'https://monivia.it'];
+    const allowedOrigins = ['https://banca.monivia.it', 'https://monivia.it', 'https://www.monivia.it'];
     const originHeader = req.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL || 'https://banca.monivia.it';
     let validatedOrigin = originHeader;
     try {

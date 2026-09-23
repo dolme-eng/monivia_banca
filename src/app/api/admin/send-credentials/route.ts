@@ -5,7 +5,7 @@ import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 import { validateCsrfToken } from '@/lib/csrf';
 import { sendClientWelcomeEmail } from '@/lib/email-notify';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 
 const sendCredentialsSchema = z.object({
   userId: z.string().uuid().optional(),
@@ -24,9 +24,9 @@ export async function POST(req: NextRequest) {
   if ('error' in auth) return auth.error;
 
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`send-credentials:${ip}`, 20, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`send-credentials:${auth.session.userId}:${ip}`, 20, 10 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste.' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   if (!checkOrigin(req)) {

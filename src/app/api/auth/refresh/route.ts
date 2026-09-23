@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SignJWT, jwtVerify } from 'jose';
 import { prisma } from '@/lib/prisma';
-import { randomBytes } from 'node:crypto';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { hashToken, newToken } from '@/lib/tokens';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { validateCsrfToken } from '@/lib/csrf';
 
 const AUTH_SECRET = process.env.AUTH_SECRET;
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`refresh:${ip}`, 20, 15 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   const csrfToken = req.headers.get('x-csrf-token');
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     prisma.refreshToken.deleteMany({ where: { expiresAt: { lt: new Date() } } }).catch(() => {});
 
     const dbToken = await prisma.refreshToken.findUnique({
-      where: { token: refreshTokenValue },
+      where: { token: hashToken(refreshTokenValue) },
       include: { user: true },
     });
 
@@ -62,6 +62,22 @@ export async function POST(req: NextRequest) {
 
     const user = dbToken.user;
 
+    // Re-check lockout and account status: a FROZEN/CLOSED/locked account
+    // must not keep minting access tokens through refresh.
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      await prisma.refreshToken.delete({ where: { id: dbToken.id } }).catch(() => {});
+      return NextResponse.json({ success: false, error: 'Account bloccato' }, { status: 401 });
+    }
+
+    const account = await prisma.account.findFirst({
+      where: { userId: user.id },
+      select: { status: true },
+    });
+    if (account && account.status !== 'ACTIVE') {
+      await prisma.refreshToken.delete({ where: { id: dbToken.id } }).catch(() => {});
+      return NextResponse.json({ success: false, error: 'Conto non attivo' }, { status: 403 });
+    }
+
     const accessToken = await new SignJWT({
       name: `${user.nome} ${user.cognome}`,
       email: user.email,
@@ -73,7 +89,7 @@ export async function POST(req: NextRequest) {
       .setExpirationTime(ACCESS_TOKEN_TTL)
       .sign(secret);
 
-    const newRefreshToken = randomBytes(40).toString('hex');
+    const newRefreshToken = newToken(40);
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
 
@@ -85,7 +101,7 @@ export async function POST(req: NextRequest) {
       }),
       prisma.refreshToken.create({
         data: {
-          token: newRefreshToken,
+          token: hashToken(newRefreshToken),
           userId: user.id,
           expiresAt,
         },

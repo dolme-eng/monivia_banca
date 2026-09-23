@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { randomBytes } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { validateCsrfToken } from '@/lib/csrf';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 
@@ -31,14 +31,18 @@ export async function POST(req: NextRequest) {
   }
 
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`topup:${ip}`, 20, 10 * 60 * 1000);
+  const rl = await checkRateLimit(`topup:${auth.session.userId}:${ip}`, 20, 10 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   try {
     const body = await req.json();
-    const { accountId, amount } = topupSchema.parse(body);
+    const parsed = topupSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: 'Dati non validi' }, { status: 400 });
+    }
+    const { accountId, amount } = parsed.data;
 
     const result = await prisma.$transaction(async (tx) => {
       const account = await tx.account.findUnique({
@@ -57,7 +61,7 @@ export async function POST(req: NextRequest) {
           amount,
           description: 'Accredito aggiuntivo - Prestito Monivia',
           status: 'APPROVED',
-          reference: `TOPUP-${Date.now()}`,
+          reference: `TOPUP-${randomUUID()}`,
         },
       });
 

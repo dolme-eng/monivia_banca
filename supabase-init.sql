@@ -125,10 +125,14 @@ CREATE INDEX IF NOT EXISTS "PasswordResetToken_token_idx" ON "PasswordResetToken
 CREATE INDEX IF NOT EXISTS "PasswordResetToken_userId_idx" ON "PasswordResetToken"("userId");
 
 -- Create admin user
+-- SECURITY: never commit a real password hash. Generate one locally with:
+--   node gen-hash.cjs "Your-Strong-Password-Here"
+-- ...then paste the resulting hash below, or preferably create the admin via:
+--   ADMIN_EMAIL=... ADMIN_PASSWORD=... npx prisma db seed
 -- The $ in bcrypt hashes is safe inside single-quoted strings in PostgreSQL.
 -- Dollar-quoting only triggers with $$ (double dollar), not single $.
--- To update the password hash later, run:
+-- To rotate the password hash later, run:
 --   UPDATE "User" SET "hashedPassword" = '$2b$12$...' WHERE email = 'admin@monivia.it';
 INSERT INTO "User" (id, email, "hashedPassword", nome, cognome, role, "createdAt", "updatedAt")
-VALUES (gen_random_uuid()::text, 'admin@monivia.it', '$2b$12$qmG0cPaJia3VMWAoLsefo.zxnChYtuoc9Kb6ukqte.qLb7m6AizJ2', 'Admin', 'Monivia', 'ADMIN', now(), now())
+VALUES (gen_random_uuid()::text, 'admin@monivia.it', '$2b$12$REPLACE_WITH_GENERATED_HASH', 'Admin', 'Monivia', 'ADMIN', now(), now())
 ON CONFLICT (email) DO NOTHING;

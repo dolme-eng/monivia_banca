@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { hashToken } from '@/lib/tokens';
 import { validateCsrfToken } from '@/lib/csrf';
 import { jwtVerify } from 'jose';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 
 const AUTH_SECRET = process.env.AUTH_SECRET;
 const secret = AUTH_SECRET ? new TextEncoder().encode(AUTH_SECRET) : null;
@@ -16,10 +17,12 @@ export async function POST(req: Request) {
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`logout:${ip}`, 30, 15 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
-  const accessToken = req.headers.get('cookie')?.match(/(?:__Secure-)?authjs\.session-token=([^;]+)/)?.[1];
+  const cookieHeader = req.headers.get('cookie') ?? '';
+  const accessToken = cookieHeader.match(/(?:__Secure-)?authjs\.session-token=([^;]+)/)?.[1];
+  const refreshCookie = cookieHeader.match(/(?:^|;\s*)refresh-token=([^;]+)/)?.[1];
 
   if (accessToken && secret) {
     try {
@@ -29,8 +32,14 @@ export async function POST(req: Request) {
         await prisma.refreshToken.deleteMany({ where: { userId } }).catch(() => {});
       }
     } catch {
-      // Token invalid/expired — still proceed with logout
+      // Token invalid/expired — fall through to refresh-cookie revocation below
     }
+  }
+
+  // Fallback: access token expired/invalid — revoke the presented refresh token directly
+  // so a stolen refresh token does not survive logout.
+  if (refreshCookie) {
+    await prisma.refreshToken.deleteMany({ where: { token: hashToken(refreshCookie) } }).catch(() => {});
   }
 
   const response = NextResponse.json({ success: true });

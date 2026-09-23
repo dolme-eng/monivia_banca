@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { hashToken } from '@/lib/tokens';
 import { validateCsrfToken } from '@/lib/csrf';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 
 const resetPasswordSchema = z.object({
   token: z.string().min(1).max(256).trim(),
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`reset-password:${ip}`, 10, 15 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste.' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   try {
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
     const { token, password } = resetPasswordSchema.parse(body);
 
     const resetToken = await prisma.passwordResetToken.findUnique({
-      where: { token },
+      where: { token: hashToken(token) },
       select: { id: true, userId: true, expiresAt: true, usedAt: true },
     });
 
@@ -48,6 +49,15 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Atomic single-use claim: concurrent replays of the same token all fail except one
+    const claim = await prisma.passwordResetToken.updateMany({
+      where: { id: resetToken.id, usedAt: null, expiresAt: { gt: new Date() } },
+      data: { usedAt: new Date() },
+    });
+    if (claim.count !== 1) {
+      return NextResponse.json({ success: false, error: 'Link non valido o scaduto' }, { status: 400 });
+    }
+
     await prisma.$transaction([
       prisma.user.update({
         where: { id: resetToken.userId },
@@ -55,10 +65,6 @@ export async function POST(req: NextRequest) {
       }),
       prisma.refreshToken.deleteMany({
         where: { userId: resetToken.userId },
-      }),
-      prisma.passwordResetToken.update({
-        where: { id: resetToken.id },
-        data: { usedAt: new Date() },
       }),
     ]);
 

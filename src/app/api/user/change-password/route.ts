@@ -4,7 +4,8 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/api-auth';
 import { validateCsrfToken } from '@/lib/csrf';
-import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
+import { checkOrigin } from '@/lib/origin';
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'Password attuale richiesta').max(128),
@@ -21,10 +22,19 @@ export async function POST(req: NextRequest) {
   const auth = await requireAuth(req);
   if ('error' in auth) return auth.error;
 
+  if (!checkOrigin(req)) {
+    return NextResponse.json({ success: false, error: 'Accesso negato' }, { status: 403 });
+  }
+
+  const ct = req.headers.get('content-type');
+  if (!ct?.includes('application/json')) {
+    return NextResponse.json({ success: false, error: 'Content-Type non valido' }, { status: 415 });
+  }
+
   const ip = getClientIp(req);
-  const rl = await checkRateLimit(`change-password:${ip}`, 5, 15 * 60 * 1000);
+  const rl = await checkRateLimit(`change-password:${auth.session.userId}:${ip}`, 5, 15 * 60 * 1000);
   if (!rl.allowed) {
-    return NextResponse.json({ success: false, error: 'Troppe richieste.' }, { status: 429 });
+    return rateLimitedResponse(rl);
   }
 
   const csrfToken = req.headers.get('x-csrf-token');
@@ -34,7 +44,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { currentPassword, newPassword } = changePasswordSchema.parse(body);
+    const parsed = changePasswordSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: parsed.error.issues[0]?.message || 'Dati non validi' }, { status: 400 });
+    }
+    const { currentPassword, newPassword } = parsed.data;
 
     if (currentPassword === newPassword) {
       return NextResponse.json({ success: false, error: 'La nuova password deve essere diversa da quella attuale' }, { status: 400 });
