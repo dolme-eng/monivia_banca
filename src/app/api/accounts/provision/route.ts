@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
-import { newToken } from '@/lib/tokens';
+import { hashToken, newToken } from '@/lib/tokens';
 import { encryptPan, hashPan } from '@/lib/pan-crypto';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
