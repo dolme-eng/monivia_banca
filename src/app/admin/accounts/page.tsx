@@ -253,13 +253,13 @@ export default function AccountsPage() {
                     <div className="flex flex-wrap gap-x-6 gap-y-1 ml-14">
                       <div>
                         <span className="text-[10px] text-slate-400 uppercase">IBAN</span>
-                        {editingIban?.id === acc.id ? (
+                        {editingIban && editingIban.id === acc.id ? (
                           <div className="mt-1">
                             <div className="flex items-center gap-2">
                               <input
                                 type="text"
                                 value={editingIban.value}
-                                onChange={(e) => setEditingIban({ ...editingIban, value: e.target.value.toUpperCase() })}
+                                onChange={(e) => setEditingIban({ id: editingIban.id, value: e.target.value.toUpperCase() })}
                                 placeholder="IT00…"
                                 spellCheck={false}
                                 autoComplete="off"
