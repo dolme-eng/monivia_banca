@@ -47,6 +47,9 @@ model Card {
   account   Account    @relation(fields: [accountId], references: [id])
   numberHash String     @unique
   last4      String
+  // Full PAN encrypted with AES-256-GCM (CARD_PAN_SECRET). NULL for cards
+  // issued before encrypted storage — those can never reveal the full number.
+  panEnc     String?
   expiry     String
   holder    String
   status    CardStatus @default(ACTIVE)
@@ -126,6 +129,23 @@ model RateLimitEntry {
 
   @@index([key])
   @@index([resetAt])
+}
+
+// Immutable audit trail for sensitive operations (PAN reveals, IBAN changes,
+// approvals). Best-effort writes — never blocks the underlying operation.
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String
+  action    String
+  entity    String
+  entityId  String
+  before    String?
+  after     String?
+  createdAt DateTime @default(now())
+
+  @@index([actorId])
+  @@index([entity, entityId])
+  @@index([createdAt])
 }
 
 enum UserRole {

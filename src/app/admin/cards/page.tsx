@@ -13,6 +13,8 @@ import {
   XCircle,
   RotateCcw,
   CheckCircle2,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -47,6 +49,8 @@ export default function CardsPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<ConfirmAction | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [revealed, setRevealed] = useState<Record<string, string>>({});
+  const [revealLoading, setRevealLoading] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(searchQuery), 400);
@@ -111,6 +115,45 @@ export default function CardsPage() {
     } finally {
       setActionLoading(null);
       setConfirm(null);
+    }
+  };
+
+  const toggleReveal = async (cardId: string) => {
+    if (revealed[cardId]) {
+      setRevealed((prev) => {
+        const next = { ...prev };
+        delete next[cardId];
+        return next;
+      });
+      return;
+    }
+    setRevealLoading(cardId);
+    setActionError(null);
+    try {
+      const res = await csrfFetch('/api/admin/cards/pan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cardId }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setRevealed((prev) => ({ ...prev, [cardId]: data.pan }));
+        // Auto-hide after 60s so the full number doesn't linger on screen
+        setTimeout(() => {
+          setRevealed((prev) => {
+            if (!prev[cardId]) return prev;
+            const next = { ...prev };
+            delete next[cardId];
+            return next;
+          });
+        }, 60000);
+      } else {
+        setActionError(data.error || 'Impossibile mostrare il numero.');
+      }
+    } catch {
+      setActionError('Errore di connessione.');
+    } finally {
+      setRevealLoading(null);
     }
   };
 
@@ -220,7 +263,9 @@ export default function CardsPage() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-black text-primary truncate">{card.holder}</p>
-                        <p className="text-[11px] text-slate-400 truncate">{card.number}</p>
+                        <p className="text-[11px] text-slate-400 truncate font-mono">
+                          {revealed[card.id] ?? card.number}
+                        </p>
                       </div>
                       <span className={`ml-auto text-[11px] font-black px-2 py-0.5 rounded-full shrink-0 ${st.cls}`}>
                         {st.text}
@@ -255,6 +300,20 @@ export default function CardsPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 shrink-0">
+                    <button
+                      onClick={() => toggleReveal(card.id)}
+                      disabled={revealLoading !== null}
+                      className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-xs font-black hover:bg-slate-200 transition-colors"
+                    >
+                      {revealLoading === card.id ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : revealed[card.id] ? (
+                        <EyeOff size={14} />
+                      ) : (
+                        <Eye size={14} />
+                      )}
+                      {revealed[card.id] ? 'Nascondi' : 'Mostra numero'}
+                    </button>
                     {card.status === 'ACTIVE' && (
                       <button
                         onClick={() => setConfirm({ type: 'freeze', card })}

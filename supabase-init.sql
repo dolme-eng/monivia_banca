@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS "Card" (
   "accountId" TEXT NOT NULL REFERENCES "Account"(id),
   "numberHash" TEXT UNIQUE NOT NULL,
   "last4" TEXT NOT NULL,
+  "panEnc" TEXT,
   expiry TEXT NOT NULL,
   holder TEXT NOT NULL,
   status "CardStatus" NOT NULL DEFAULT 'ACTIVE',
@@ -123,6 +124,21 @@ CREATE TABLE IF NOT EXISTS "PasswordResetToken" (
 
 CREATE INDEX IF NOT EXISTS "PasswordResetToken_token_idx" ON "PasswordResetToken"("token");
 CREATE INDEX IF NOT EXISTS "PasswordResetToken_userId_idx" ON "PasswordResetToken"("userId");
+
+CREATE TABLE IF NOT EXISTS "AuditLog" (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  "actorId" TEXT NOT NULL,
+  action TEXT NOT NULL,
+  entity TEXT NOT NULL,
+  "entityId" TEXT NOT NULL,
+  before TEXT,
+  after TEXT,
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS "AuditLog_actorId_idx" ON "AuditLog"("actorId");
+CREATE INDEX IF NOT EXISTS "AuditLog_entity_entityId_idx" ON "AuditLog"("entity", "entityId");
+CREATE INDEX IF NOT EXISTS "AuditLog_createdAt_idx" ON "AuditLog"("createdAt");
 
 -- Create admin user
 -- SECURITY: never commit a real password hash. Generate one locally with:

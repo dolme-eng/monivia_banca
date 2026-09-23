@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createHash, randomUUID } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { hashToken, newToken } from '@/lib/tokens';
+import { encryptPan } from '@/lib/pan-crypto';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { validateCsrfToken } from '@/lib/csrf';
@@ -185,11 +186,21 @@ export async function POST(req: NextRequest) {
       const cardNumber = generateLuhnCard();
       const numberHash = createHash('sha256').update(cardNumber).digest('hex');
       const last4 = cardNumber.slice(-4);
+      // Encrypted PAN for admin/client reveal. Best-effort: if CARD_PAN_SECRET
+      // is not configured, the card is still issued but full reveal stays
+      // unavailable (panEnc NULL) — provisioning never breaks on this.
+      let panEnc: string | null = null;
+      try {
+        panEnc = encryptPan(cardNumber);
+      } catch {
+        console.error('PAN encryption skipped: CARD_PAN_SECRET not configured');
+      }
       const card = await tx.card.create({
         data: {
           accountId: account.id,
           numberHash,
           last4,
+          panEnc,
           expiry: '12/29',
           holder: `${nome} ${cognome}`,
         },

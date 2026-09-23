@@ -15,6 +15,7 @@ import {
   Shield,
   Clock,
   AlertTriangle,
+  Pencil,
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -45,6 +46,9 @@ export default function AccountsPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<ConfirmAction | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [editingIban, setEditingIban] = useState<{ id: string; value: string } | null>(null);
+  const [ibanSaving, setIbanSaving] = useState(false);
+  const [ibanError, setIbanError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(searchQuery), 400);
@@ -107,6 +111,32 @@ export default function AccountsPage() {
     } finally {
       setActionLoading(null);
       setConfirm(null);
+    }
+  };
+
+  const saveIban = async () => {
+    if (!editingIban || ibanSaving) return;
+    setIbanSaving(true);
+    setIbanError(null);
+    try {
+      const res = await csrfFetch(`/api/admin/accounts/${editingIban.id}/iban`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ iban: editingIban.value }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setAccounts((prev) =>
+          prev.map((a) => (a.id === editingIban.id ? { ...a, iban: data.account.iban } : a))
+        );
+        setEditingIban(null);
+      } else {
+        setIbanError(data.error || 'Impossibile aggiornare l\'IBAN.');
+      }
+    } catch {
+      setIbanError('Errore di connessione.');
+    } finally {
+      setIbanSaving(false);
     }
   };
 
@@ -220,7 +250,40 @@ export default function AccountsPage() {
                     <div className="flex flex-wrap gap-x-6 gap-y-1 ml-14">
                       <div>
                         <span className="text-[10px] text-slate-400 uppercase">IBAN</span>
-                        <p className="text-xs font-mono text-slate-600">{acc.iban}</p>
+                        {editingIban?.id === acc.id ? (
+                          <div className="mt-1">
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={editingIban.value}
+                                onChange={(e) => setEditingIban({ ...editingIban, value: e.target.value })}
+                                placeholder="IT00…"
+                                spellCheck={false}
+                                autoComplete="off"
+                                className="w-64 max-w-full px-2 py-2 min-h-[44px] text-xs font-mono rounded-lg border border-secondary focus:ring-1 focus:ring-secondary outline-none"
+                              />
+                              <button
+                                onClick={saveIban}
+                                disabled={ibanSaving}
+                                className="px-3 py-2 min-h-[44px] bg-emerald-600 text-white rounded-lg text-xs font-black hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                              >
+                                {ibanSaving ? <Loader2 size={14} className="animate-spin" /> : 'Salva'}
+                              </button>
+                              <button
+                                onClick={() => { setEditingIban(null); setIbanError(null); }}
+                                disabled={ibanSaving}
+                                className="px-3 py-2 min-h-[44px] bg-slate-100 text-slate-500 rounded-lg text-xs font-black hover:bg-slate-200 transition-colors"
+                              >
+                                Annulla
+                              </button>
+                            </div>
+                            {ibanError && (
+                              <p role="alert" className="text-[11px] font-black text-red-500 mt-1">{ibanError}</p>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-xs font-mono text-slate-600">{acc.iban}</p>
+                        )}
                       </div>
                       <div>
                         <span className="text-[10px] text-slate-400 uppercase">Saldo</span>
@@ -241,6 +304,14 @@ export default function AccountsPage() {
 
                   {/* Actions */}
                   <div className="flex flex-wrap gap-2 shrink-0">
+                    <button
+                      onClick={() => { setEditingIban({ id: acc.id, value: acc.iban }); setIbanError(null); }}
+                      disabled={actionLoading !== null}
+                      className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-xs font-black hover:bg-slate-200 transition-colors"
+                    >
+                      <Pencil size={14} />
+                      Modifica IBAN
+                    </button>
                     {acc.status === 'PENDING' && (
                       <button
                         onClick={() => setConfirm({ type: 'validate', account: acc })}

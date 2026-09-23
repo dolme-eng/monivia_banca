@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { authFetch } from '@/lib/auth-client';
+import { csrfFetch } from '@/lib/csrf-client';
 import { formatAmount, formatDateTime } from '@/lib/format';
 import { useSelectedAccount } from '@/lib/selected-account';
 import {
@@ -12,6 +13,8 @@ import {
   Loader2,
   XCircle,
   AlertTriangle,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 interface CardData {
@@ -46,6 +49,8 @@ export default function CardsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedCard, setSelectedCard] = useState(0);
+  const [revealedPan, setRevealedPan] = useState<string | null>(null);
+  const [revealLoading, setRevealLoading] = useState(false);
   const { selectedAccountId } = useSelectedAccount();
 
   useEffect(() => {
@@ -83,12 +88,45 @@ export default function CardsPage() {
   const cards = account?.cards ?? [];
   const card = cards[selectedCard];
   const transactions = account?.transactions ?? [];
+
+  // Clear a revealed PAN when switching cards
+  useEffect(() => {
+    setRevealedPan(null);
+  }, [selectedCard, selectedAccountId]);
   const balance = account?.balance ?? 0;
   const spentPercent = account?.balance != null ? Math.min(Math.max(((5000 - balance) / 5000) * 100, 0), 100) : 0;
 
   const maskNumber = (num: string) => {
     const last4 = num.slice(-4);
     return `•••• •••• •••• ${last4}`;
+  };
+
+  const toggleReveal = async () => {
+    if (!card) return;
+    if (revealedPan) {
+      setRevealedPan(null);
+      return;
+    }
+    setRevealLoading(true);
+    setError('');
+    try {
+      const res = await csrfFetch('/api/user/cards/pan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cardId: card.id }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setRevealedPan(data.pan);
+        setTimeout(() => setRevealedPan(null), 60000);
+      } else {
+        setError(data.error || 'Impossibile mostrare il numero.');
+      }
+    } catch {
+      setError('Errore di connessione.');
+    } finally {
+      setRevealLoading(false);
+    }
   };
 
   const getIcon = (type: string) => {
@@ -139,8 +177,24 @@ export default function CardsPage() {
                 <Wifi size={24} className="text-secondary -rotate-90" />
               </div>
               <div className="z-10">
-                <p className="font-mono text-sm tracking-[0.2em] mb-4">{maskNumber(card.number)}</p>
-                <div className="flex justify-between items-end">
+                <p className="font-mono text-sm tracking-[0.2em] mb-2">
+                  {revealedPan ?? maskNumber(card.number)}
+                </p>
+                <button
+                  onClick={toggleReveal}
+                  disabled={revealLoading}
+                  className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-secondary hover:text-white transition-colors min-h-[32px]"
+                >
+                  {revealLoading ? (
+                    <Loader2 size={12} className="animate-spin" />
+                  ) : revealedPan ? (
+                    <EyeOff size={12} />
+                  ) : (
+                    <Eye size={12} />
+                  )}
+                  {revealedPan ? 'Nascondi numero' : 'Mostra numero'}
+                </button>
+                <div className="flex justify-between items-end mt-2">
                   <div>
                     <p className="text-[11px] opacity-50 uppercase">Titolare</p>
                     <p className="text-xs font-black uppercase">{card.holder}</p>
