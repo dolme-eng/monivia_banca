@@ -235,7 +235,7 @@ export default function CardsPage() {
                   {card.status === 'ACTIVE' ? 'Attiva' : card.status === 'FROZEN' ? 'Congelata' : 'Scaduta'}
                 </span>
                 <span className="text-xs text-slate-400 italic">
-                  {card.number.startsWith('4') ? 'Carta Fisica' : 'Carta Virtuale'}
+                  Carta Monivia
                 </span>
               </div>
               <div className="space-y-3">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { authFetch } from '@/lib/auth-client';
 import { useSelectedAccount } from '@/lib/selected-account';
 import {
@@ -45,33 +45,34 @@ export default function PrelievoPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { selectedAccountId } = useSelectedAccount();
 
-  useEffect(() => {
-    const fetchAccount = async () => {
-      try {
-        const res = await authFetch('/api/user/account');
-        if (res.status === 401) {
-          window.location.replace('/login');
-          return;
-        }
-        const data = await res.json();
-        if (data.success && data.user?.accounts) {
-          const acc = data.user.accounts.find((a: Account) => a.id === selectedAccountId) || data.user.accounts[0];
-          if (acc) {
-            setAccount({ id: acc.id, iban: acc.iban, balance: acc.balance, status: acc.status, user: { nome: data.user.nome, cognome: data.user.cognome } });
-          } else {
-            setError('Impossibile caricare i dati del conto.');
-          }
+  const fetchAccount = useCallback(async () => {
+    try {
+      const res = await authFetch('/api/user/account');
+      if (res.status === 401) {
+        window.location.replace('/login');
+        return;
+      }
+      const data = await res.json();
+      if (data.success && data.user?.accounts) {
+        const acc = data.user.accounts.find((a: Account) => a.id === selectedAccountId) || data.user.accounts[0];
+        if (acc) {
+          setAccount({ id: acc.id, iban: acc.iban, balance: acc.balance, status: acc.status, user: { nome: data.user.nome, cognome: data.user.cognome } });
         } else {
           setError('Impossibile caricare i dati del conto.');
         }
-      } catch {
-        setError('Errore di connessione.');
-      } finally {
-        setLoadingAccount(false);
+      } else {
+        setError('Impossibile caricare i dati del conto.');
       }
-    };
-    fetchAccount();
+    } catch {
+      setError('Errore di connessione.');
+    } finally {
+      setLoadingAccount(false);
+    }
   }, [selectedAccountId]);
+
+  useEffect(() => {
+    fetchAccount();
+  }, [fetchAccount]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,6 +127,8 @@ export default function PrelievoPage() {
         ]);
         setAmount(0);
         setDescription('');
+        // Refresh balance so the user sees the updated amount immediately
+        fetchAccount();
         setTimeout(() => setSuccess(false), 3000);
       } else {
         setError(data.error || 'Errore durante la richiesta');

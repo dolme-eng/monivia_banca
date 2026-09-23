@@ -8,9 +8,7 @@ import {
   LayoutDashboard,
   UserPlus,
   CheckCircle2,
-  Search,
   Bell,
-  HelpCircle,
   Plus,
   Menu,
   X,
@@ -225,16 +223,6 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
             >
               <Menu size={20} />
             </button>
-            <div className="relative hidden sm:block">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Cerca..."
-                disabled
-                readOnly
-                className="pl-10 pr-4 py-2 bg-slate-100 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-secondary/30 opacity-60 cursor-not-allowed"
-              />
-            </div>
           </div>
           <div className="flex items-center gap-1">
             <Link href="/admin/approvals" className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-secondary transition-colors" aria-label="Notifiche">
@@ -245,9 +233,6 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
                 </span>
               )}
             </Link>
-            <button className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-secondary transition-colors" aria-label="Aiuto">
-              <HelpCircle size={18} />
-            </button>
             <div className="w-9 h-9 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-xs font-black ml-1">
               {initials}
             </div>

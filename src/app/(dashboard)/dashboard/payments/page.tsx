@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { authFetch } from '@/lib/auth-client';
 import { formatAmount, formatTime } from '@/lib/format';
+import { isValidIban, normalizeIban } from '@/lib/iban';
 import { useSelectedAccount } from '@/lib/selected-account';
 import {
   Send,
@@ -52,32 +53,39 @@ export default function PaymentsPage() {
     description: '',
   });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await authFetch('/api/user/account');
-        if (res.status === 401) {
-          window.location.replace('/login');
-          return;
-        }
-        const data = await res.json();
-        if (data.success) {
-          setUser(data.user);
-        } else {
-          setError('Impossibile caricare i dati del conto.');
-        }
-      } catch {
-        setError('Errore di connessione.');
-      } finally {
-        setLoading(false);
+  const fetchUser = useCallback(async () => {
+    try {
+      const res = await authFetch('/api/user/account');
+      if (res.status === 401) {
+        window.location.replace('/login');
+        return;
       }
-    };
-    fetchUser();
+      const data = await res.json();
+      if (data.success) {
+        setUser(data.user);
+      } else {
+        setError('Impossibile caricare i dati del conto.');
+      }
+    } catch {
+      setError('Errore di connessione.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   const account = user?.accounts?.find((a) => a.id === selectedAccountId) || user?.accounts?.[0];
   const balance = account?.balance ?? 0;
   const transactions = account?.transactions ?? [];
+
+  const handleIbanChange = (raw: string) => {
+    // Auto-format: uppercase, alphanumeric only, groups of 4
+    const clean = raw.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 34);
+    setForm({ ...form, iban: clean.replace(/(.{4})/g, '$1 ').trim() });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +93,12 @@ export default function PaymentsPage() {
 
     if (!form.iban || !form.amount || !form.description) {
       setError('Compila tutti i campi obbligatori.');
+      return;
+    }
+
+    // Client-side IBAN check (server revalidates): fail fast with a clear message
+    if (!isValidIban(form.iban)) {
+      setError('IBAN non valido: verifica il codice e riprova.');
       return;
     }
 
@@ -115,7 +129,7 @@ export default function PaymentsPage() {
           type: 'TRANSFER_OUT',
           amount: confirmAmount,
           description: form.description,
-          toIban: form.iban,
+          toIban: normalizeIban(form.iban),
         }),
       });
 
@@ -124,6 +138,8 @@ export default function PaymentsPage() {
       if (data.success) {
         setSuccess(true);
         setForm({ iban: '', amount: 0, description: '' });
+        // Refresh balance so the user sees the updated amount immediately
+        fetchUser();
         setTimeout(() => setSuccess(false), 3000);
       } else {
         setError(data.error || 'Errore durante l\'invio.');
@@ -211,10 +227,13 @@ export default function PaymentsPage() {
                   <input
                     type="text"
                     value={form.iban}
-                    onChange={(e) => setForm({ ...form, iban: e.target.value })}
+                    onChange={(e) => handleIbanChange(e.target.value)}
                     placeholder="IT00 A000 0000 0000 0000 0000 000"
                     required
-                    className="field-shell"
+                    spellCheck={false}
+                    autoComplete="off"
+                    inputMode="text"
+                    className="field-shell font-mono"
                   />
                 </div>
 
