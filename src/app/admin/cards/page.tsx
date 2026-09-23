@@ -22,6 +22,7 @@ import ConfirmModal from '@/components/ConfirmModal';
 interface CardData {
   id: string;
   number: string;
+  hasPan: boolean;
   holder: string;
   expiry: string;
   status: string;
@@ -300,20 +301,30 @@ export default function CardsPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 shrink-0">
-                    <button
-                      onClick={() => toggleReveal(card.id)}
-                      disabled={revealLoading !== null}
-                      className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-xs font-black hover:bg-slate-200 transition-colors"
-                    >
-                      {revealLoading === card.id ? (
-                        <Loader2 size={14} className="animate-spin" />
-                      ) : revealed[card.id] ? (
+                    {card.hasPan ? (
+                      <button
+                        onClick={() => toggleReveal(card.id)}
+                        disabled={revealLoading !== null}
+                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-xs font-black hover:bg-slate-200 transition-colors"
+                      >
+                        {revealLoading === card.id ? (
+                          <Loader2 size={14} className="animate-spin" />
+                        ) : revealed[card.id] ? (
+                          <EyeOff size={14} />
+                        ) : (
+                          <Eye size={14} />
+                        )}
+                        {revealed[card.id] ? 'Nascondi' : 'Mostra numero'}
+                      </button>
+                    ) : (
+                      <span
+                        title="Numero completo non disponibile: carta emessa prima dell'archiviazione cifrata"
+                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-50 text-slate-400 border border-dashed border-slate-200 rounded-lg text-xs font-black cursor-not-allowed"
+                      >
                         <EyeOff size={14} />
-                      ) : (
-                        <Eye size={14} />
-                      )}
-                      {revealed[card.id] ? 'Nascondi' : 'Mostra numero'}
-                    </button>
+                        N° non disponibile
+                      </span>
+                    )}
                     {card.status === 'ACTIVE' && (
                       <button
                         onClick={() => setConfirm({ type: 'freeze', card })}

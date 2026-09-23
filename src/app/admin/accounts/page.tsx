@@ -116,13 +116,16 @@ export default function AccountsPage() {
 
   const saveIban = async () => {
     if (!editingIban || ibanSaving) return;
+    // Normalize like the server does: uppercase, no spaces/dashes
+    const normalized = editingIban.value.replace(/[\s-]/g, '').toUpperCase();
+    setEditingIban({ ...editingIban, value: normalized });
     setIbanSaving(true);
     setIbanError(null);
     try {
       const res = await csrfFetch(`/api/admin/accounts/${editingIban.id}/iban`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ iban: editingIban.value }),
+        body: JSON.stringify({ iban: normalized }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -256,7 +259,7 @@ export default function AccountsPage() {
                               <input
                                 type="text"
                                 value={editingIban.value}
-                                onChange={(e) => setEditingIban({ ...editingIban, value: e.target.value })}
+                                onChange={(e) => setEditingIban({ ...editingIban, value: e.target.value.toUpperCase() })}
                                 placeholder="IT00…"
                                 spellCheck={false}
                                 autoComplete="off"
@@ -277,6 +280,12 @@ export default function AccountsPage() {
                                 Annulla
                               </button>
                             </div>
+                            <p className="text-[11px] text-slate-400 mt-1">
+                              Formato: IT + 2 cifre di controllo + 23 caratteri
+                              (<span className={editingIban.value.replace(/[\s-]/g, '').length === 27 ? 'text-emerald-600 font-black' : ''}>
+                                {editingIban.value.replace(/[\s-]/g, '').length}/27
+                              </span>)
+                            </p>
                             {ibanError && (
                               <p role="alert" className="text-[11px] font-black text-red-500 mt-1">{ibanError}</p>
                             )}

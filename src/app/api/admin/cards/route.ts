@@ -34,7 +34,14 @@ export async function GET(req: NextRequest) {
 
     const cards = await prisma.card.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        last4: true,
+        panEnc: true,
+        holder: true,
+        expiry: true,
+        status: true,
+        createdAt: true,
         account: {
           select: {
             id: true,
@@ -51,6 +58,7 @@ export async function GET(req: NextRequest) {
     const masked = cards.map((c) => ({
       id: c.id,
       number: '•••• •••• •••• ' + c.last4,
+      hasPan: !!c.panEnc,
       holder: c.holder,
       expiry: c.expiry,
       status: c.status,

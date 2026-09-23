@@ -40,6 +40,7 @@ export async function GET(req: Request) {
               select: {
                 id: true,
                 last4: true,
+                panEnc: true,
                 expiry: true,
                 holder: true,
                 status: true,
@@ -64,7 +65,13 @@ export async function GET(req: Request) {
         ...acc,
         balance: Number(acc.balance),
         cards: acc.cards.map((card) => ({
-          ...card,
+          id: card.id,
+          last4: card.last4,
+          expiry: card.expiry,
+          holder: card.holder,
+          status: card.status,
+          // Reveal availability only — the encrypted blob itself never leaves the server
+          hasPan: !!card.panEnc,
           number: '•••• •••• •••• ' + card.last4,
         })),
         transactions: acc.transactions.map((tx) => ({

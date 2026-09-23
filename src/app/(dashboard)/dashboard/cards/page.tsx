@@ -20,6 +20,7 @@ import {
 interface CardData {
   id: string;
   number: string;
+  hasPan: boolean;
   expiry: string;
   holder: string;
   status: string;
@@ -102,7 +103,7 @@ export default function CardsPage() {
   };
 
   const toggleReveal = async () => {
-    if (!card) return;
+    if (!card || !card.hasPan) return;
     if (revealedPan) {
       setRevealedPan(null);
       return;
@@ -182,8 +183,13 @@ export default function CardsPage() {
                 </p>
                 <button
                   onClick={toggleReveal}
-                  disabled={revealLoading}
-                  className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-secondary hover:text-white transition-colors min-h-[32px]"
+                  disabled={revealLoading || !card?.hasPan}
+                  title={
+                    card?.hasPan
+                      ? undefined
+                      : 'Numero completo non disponibile per questa carta'
+                  }
+                  className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-secondary hover:text-white transition-colors min-h-[32px] disabled:opacity-40"
                 >
                   {revealLoading ? (
                     <Loader2 size={12} className="animate-spin" />
@@ -192,7 +198,7 @@ export default function CardsPage() {
                   ) : (
                     <Eye size={12} />
                   )}
-                  {revealedPan ? 'Nascondi numero' : 'Mostra numero'}
+                  {revealedPan ? 'Nascondi numero' : card?.hasPan ? 'Mostra numero' : 'Numero non disponibile'}
                 </button>
                 <div className="flex justify-between items-end mt-2">
                   <div>
