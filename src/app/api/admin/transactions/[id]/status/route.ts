@@ -5,6 +5,7 @@ import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 import { validateCsrfToken } from '@/lib/csrf';
 import { z } from 'zod';
+import { logAudit } from '@/lib/audit';
 
 const txActionSchema = z.object({
   action: z.enum(['cancel', 'pause']),
@@ -69,6 +70,14 @@ export async function PATCH(
           { status: 400 }
         );
       }
+      await logAudit({
+        actorId: auth.session.userId!,
+        action: 'TRANSACTION_CANCEL',
+        entity: 'Transaction',
+        entityId: id,
+        before: 'PENDING',
+        after: 'CANCELLED',
+      });
       return NextResponse.json({ success: true, transaction: { id, status: 'CANCELLED' } });
     }
 

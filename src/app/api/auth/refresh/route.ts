@@ -13,6 +13,10 @@ const secret = AUTH_SECRET ? new TextEncoder().encode(AUTH_SECRET) : null;
 
 const ACCESS_TOKEN_TTL = '15m';
 const REFRESH_TOKEN_TTL_DAYS = 7;
+// Absolute session lifetime: refresh chains cannot live longer than this,
+// even with continuous activity (sliding 7d rotation would otherwise be infinite).
+const REFRESH_ABSOLUTE_TTL_DAYS = 30;
+const MAX_ACTIVE_SESSIONS = 5;
 
 export async function POST(req: NextRequest) {
   if (!secret) {
@@ -62,6 +66,13 @@ export async function POST(req: NextRequest) {
 
     const user = dbToken.user;
 
+    // Absolute lifetime: a refresh chain older than 30 days forces re-login,
+    // even with continuous activity.
+    if (Date.now() - new Date(dbToken.createdAt).getTime() > REFRESH_ABSOLUTE_TTL_DAYS * 24 * 60 * 60 * 1000) {
+      await prisma.refreshToken.delete({ where: { id: dbToken.id } }).catch(() => {});
+      return NextResponse.json({ success: false, error: 'Sessione scaduta. Effettua nuovamente il login.' }, { status: 401 });
+    }
+
     // Re-check lockout and account status: a FROZEN/CLOSED/locked account
     // must not keep minting access tokens through refresh.
     if (user.lockedUntil && user.lockedUntil > new Date()) {
@@ -93,20 +104,44 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
 
-    // Mark old token as consumed instead of deleting — enables reuse detection
-    await prisma.$transaction([
-      prisma.refreshToken.update({
-        where: { id: dbToken.id },
-        data: { consumedAt: new Date() },
-      }),
-      prisma.refreshToken.create({
-        data: {
-          token: hashToken(newRefreshToken),
-          userId: user.id,
-          expiresAt,
-        },
-      }),
-    ]);
+    // Atomic single-use claim: concurrent replays race here and exactly one wins.
+    // The loser gets count 0 -> plain 401 (mass revocation already happened above
+    // only when reuse was positively observed).
+    const claim = await prisma.refreshToken.updateMany({
+      where: { id: dbToken.id, consumedAt: null },
+      data: { consumedAt: new Date() },
+    });
+    if (claim.count !== 1) {
+      return NextResponse.json({ success: false, error: 'Token non valido' }, { status: 401 });
+    }
+
+    const created = await prisma.refreshToken.create({
+      data: {
+        token: hashToken(newRefreshToken),
+        userId: user.id,
+        expiresAt,
+      },
+    });
+
+    // Hygiene, best-effort: drop long-consumed tokens and cap concurrent sessions
+    try {
+      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      await prisma.refreshToken.deleteMany({
+        where: { userId: user.id, consumedAt: { lt: dayAgo } },
+      });
+      const active = await prisma.refreshToken.findMany({
+        where: { userId: user.id, consumedAt: null, id: { not: created.id } },
+        orderBy: { createdAt: 'desc' },
+        select: { id: true },
+      });
+      if (active.length >= MAX_ACTIVE_SESSIONS) {
+        await prisma.refreshToken.deleteMany({
+          where: { id: { in: active.slice(MAX_ACTIVE_SESSIONS - 1).map((t) => t.id) } },
+        });
+      }
+    } catch {
+      /* hygiene must never break refresh */
+    }
 
     const response = NextResponse.json({ success: true, role: user.role });
 

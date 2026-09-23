@@ -5,6 +5,7 @@ import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 import { validateCsrfToken } from '@/lib/csrf';
 import { z } from 'zod';
+import { logAudit } from '@/lib/audit';
 
 const statusSchema = z.object({
   action: z.enum(['freeze', 'unfreeze', 'expire', 'reactivate', 'delete']),
@@ -79,6 +80,14 @@ export async function PATCH(
         break;
       case 'delete':
         await prisma.card.delete({ where: { id } });
+        await logAudit({
+          actorId: auth.session.userId!,
+          action: 'CARD_DELETE',
+          entity: 'Card',
+          entityId: id,
+          before: card.status,
+          after: 'DELETED',
+        });
         return NextResponse.json({ success: true, message: 'Carta eliminata definitivamente' });
     }
 
@@ -86,6 +95,15 @@ export async function PATCH(
       where: { id },
       data: updateData,
       select: { id: true, status: true },
+    });
+
+    await logAudit({
+      actorId: auth.session.userId!,
+      action: `CARD_${action.toUpperCase()}`,
+      entity: 'Card',
+      entityId: id,
+      before: card.status,
+      after: updated.status,
     });
 
     return NextResponse.json({ success: true, card: updated });

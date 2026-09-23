@@ -110,6 +110,7 @@ export default function ResetPasswordPage() {
                     type={showPassword ? 'text' : 'password'}
                     required
                     minLength={8}
+                    autoComplete="new-password"
                     className="w-full pl-10 pr-10 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary"
                     placeholder="Minimo 8 caratteri"
                     value={password}
@@ -134,6 +135,7 @@ export default function ResetPasswordPage() {
                   type={showPassword ? 'text' : 'password'}
                   required
                   minLength={8}
+                  autoComplete="new-password"
                   className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary"
                   placeholder="Ripeti la password"
                   value={confirmPassword}

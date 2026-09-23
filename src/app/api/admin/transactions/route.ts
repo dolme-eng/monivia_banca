@@ -6,6 +6,7 @@ import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-lim
 import { sendClientTransactionUpdate } from '@/lib/email-notify';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
+import { logAudit } from '@/lib/audit';
 
 const approvalSchema = z.object({
   transactionId: z.string().uuid('ID transazione non valido'),
@@ -106,6 +107,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: result.error }, { status: 400 });
     }
 
+    await logAudit({
+      actorId: auth.session.userId!,
+      action: action === 'APPROVE' ? 'TRANSACTION_APPROVE' : 'TRANSACTION_REJECT',
+      entity: 'Transaction',
+      entityId: transactionId,
+      before: 'PENDING',
+      after: action === 'APPROVE' ? 'APPROVED' : 'REJECTED',
+    });
+
     sendClientTransactionUpdate({
       clientEmail: transaction.account.user.email,
       clientNome: transaction.account.user.nome,
@@ -155,7 +165,7 @@ export async function GET(req: NextRequest) {
             },
           },
         },
-        orderBy: { createdAt: status ? 'desc' : 'asc' },
+        orderBy: [{ createdAt: status ? 'desc' : 'asc' }, { id: status ? 'desc' : 'asc' }],
         skip,
         take: limit,
       }),

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createHash, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
-import { hashToken, newToken } from '@/lib/tokens';
-import { encryptPan } from '@/lib/pan-crypto';
+import { newToken } from '@/lib/tokens';
+import { encryptPan, hashPan } from '@/lib/pan-crypto';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { validateCsrfToken } from '@/lib/csrf';
@@ -23,8 +23,27 @@ function luhnCheck(num: string): boolean {
   return sum % 10 === 0;
 }
 
+/**
+ * Unbiased random string over an alphabet: rejection sampling discards
+ * out-of-range bytes instead of `b % alphabet.length` (which biases toward
+ * the first 256 % length symbols). NIST SP 800-90Ar1 style.
+ */
+function unbiasedSample(n: number, alphabet: string): string {
+  const m = alphabet.length;
+  const limit = 256 - (256 % m);
+  let out = '';
+  while (out.length < n) {
+    const bytes = crypto.getRandomValues(new Uint8Array(32));
+    for (const b of bytes) {
+      if (out.length >= n) break;
+      if (b < limit) out += alphabet[b % m];
+    }
+  }
+  return out;
+}
+
 function generateLuhnCard(): string {
-  const randomDigits = Array.from(crypto.getRandomValues(new Uint8Array(15)), (b) => b % 10).join('');
+  const randomDigits = unbiasedSample(15, '0123456789');
   for (let d = 0; d <= 9; d++) {
     const candidate = randomDigits + d;
     if (luhnCheck(candidate)) return candidate;
@@ -34,8 +53,7 @@ function generateLuhnCard(): string {
 
 function generateItalianIban(): string {
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const randomValues = crypto.getRandomValues(new Uint8Array(23));
-  const body = Array.from(randomValues, (b) => chars[b % chars.length]).join('');
+  const body = unbiasedSample(23, chars);
   
   // Compute check digits using mod-97 algorithm
   // IBAN validation: move first 4 chars to end, convert letters to numbers (A=10, B=11, ...), then mod 97
@@ -107,6 +125,14 @@ export async function POST(req: NextRequest) {
     }
     const { email, nome, cognome, amount, password } = parsed.data;
 
+    // Round to cents once: IEEE floats must never reach money columns raw
+    const cents = Math.round(amount * 100) / 100;
+
+    // Invite material is pre-generated so the row can be created INSIDE the
+    // transaction below — no orphan credited account if invite creation fails
+    const inviteTokenRaw = newToken(32);
+    const inviteExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const result = await prisma.$transaction(async (tx) => {
@@ -125,15 +151,19 @@ export async function POST(req: NextRequest) {
 
       const existingAccount = await tx.account.findFirst({
         where: { userId: user.id },
-        select: { id: true, iban: true, balance: true },
+        select: { id: true, iban: true, balance: true, status: true },
       });
 
       if (existingAccount) {
+        // Never credit frozen/closed accounts — unfreeze first
+        if (existingAccount.status === 'FROZEN' || existingAccount.status === 'CLOSED') {
+          return { success: false as const, error: 'Il conto è congelato o chiuso. Scongelalo prima di accreditare.' };
+        }
         await tx.transaction.create({
           data: {
             accountId: existingAccount.id,
             type: 'CREDIT',
-            amount,
+            amount: cents,
             description: 'Accredito aggiuntivo - Prestito Monivia',
             status: 'APPROVED',
             reference: `TOPUP-${randomUUID()}`,
@@ -142,7 +172,7 @@ export async function POST(req: NextRequest) {
 
         const updatedAccount = await tx.account.update({
           where: { id: existingAccount.id },
-          data: { balance: { increment: Number(amount) } },
+          data: { balance: { increment: cents } },
           select: { iban: true, balance: true },
         });
 
@@ -161,7 +191,16 @@ export async function POST(req: NextRequest) {
         };
       }
 
-      const iban = generateItalianIban();
+      // Collision-safe generation: pre-check uniqueness so a duplicate surfaces
+      // here (retry) instead of as a 500 P2002. Residual concurrent races are
+      // astronomically unlikely and still fail closed via the unique constraint.
+      let iban = '';
+      for (let i = 0; i < 5; i++) {
+        const candidate = generateItalianIban();
+        const taken = await tx.account.findUnique({ where: { iban: candidate }, select: { id: true } });
+        if (!taken) { iban = candidate; break; }
+      }
+      if (!iban) throw new Error('IBAN collision');
       const account = await tx.account.create({
         data: { userId: user.id, iban, balance: 0, status: 'PENDING' },
       });
@@ -170,7 +209,7 @@ export async function POST(req: NextRequest) {
         data: {
           accountId: account.id,
           type: 'CREDIT',
-          amount,
+          amount: cents,
           description: 'Accredito iniziale - Prestito Monivia',
           status: 'APPROVED',
           reference: `LOAN-${randomUUID()}`,
@@ -179,13 +218,24 @@ export async function POST(req: NextRequest) {
 
       const updatedAccount = await tx.account.update({
         where: { id: account.id },
-        data: { balance: { increment: Number(amount) } },
+        data: { balance: { increment: cents } },
         select: { iban: true, balance: true },
       });
 
-      const cardNumber = generateLuhnCard();
-      const numberHash = createHash('sha256').update(cardNumber).digest('hex');
+      let cardNumber = '';
+      let numberHash = '';
+      for (let i = 0; i < 5; i++) {
+        const candidate = generateLuhnCard();
+        const h = hashPan(candidate);
+        const taken = await tx.card.findUnique({ where: { numberHash: h }, select: { id: true } });
+        if (!taken) { cardNumber = candidate; numberHash = h; break; }
+      }
+      if (!cardNumber) throw new Error('Card collision');
       const last4 = cardNumber.slice(-4);
+      // Card expiry: 4 years from issuance (was hardcoded '12/29' for all cards)
+      const expDate = new Date();
+      expDate.setFullYear(expDate.getFullYear() + 4);
+      const expiry = `${String(expDate.getMonth() + 1).padStart(2, '0')}/${String(expDate.getFullYear()).slice(-2)}`;
       // Encrypted PAN for admin/client reveal. Best-effort: if CARD_PAN_SECRET
       // is not configured, the card is still issued but full reveal stays
       // unavailable (panEnc NULL) — provisioning never breaks on this.
@@ -201,8 +251,20 @@ export async function POST(req: NextRequest) {
           numberHash,
           last4,
           panEnc,
-          expiry: '12/29',
+          expiry,
           holder: `${nome} ${cognome}`,
+        },
+      });
+
+      // Invite row lives in the same transaction: no orphan account possible
+      await tx.inviteToken.create({
+        data: {
+          token: hashToken(inviteTokenRaw),
+          userId: user.id,
+          email,
+          nome,
+          cognome,
+          expiresAt: inviteExpiresAt,
         },
       });
 
@@ -215,24 +277,10 @@ export async function POST(req: NextRequest) {
     });
 
     let inviteUrl: string | undefined;
-    let inviteToken: string | undefined;
 
     if (result.isNew) {
-      inviteToken = newToken(32);
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 24);
-
-      // Store only the hash — the raw value goes into the invite link once
-      await prisma.inviteToken.create({
-        data: {
-          token: hashToken(inviteToken),
-          userId: result.userId!,
-          email,
-          nome,
-          cognome,
-          expiresAt,
-        },
-      });
+      // Row already created inside the transaction; only build the link here
+      const inviteToken = inviteTokenRaw;
 
       let inviteOrigin = 'https://banca.monivia.it';
       try {

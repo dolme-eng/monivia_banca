@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         data: {
           accountId,
           type: 'DEBIT',
-          amount: -amount,
+          amount: -(Math.round(amount * 100) / 100),
           description,
           status: 'PENDING',
           reference: `PRELIEVO-${randomUUID()}`,
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
       message: 'Richiesta di prelievo inviata. In attesa di approvazione amministrativa.',
       transaction: {
         id: transaction.id,
-        amount: -amount,
+        amount: -(Math.round(amount * 100) / 100),
         status: transaction.status,
         createdAt: transaction.createdAt,
       },

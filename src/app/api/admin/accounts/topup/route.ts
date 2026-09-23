@@ -43,22 +43,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Dati non validi' }, { status: 400 });
     }
     const { accountId, amount } = parsed.data;
+    const cents = Math.round(amount * 100) / 100;
 
     const result = await prisma.$transaction(async (tx) => {
       const account = await tx.account.findUnique({
         where: { id: accountId },
-        select: { id: true, iban: true, balance: true },
+        select: { id: true, iban: true, balance: true, status: true },
       });
 
       if (!account) {
         return { success: false, error: 'Conto non trovato' };
       }
 
+      // Never credit frozen/closed accounts
+      if (account.status === 'FROZEN' || account.status === 'CLOSED') {
+        return { success: false, error: 'Il conto è congelato o chiuso' };
+      }
+
       await tx.transaction.create({
         data: {
           accountId: account.id,
           type: 'CREDIT',
-          amount,
+          amount: cents,
           description: 'Accredito aggiuntivo - Prestito Monivia',
           status: 'APPROVED',
           reference: `TOPUP-${randomUUID()}`,
@@ -67,7 +73,7 @@ export async function POST(req: NextRequest) {
 
       const updated = await tx.account.update({
         where: { id: account.id },
-        data: { balance: { increment: Number(amount) } },
+        data: { balance: { increment: cents } },
         select: { iban: true, balance: true },
       });
 

@@ -5,6 +5,7 @@ import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
 import { validateCsrfToken } from '@/lib/csrf';
 import { z } from 'zod';
+import { logAudit } from '@/lib/audit';
 
 const statusSchema = z.object({
   action: z.enum(['validate', 'freeze', 'unfreeze', 'block', 'unblock', 'delete']),
@@ -43,7 +44,7 @@ export async function PATCH(
 
     const account = await prisma.account.findUnique({
       where: { id },
-      select: { id: true, status: true, blockedAt: true },
+      select: { id: true, status: true, blockedAt: true, userId: true },
     });
 
     if (!account) {
@@ -89,6 +90,14 @@ export async function PATCH(
           await tx.card.deleteMany({ where: { accountId: id } });
           await tx.account.delete({ where: { id } });
         });
+        await logAudit({
+          actorId: auth.session.userId!,
+          action: 'ACCOUNT_DELETE',
+          entity: 'Account',
+          entityId: id,
+          before: account.status,
+          after: 'DELETED',
+        });
         return NextResponse.json({ success: true, message: 'Conto eliminato definitivamente' });
     }
 
@@ -96,6 +105,26 @@ export async function PATCH(
       where: { id },
       data: updateData,
       select: { id: true, status: true, blockedAt: true },
+    });
+
+    // The invite served its purpose once the account is validated: consume it
+    // so the link cannot be reused afterwards (24h expiry still applies before).
+    if (action === 'validate') {
+      await prisma.inviteToken
+        .updateMany({
+          where: { userId: account.userId, usedAt: null },
+          data: { usedAt: new Date() },
+        })
+        .catch(() => {});
+    }
+
+    await logAudit({
+      actorId: auth.session.userId!,
+      action: `ACCOUNT_${action.toUpperCase()}`,
+      entity: 'Account',
+      entityId: id,
+      before: account.status,
+      after: updated.status,
     });
 
     return NextResponse.json({ success: true, account: updated });

@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     const account = await prisma.account.findUnique({ where: { id: accountId } });
 
     if (!account || account.userId !== auth.session.userId) {
-      return NextResponse.json({ success: false, error: 'Conto non trovato' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Conto non trovato' }, { status: 404 });
     }
 
     if (account.status !== 'ACTIVE') {
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
         data: {
           accountId,
           type: type === 'TRANSFER_OUT' ? 'TRANSFER_OUT' : 'DEBIT',
-          amount: -amount,
+          amount: -(Math.round(amount * 100) / 100),
           description,
           status: 'PENDING',
           reference,

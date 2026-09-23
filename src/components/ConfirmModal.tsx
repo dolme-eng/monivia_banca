@@ -27,10 +27,13 @@ export default function ConfirmModal({
   loading = false,
 }: ConfirmModalProps) {
   const backdropRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
+      // Move focus into the dialog on open (screen readers + keyboard users)
+      dialogRef.current?.focus();
       return () => { document.body.style.overflow = ''; };
     }
   }, [open]);
@@ -59,14 +62,18 @@ export default function ConfirmModal({
         onClick={() => !loading && onCancel()}
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
-        className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+        aria-describedby="confirm-modal-message"
+        tabIndex={-1}
+        className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl outline-none"
       >
         <button
           onClick={onCancel}
           disabled={loading}
+          aria-label="Chiudi finestra di dialogo"
           className="absolute right-3 top-3 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors text-slate-400 hover:text-slate-600"
         >
           <X size={16} />
@@ -77,7 +84,7 @@ export default function ConfirmModal({
         </div>
 
         <h3 id="confirm-modal-title" className="text-lg font-black text-primary mb-2">{title}</h3>
-        <p className="text-sm text-slate-500 mb-6 leading-relaxed">{message}</p>
+        <p id="confirm-modal-message" className="text-sm text-slate-500 mb-6 leading-relaxed">{message}</p>
 
         <div className="flex gap-3">
           <button

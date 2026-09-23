@@ -455,27 +455,12 @@ export default function ProvisionPage() {
                       </button>
                     </div>
                   </div>
-                  {createResult.password && (
-                    <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
-                      <p className="text-[11px] font-black uppercase tracking-widest text-amber-600">Password</p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <p className="font-mono text-sm font-bold text-primary">{createResult.password}</p>
-                        <button
-                          onClick={() => copyToClipboard(createResult.password, 'password')}
-                          className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-amber-200 hover:bg-amber-100 transition-colors"
-                          aria-label="Copia password"
-                        >
-                          {copied === 'password' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-amber-600" />}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  {!createResult.password && (
-                    <div className="rounded-lg bg-slate-50 p-3">
-                      <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Password</p>
-                      <p className="mt-1 text-sm font-bold text-primary">Imposta dall&apos;admin</p>
-                    </div>
-                  )}
+                  {/* L'API non restituisce mai la password: la mostra qui sarebbe un falso.
+                      Il cliente la riceve dall'admin tramite canale separato. */}
+                  <div className="rounded-lg bg-slate-50 p-3">
+                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Password</p>
+                    <p className="mt-1 text-sm font-bold text-primary">Impostata dall&apos;admin, comunicata al cliente separatamente</p>
+                  </div>
                   <div className="rounded-lg bg-slate-50 p-3">
                     <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">IBAN</p>
                     <div className="mt-1 flex items-center gap-2">
@@ -565,9 +550,8 @@ export default function ProvisionPage() {
                     onClick={() => {
                       const lines = [
                         `Email: ${submittedData?.email || createResult.account?.email}`,
-                        createResult.password ? `Password: ${createResult.password}` : '',
-                        createResult.inviteUrl ? `\nLink di invito: ${createResult.inviteUrl}` : '',
-                        `\nAccedi a: ${window.location.origin}/login`,
+                        createResult.inviteUrl ? `Link di invito: ${createResult.inviteUrl}` : '',
+                        `Accedi a: ${window.location.origin}/login`,
                       ].filter(Boolean);
                       copyToClipboard(lines.join('\n'), 'all');
                     }}

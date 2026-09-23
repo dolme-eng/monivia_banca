@@ -103,6 +103,7 @@ export default function LoginPage() {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete="current-password"
                   placeholder="••••••••"
                   className="field-shell pl-12 pr-12"
                 />

@@ -98,6 +98,10 @@ export default function AmountInput({
 
   return (
     <div className="relative">
+      {/* Screen-reader readout of the current value (ArrowUp/Down give no feedback otherwise) */}
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {formatAmount(value)} euro
+      </span>
       <div
         className={`relative flex items-center justify-center rounded-2xl border-2 transition-all duration-200 ${
           error

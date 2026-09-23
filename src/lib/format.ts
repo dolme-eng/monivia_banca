@@ -1,5 +1,5 @@
 export function formatAmount(amount: number): string {
-  return Math.abs(amount).toLocaleString('it-IT', { minimumFractionDigits: 2 });
+  return Math.abs(amount).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 export function formatTime(dateStr: string): string {

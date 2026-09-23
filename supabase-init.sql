@@ -140,6 +140,31 @@ CREATE INDEX IF NOT EXISTS "AuditLog_actorId_idx" ON "AuditLog"("actorId");
 CREATE INDEX IF NOT EXISTS "AuditLog_entity_entityId_idx" ON "AuditLog"("entity", "entityId");
 CREATE INDEX IF NOT EXISTS "AuditLog_createdAt_idx" ON "AuditLog"("createdAt");
 
+-- Money guards (mirror of prisma/migrations/add_money_guards/migration.sql)
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Account_balance_non_negative') THEN
+    ALTER TABLE "Account" ADD CONSTRAINT "Account_balance_non_negative" CHECK (balance >= 0);
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Account_currency_eur_only') THEN
+    ALTER TABLE "Account" ADD CONSTRAINT "Account_currency_eur_only" CHECK (currency = 'EUR');
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Transaction_amount_nonzero') THEN
+    ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_amount_nonzero" CHECK (amount <> 0);
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Card_last4_len4') THEN
+    ALTER TABLE "Card" ADD CONSTRAINT "Card_last4_len4" CHECK (char_length(last4) = 4);
+  END IF;
+END $$;
+
 -- Create admin user
 -- SECURITY: never commit a real password hash. Generate one locally with:
 --   node gen-hash.cjs "Your-Strong-Password-Here"

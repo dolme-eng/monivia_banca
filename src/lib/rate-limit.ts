@@ -69,6 +69,16 @@ export async function checkRateLimit(
 
       return { allowed: true, remaining: maxRequests - newCount, resetAt: entryResetMs };
     });
+    // Probabilistic lazy cleanup (~1% of calls): the cleanup_rate_limits()
+    // SQL function exists but no scheduler invokes it, so purge expired rows
+    // inline instead of letting the table grow forever.
+    if (Math.random() < 0.01) {
+      try {
+        await (prisma as any).$executeRawUnsafe(`DELETE FROM "RateLimitEntry" WHERE "resetAt" < NOW()`);
+      } catch (cleanupErr) {
+        console.error('[RATE-LIMIT] lazy cleanup failed');
+      }
+    }
     return outcome;
   } catch {
     // Never log the key: it may embed email/userId (PII).

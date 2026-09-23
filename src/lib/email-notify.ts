@@ -85,7 +85,7 @@ export async function sendAdminPrelievoNotification(data: {
   description: string;
   transactionId: string;
 }) {
-  const amountStr = data.amount.toLocaleString('it-IT', { minimumFractionDigits: 2 });
+  const amountStr = data.amount.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const adminUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/admin/prelievo/${data.transactionId}`;
 
   const html = `
@@ -168,7 +168,7 @@ export async function sendClientTransactionUpdate(data: {
   amount: number;
   description: string;
 }) {
-  const amountStr = Math.abs(Number(data.amount)).toLocaleString('it-IT', { minimumFractionDigits: 2 });
+  const amountStr = Math.abs(Number(data.amount)).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const isApproved = data.type === 'APPROVED';
   const statusColor = isApproved ? '#10b981' : '#ef4444';
   const statusText = isApproved ? 'Approvata' : 'Rifiutata';
@@ -245,7 +245,7 @@ export async function sendAdminInviteNotification(data: {
   inviteUrl: string;
   amount: number;
 }) {
-  const amountStr = data.amount.toLocaleString('it-IT', { minimumFractionDigits: 2 });
+  const amountStr = data.amount.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const html = `
     <div style="font-family: 'Inter', Arial, sans-serif; background: #f8fafc; padding: 40px 20px; color: #0a1628;">

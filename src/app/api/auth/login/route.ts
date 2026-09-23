@@ -63,12 +63,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
     }
 
+    // Generic response on lockout too: a distinct 429 would reveal that the
+    // account exists (user-enumeration oracle). Locked users simply fail
+    // until the window expires, then succeed with the right password.
     if (user.lockedUntil && user.lockedUntil > new Date()) {
-      const remaining = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000);
-      return NextResponse.json({
-        success: false,
-        error: `Account temporaneamente bloccato. Riprova tra ${remaining} minuti.`,
-      }, { status: 429 });
+      return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
     }
 
     const valid = await bcrypt.compare(password, user.hashedPassword);
@@ -108,13 +107,10 @@ export async function POST(req: NextRequest) {
       select: { status: true },
     });
 
+    // Single generic message: distinct per-status messages would confirm
+    // valid credentials to an attacker (oracle).
     if (account && account.status !== 'ACTIVE') {
-      const msg = account.status === 'PENDING'
-        ? 'Il conto è in attesa di validazione. Riprova più tardi.'
-        : account.status === 'FROZEN'
-        ? 'Il conto è stato congelato. Contatta il supporto.'
-        : 'Il conto non è attivo. Contatta il supporto.';
-      return NextResponse.json({ success: false, error: msg }, { status: 403 });
+      return NextResponse.json({ success: false, error: 'Il conto non è attivo. Contatta il supporto.' }, { status: 403 });
     }
 
     const accessToken = await new SignJWT({

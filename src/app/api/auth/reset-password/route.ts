@@ -32,7 +32,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Token CSRF non valido' }, { status: 403 });
     }
 
-    const { token, password } = resetPasswordSchema.parse(body);
+    const parsed = resetPasswordSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: parsed.error.issues[0]?.message || 'Dati non validi' }, { status: 400 });
+    }
+    const { token, password } = parsed.data;
 
     const resetToken = await prisma.passwordResetToken.findUnique({
       where: { token: hashToken(token) },

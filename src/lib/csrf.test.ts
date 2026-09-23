@@ -74,4 +74,20 @@ describe('CSRF Token', () => {
     const t2 = generateCsrfToken();
     expect(t1).not.toBe(t2);
   });
+
+  it('rejects tokens dated far in the future (TTL cannot be extended)', () => {
+    const secret = process.env.CSRF_SECRET!;
+    const { createHmac, randomBytes } = require('crypto');
+    const futurePayload = `${Date.now() + 60 * 60 * 1000}:${randomBytes(16).toString('hex')}`;
+    const sig = createHmac('sha256', secret).update(futurePayload).digest('hex');
+    expect(validateCsrfToken(`${futurePayload}.${sig}`)).toBe(false);
+  });
+
+  it('rejects tokens older than the 30-minute TTL', () => {
+    const secret = process.env.CSRF_SECRET!;
+    const { createHmac, randomBytes } = require('crypto');
+    const oldPayload = `${Date.now() - 31 * 60 * 1000}:${randomBytes(16).toString('hex')}`;
+    const sig = createHmac('sha256', secret).update(oldPayload).digest('hex');
+    expect(validateCsrfToken(`${oldPayload}.${sig}`)).toBe(false);
+  });
 });

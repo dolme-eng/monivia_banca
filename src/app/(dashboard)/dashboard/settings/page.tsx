@@ -215,6 +215,7 @@ export default function SettingsPage() {
                   <input
                     type={showCurrent ? 'text' : 'password'}
                     required
+                    autoComplete="current-password"
                     className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary pr-10"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
@@ -239,6 +240,7 @@ export default function SettingsPage() {
                     type={showNew ? 'text' : 'password'}
                     required
                     minLength={8}
+                    autoComplete="new-password"
                     className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary pr-10"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
@@ -263,6 +265,7 @@ export default function SettingsPage() {
                   type={showNew ? 'text' : 'password'}
                   required
                   minLength={8}
+                  autoComplete="new-password"
                   className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
