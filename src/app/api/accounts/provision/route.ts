@@ -157,37 +157,26 @@ export async function POST(req: NextRequest) {
       if (existingAccount) {
         // Never credit frozen/closed accounts — unfreeze first
         if (existingAccount.status === 'FROZEN' || existingAccount.status === 'CLOSED') {
-          return { success: false as const, error: 'Il conto è congelato o chiuso. Scongelalo prima di accreditare.' };
+          return {
+            success: false as const,
+            error: 'Il conto è congelato o chiuso. Scongelalo prima di accreditare.',
+            code: 'ACCOUNT_NOT_ACTIVE' as const,
+          };
         }
-        await tx.transaction.create({
-          data: {
-            accountId: existingAccount.id,
-            type: 'CREDIT',
-            amount: cents,
-            description: 'Accredito aggiuntivo - Prestito Monivia',
-            status: 'APPROVED',
-            reference: `TOPUP-${randomUUID()}`,
-          },
-        });
 
-        const updatedAccount = await tx.account.update({
-          where: { id: existingAccount.id },
-          data: { balance: { increment: cents } },
-          select: { iban: true, balance: true },
-        });
-
-        const card = await tx.card.findFirst({
-          where: { accountId: existingAccount.id },
-          select: { last4: true, holder: true },
-        });
-
+        // Refuse to silently re-credit. This endpoint used to turn a double
+        // click or a retried request into a second CREDIT + balance increment
+        // while answering 200 {success:true} — a silent double-spend.
+        // Topping up an existing account is a distinct, explicit action
+        // (/api/admin/accounts/topup); name it so the admin cannot believe a
+        // credential was set either (the password below is ignored for
+        // existing users — use /api/admin/accounts/{id}/password).
         return {
-          account: { iban: updatedAccount.iban, balance: updatedAccount.balance },
-          card: card
-            ? { number: '•••• •••• •••• ' + card.last4, holder: card.holder }
-            : null,
-          isNew: false,
-          userId: user.id,
+          success: false as const,
+          error:
+            'Un conto esiste già per questa email. Nessun importo è stato accreditato. ' +
+            'Usa "Accredita" (topup) per aggiungere fondi, oppure "Reimposta password" per impostare le credenziali.',
+          code: 'ACCOUNT_ALREADY_EXISTS' as const,
         };
       }
 
@@ -275,6 +264,14 @@ export async function POST(req: NextRequest) {
         userId: user.id,
       };
     });
+
+    // The transaction signals refusal by returning { success: false }.
+    if ('success' in result && result.success === false) {
+      return NextResponse.json(
+        { success: false, error: result.error, code: result.code },
+        { status: 409 }
+      );
+    }
 
     let inviteUrl: string | undefined;
 

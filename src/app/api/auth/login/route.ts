@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { randomBytes } from 'node:crypto';
 import { hashToken, newToken } from '@/lib/tokens';
 import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { validateCsrfToken } from '@/lib/csrf';
@@ -22,6 +23,19 @@ const ACCESS_TOKEN_TTL = '15m';
 const REFRESH_TOKEN_TTL_DAYS = 7;
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
+
+// Dummy hash for the "user not found" branch, computed once per instance.
+// Generated rather than hardcoded: a hand-written bcrypt string can be invalid
+// (compare then throws or short-circuits) which silently defeats the whole
+// timing equalisation. Cost MUST match the real hashes (12) or the difference
+// itself leaks account existence.
+let dummyHash: string | null = null;
+function getDummyHash(): string {
+  if (!dummyHash) {
+    dummyHash = bcrypt.hashSync(randomBytes(16).toString('hex'), 12);
+  }
+  return dummyHash;
+}
 
 export async function POST(req: NextRequest) {
   if (!secret) {
@@ -50,13 +64,10 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user || !user.hashedPassword) {
-      // Validly-formatted dummy hash (cost 10) so a missing user costs ~same time
-      // as a real bcrypt comparison; never throws on malformed salt.
+      // Same-cost compare against a generated dummy hash so a missing user
+      // takes as long as a real (wrong) password attempt.
       try {
-        await bcrypt.compare(
-          'dummy_password_never_matches_7f3a',
-          '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdLPAZq'
-        );
+        await bcrypt.compare('dummy_password_never_matches', getDummyHash());
       } catch {
         /* ignore — timing mitigation only */
       }
@@ -70,33 +81,30 @@ export async function POST(req: NextRequest) {
     const valid = await bcrypt.compare(password, user.hashedPassword);
 
     if (!valid) {
-      const newAttempts = user.failedAttempts + 1;
-      const lockUntil = newAttempts >= MAX_FAILED_ATTEMPTS
-        ? new Date(Date.now() + LOCKOUT_DURATION_MS)
-        : null;
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          failedAttempts: newAttempts,
-          lockedUntil: lockUntil,
-        },
+      // Atomic increment: a plain read-modify-write loses updates under
+      // concurrency (N parallel wrong passwords all read the same value and
+      // write the same one, so the lockout would never trigger).
+      const bumped = await prisma.user.updateMany({
+        where: { id: user.id, failedAttempts: { lt: MAX_FAILED_ATTEMPTS } },
+        data: { failedAttempts: { increment: 1 } },
       });
-
-      if (lockUntil) {
+      if (bumped.count === 0) {
+        // Already at/over the threshold: re-arm the lock without ever writing a
+        // lower counter.
+        await prisma.user.updateMany({
+          where: { id: user.id },
+          data: { lockedUntil: new Date(Date.now() + LOCKOUT_DURATION_MS) },
+        });
         return NextResponse.json({
           success: false,
           error: 'Troppi tentativi falliti. Account bloccato per 15 minuti.',
         }, { status: 429 });
       }
 
-      // Tell the user how many tries are left BEFORE they lock themselves out.
-      // Prevents the retry-loop frustration; the lockout still applies.
-      const left = MAX_FAILED_ATTEMPTS - newAttempts;
-      const hint = left === 1
-        ? ' Ultimo tentativo: al prossimo errore l\'account sarà bloccato per 15 minuti.'
-        : ` ${left} tentativi rimasti prima del blocco temporaneo.`;
-      return NextResponse.json({ success: false, error: 'Credenziali non valide.' + hint }, { status: 401 });
+      // Constant response for every wrong-password case. A per-attempt counter
+      // in the message ("N tentativi rimasti") confirmed account existence to
+      // anyone probing addresses, defeating the constant-time compare above.
+      return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
     }
 
     // Correct password: now safe to explain the account state

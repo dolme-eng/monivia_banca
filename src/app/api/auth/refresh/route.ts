@@ -80,11 +80,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Account bloccato' }, { status: 401 });
     }
 
+    // A deleted account yields `null`, which used to SKIP this guard entirely
+    // and mint a fresh session for an account that no longer exists. Absence
+    // must be treated exactly like a non-ACTIVE account.
     const account = await prisma.account.findFirst({
       where: { userId: user.id },
       select: { status: true },
     });
-    if (account && account.status !== 'ACTIVE') {
+    if (!account || account.status !== 'ACTIVE') {
       await prisma.refreshToken.delete({ where: { id: dbToken.id } }).catch(() => {});
       return NextResponse.json({ success: false, error: 'Conto non attivo' }, { status: 403 });
     }
