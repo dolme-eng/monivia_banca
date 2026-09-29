@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
+import { isEmailConfigured } from '@/lib/email-notify';
 
 export async function GET(req: NextRequest) {
   const auth = await requireAdmin(req);
@@ -56,6 +57,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
+      emailConfigured: isEmailConfigured(),
       totalAccounts,
       pendingTransactions,
       pendingAccounts,

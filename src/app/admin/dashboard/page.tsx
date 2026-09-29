@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 
 interface AdminStats {
+  emailConfigured?: boolean;
   totalAccounts: number;
   pendingTransactions: number;
   pendingAccounts: number;
@@ -41,6 +42,7 @@ export default function AdminDashboardPage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const emailOk = stats.emailConfigured !== false;
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -80,6 +82,20 @@ export default function AdminDashboardPage() {
           Nuovo Provisioning
         </Link>
       </div>
+
+      {!loading && !emailOk && (
+        <div role="alert" className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-800 flex items-start gap-2">
+          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+          <div>
+            <p className="font-black">Invio email non configurato</p>
+            <p className="mt-0.5 text-amber-700">
+              Le link di «Password dimenticata», gli inviti e le notifiche di approvazione
+              <strong> non vengono consegnati</strong>. Imposta <code className="font-mono">RESEND_API_KEY</code>{' '}
+              oppure le credenziali SMTP nelle variabili d&apos;ambiente Vercel.
+            </p>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center gap-2">

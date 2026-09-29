@@ -70,7 +70,17 @@ async function sendEmail(options: {
     }
   }
 
-  console.log('[EMAIL-SKIPPED] No email provider configured (set RESEND_API_KEY or SMTP credentials)');
+  // No provider configured: the email is NEVER delivered. Callers intentionally
+  // keep returning success (anti-enumeration), so this must be loud — it is the
+  // only signal that password-reset / invite mails are silently bouncing.
+  console.error(
+    '[EMAIL-NOT-SENT] No provider configured (set RESEND_API_KEY or SMTP_*). ' +
+    'Password reset, invite and approval emails are NOT being delivered.'
+  );
+}
+
+export function isEmailConfigured(): boolean {
+  return !!(resend || transporter);
 }
 
 // ============================================================
