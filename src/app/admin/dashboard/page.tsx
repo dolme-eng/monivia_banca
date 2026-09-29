@@ -17,7 +17,7 @@ import {
   AlertCircle,
   XCircle,
   Loader2,
-  Send,
+  Mail,
 } from 'lucide-react';
 
 interface AdminStats {
@@ -138,7 +138,7 @@ export default function AdminDashboardPage() {
                 disabled={testBusy || !testTo}
                 className="px-4 py-2 min-h-[44px] rounded-lg bg-red-600 text-white text-xs font-black hover:bg-red-700 disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {testBusy ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                {testBusy ? <Loader2 size={14} className="animate-spin" /> : <Mail size={14} />}
                 Invia email di test
               </button>
             </div>
