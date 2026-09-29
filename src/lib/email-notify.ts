@@ -6,18 +6,35 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-// --- SMTP fallback (Hostinger) ---
+// --- SMTP fallback ---
+// `secure` is derived from the port: 465 is implicit TLS, 587/25 expect STARTTLS.
+// Hardcoding secure:true breaks every non-465 host (STARTTLS is then never
+// negotiated and the server answers 535 authentication failed).
+const smtpPort = Number(process.env.SMTP_PORT) || 465;
+const smtpSecure = smtpPort === 465;
+
 const transporter = (!resend && process.env.SMTP_USER && process.env.SMTP_PASS)
   ? nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.hostinger.com',
-      port: Number(process.env.SMTP_PORT) || 465,
-      secure: true,
+      port: smtpPort,
+      secure: smtpSecure,
+      // Only ask for STARTTLS on the submission ports; implicit TLS already covers 465.
+      requireTLS: smtpPort === 587,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
     })
   : null;
+
+export function getSmtpConfig() {
+  return {
+    host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+    port: smtpPort,
+    secure: smtpSecure,
+    user: process.env.SMTP_USER ? `${process.env.SMTP_USER.slice(0, 2)}***` : null,
+  };
+}
 
 const FROM_EMAIL = process.env.EMAIL_FROM || 'Monivia <contatto@monivia.it>';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@monivia.it';
@@ -104,6 +121,28 @@ async function sendEmail(options: {
 
 export function isEmailConfigured(): boolean {
   return !!(resend || transporter);
+}
+
+/**
+ * Fire a real email and report the provider's verbatim outcome.
+ * Used by the admin diagnostic panel to tell a config problem apart from a
+ * provider/auth/deliverability problem.
+ */
+export async function sendTestEmail(to: string): Promise<{ ok: boolean; error?: string }> {
+  if (!resend && !transporter) {
+    return { ok: false, error: 'Nessun provider configurato (RESEND_API_KEY o SMTP_USER+SMTP_PASS mancanti)' };
+  }
+  try {
+    await sendEmail({
+      to,
+      subject: 'Monivia — test di configurazione email',
+      html: '<div style="font-family:Arial,sans-serif"><h2>Monivia</h2><p>Email di test: la configurazione SMTP funziona.</p></div>',
+    });
+    if (emailStats.sent > 0) return { ok: true };
+    return { ok: false, error: emailStats.lastError || 'invio non riuscito' };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
 }
 
 // ============================================================

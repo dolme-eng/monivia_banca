@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { formatTime } from '@/lib/format';
+import { csrfFetch } from '@/lib/csrf-client';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -15,6 +16,8 @@ import {
   Send,
   AlertCircle,
   XCircle,
+  Loader2,
+  Send,
 } from 'lucide-react';
 
 interface AdminStats {
@@ -45,6 +48,33 @@ export default function AdminDashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const emailOk = stats.emailConfigured !== false;
   const emailBroken = !loading && (stats.email?.failed ?? 0) > 0;
+  const [testTo, setTestTo] = useState('');
+  const [testBusy, setTestBusy] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  const runEmailTest = async () => {
+    if (!testTo || testBusy) return;
+    setTestBusy(true);
+    setTestResult(null);
+    try {
+      const res = await csrfFetch('/api/admin/email-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: testTo }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTestResult({ ok: true, msg: `Email inviata a ${testTo}. Controlla la posta (e lo spam).` });
+      } else {
+        const smtp = data.smtp ? ` [smtp: ${data.smtp.host}:${data.smtp.port} user=${data.smtp.user}]` : '';
+        setTestResult({ ok: false, msg: (data.error || 'Invio fallito') + smtp });
+      }
+    } catch {
+      setTestResult({ ok: false, msg: 'Errore di connessione.' });
+    } finally {
+      setTestBusy(false);
+    }
+  };
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -95,6 +125,31 @@ export default function AdminDashboardPage() {
               Gli utenti che chiedono un reset password ricevono «invio riuscito» ma nessuna email.
               Ultimo errore: <code className="font-mono text-[11px] break-all">{stats.email?.lastError}</code>
             </p>
+            <div className="flex flex-col sm:flex-row gap-2 mt-3">
+              <input
+                type="email"
+                value={testTo}
+                onChange={(e) => setTestTo(e.target.value)}
+                placeholder="tuo@email.it"
+                className="flex-1 px-3 py-2 min-h-[44px] rounded-lg border border-red-200 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-red-400"
+              />
+              <button
+                onClick={runEmailTest}
+                disabled={testBusy || !testTo}
+                className="px-4 py-2 min-h-[44px] rounded-lg bg-red-600 text-white text-xs font-black hover:bg-red-700 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {testBusy ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                Invia email di test
+              </button>
+            </div>
+            {testResult && (
+              <p
+                role="status"
+                className={`mt-2 text-xs font-black break-words ${testResult.ok ? 'text-emerald-700' : 'text-red-700'}`}
+              >
+                {testResult.ok ? '✓ ' : '✗ '}{testResult.msg}
+              </p>
+            )}
           </div>
         </div>
       )}
