@@ -19,6 +19,7 @@ import {
 
 interface AdminStats {
   emailConfigured?: boolean;
+  email?: { sent: number; failed: number; lastError: string | null; configured: boolean };
   totalAccounts: number;
   pendingTransactions: number;
   pendingAccounts: number;
@@ -43,6 +44,7 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const emailOk = stats.emailConfigured !== false;
+  const emailBroken = !loading && (stats.email?.failed ?? 0) > 0;
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -82,6 +84,20 @@ export default function AdminDashboardPage() {
           Nuovo Provisioning
         </Link>
       </div>
+
+      {!loading && emailBroken && (
+        <div role="alert" className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-800 flex items-start gap-2">
+          <AlertCircle size={16} className="mt-0.5 shrink-0" />
+          <div>
+            <p className="font-black">Invio email in errore</p>
+            <p className="mt-0.5 text-red-700">
+              {stats.email?.failed} invio/i falliti ({stats.email?.sent} riusciti) su questa istanza.
+              Gli utenti che chiedono un reset password ricevono «invio riuscito» ma nessuna email.
+              Ultimo errore: <code className="font-mono text-[11px] break-all">{stats.email?.lastError}</code>
+            </p>
+          </div>
+        </div>
+      )}
 
       {!loading && !emailOk && (
         <div role="alert" className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-800 flex items-start gap-2">

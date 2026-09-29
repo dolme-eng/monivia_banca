@@ -31,6 +31,18 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;');
 }
 
+// Delivery telemetry. A configured provider does NOT mean mail is delivered:
+// wrong SMTP credentials, unverified Resend domain or a suppressed quota all
+// produce a created transporter + a failing send. Counters make that visible
+// in the admin dashboard instead of only in server logs.
+// Per-instance counters (serverless): they reset on cold start, which is
+// acceptable for an "is it broken right now" signal.
+const emailStats = { sent: 0, failed: 0, lastError: null as string | null };
+
+export function getEmailStats() {
+  return { ...emailStats, configured: isEmailConfigured() };
+}
+
 async function sendEmail(options: {
   to: string;
   subject: string;
@@ -48,8 +60,11 @@ async function sendEmail(options: {
         replyTo: options.replyTo,
         headers: { 'X-Entity-View-ID': 'no-track' },
       });
+      emailStats.sent += 1;
       return;
     } catch (err) {
+      emailStats.failed += 1;
+      emailStats.lastError = `resend: ${err instanceof Error ? err.message : String(err)}`;
       console.error('[EMAIL-RESEND] Failed, trying SMTP fallback:', err);
     }
   }
@@ -64,8 +79,11 @@ async function sendEmail(options: {
         html: options.html,
         replyTo: options.replyTo,
       });
+      emailStats.sent += 1;
       return;
     } catch (err) {
+      emailStats.failed += 1;
+      emailStats.lastError = `smtp: ${err instanceof Error ? err.message : String(err)}`;
       console.error('[EMAIL-SMTP] Failed:', err);
     }
   }
@@ -73,6 +91,8 @@ async function sendEmail(options: {
   // No provider configured: the email is NEVER delivered. Callers intentionally
   // keep returning success (anti-enumeration), so this must be loud — it is the
   // only signal that password-reset / invite mails are silently bouncing.
+  emailStats.failed += 1;
+  emailStats.lastError = 'no-provider';
   console.error(
     '[EMAIL-NOT-SENT] No provider configured (set RESEND_API_KEY or SMTP_*). ' +
     'Password reset, invite and approval emails are NOT being delivered.'
