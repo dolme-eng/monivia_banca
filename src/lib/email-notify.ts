@@ -63,8 +63,6 @@ async function sendEmail(options: {
       emailStats.sent += 1;
       return;
     } catch (err) {
-      emailStats.failed += 1;
-      emailStats.lastError = `resend: ${err instanceof Error ? err.message : String(err)}`;
       console.error('[EMAIL-RESEND] Failed, trying SMTP fallback:', err);
     }
   }
@@ -82,17 +80,22 @@ async function sendEmail(options: {
       emailStats.sent += 1;
       return;
     } catch (err) {
+      const reason = err instanceof Error ? err.message : String(err);
       emailStats.failed += 1;
-      emailStats.lastError = `smtp: ${err instanceof Error ? err.message : String(err)}`;
+      emailStats.lastError = `smtp: ${reason}`;
       console.error('[EMAIL-SMTP] Failed:', err);
+      // Do NOT fall through: a provider was configured and attempted, so this
+      // is a delivery failure, not a missing configuration. The real reason
+      // above is what the operator needs.
+      return;
     }
   }
 
-  // No provider configured: the email is NEVER delivered. Callers intentionally
-  // keep returning success (anti-enumeration), so this must be loud — it is the
-  // only signal that password-reset / invite mails are silently bouncing.
+  // Genuinely no provider configured: the email is NEVER delivered. Callers
+  // intentionally keep returning success (anti-enumeration), so this must be
+  // loud — it is the only signal that reset/invite mails are silently bouncing.
   emailStats.failed += 1;
-  emailStats.lastError = 'no-provider';
+  emailStats.lastError = 'no-provider: set RESEND_API_KEY or SMTP_USER + SMTP_PASS';
   console.error(
     '[EMAIL-NOT-SENT] No provider configured (set RESEND_API_KEY or SMTP_*). ' +
     'Password reset, invite and approval emails are NOT being delivered.'
