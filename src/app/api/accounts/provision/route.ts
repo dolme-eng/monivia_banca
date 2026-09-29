@@ -93,6 +93,18 @@ const provisionSchema = z.object({
     .regex(/[^A-Za-z0-9]/, 'La password deve contenere almeno un carattere speciale'),
 });
 
+/** Refusal that rolls the transaction back and is rendered as a 4xx. */
+class RefusedProvision extends Error {
+  readonly code: string;
+  readonly status: number;
+  constructor(message: string, code: string, status: number) {
+    super(message);
+    this.name = 'RefusedProvision';
+    this.code = code;
+    this.status = status;
+  }
+}
+
 export async function POST(req: NextRequest) {
   const auth = await requireAdmin(req);
   if ('error' in auth) return auth.error;
@@ -163,13 +175,16 @@ export async function POST(req: NextRequest) {
       });
 
       if (existingAccount) {
+        // Refusals throw: it aborts the transaction (no half applied write) and
+        // keeps the callback return type a single concrete shape, so no union
+        // narrowing is needed anywhere below.
         // Never credit frozen/closed accounts — unfreeze first
         if (existingAccount.status === 'FROZEN' || existingAccount.status === 'CLOSED') {
-          return {
-            success: false as const,
-            error: 'Il conto è congelato o chiuso. Scongelalo prima di accreditare.',
-            code: 'ACCOUNT_NOT_ACTIVE' as const,
-          };
+          throw new RefusedProvision(
+            'Il conto è congelato o chiuso. Scongelalo prima di accreditare.',
+            'ACCOUNT_NOT_ACTIVE',
+            409
+          );
         }
 
         // Refuse to silently re-credit. This endpoint used to turn a double
@@ -179,13 +194,12 @@ export async function POST(req: NextRequest) {
         // (/api/admin/accounts/topup); name it so the admin cannot believe a
         // credential was set either (the password below is ignored for
         // existing users — use /api/admin/accounts/{id}/password).
-        return {
-          success: false as const,
-          error:
-            'Un conto esiste già per questa email. Nessun importo è stato accreditato. ' +
+        throw new RefusedProvision(
+          'Un conto esiste già per questa email. Nessun importo è stato accreditato. ' +
             'Usa "Accredita" (topup) per aggiungere fondi, oppure "Reimposta password" per impostare le credenziali.',
-          code: 'ACCOUNT_ALREADY_EXISTS' as const,
-        };
+          'ACCOUNT_ALREADY_EXISTS',
+          409
+        );
       }
 
       // Collision-safe generation: pre-check uniqueness so a duplicate surfaces
@@ -273,14 +287,6 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    // The transaction signals refusal by returning { success: false }.
-    if ('success' in result && result.success === false) {
-      return NextResponse.json(
-        { success: false, error: result.error, code: result.code },
-        { status: 409 }
-      );
-    }
-
     let inviteUrl: string | undefined;
 
     // Money movement + account creation: this is the entry path, it was the one
@@ -332,6 +338,12 @@ export async function POST(req: NextRequest) {
       inviteUrl,
     });
   } catch (error: unknown) {
+    if (error instanceof RefusedProvision) {
+      return NextResponse.json(
+        { success: false, error: error.message, code: error.code },
+        { status: error.status }
+      );
+    }
     // Server log keeps details for debugging; the client only gets a generic message.
     console.error('Provision error:', error instanceof Error ? error.message : error);
     return NextResponse.json({ success: false, error: 'Errore durante il provisioning' }, { status: 500 });
