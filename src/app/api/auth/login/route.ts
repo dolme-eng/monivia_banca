@@ -90,7 +90,13 @@ export async function POST(req: NextRequest) {
         }, { status: 429 });
       }
 
-      return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
+      // Tell the user how many tries are left BEFORE they lock themselves out.
+      // Prevents the retry-loop frustration; the lockout still applies.
+      const left = MAX_FAILED_ATTEMPTS - newAttempts;
+      const hint = left === 1
+        ? ' Ultimo tentativo: al prossimo errore l\'account sarà bloccato per 15 minuti.'
+        : ` ${left} tentativi rimasti prima del blocco temporaneo.`;
+      return NextResponse.json({ success: false, error: 'Credenziali non valide.' + hint }, { status: 401 });
     }
 
     // Correct password: now safe to explain the account state
