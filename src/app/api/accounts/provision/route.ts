@@ -127,7 +127,11 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    const { email, nome, cognome, amount, password } = parsed.data;
+    const { email: rawEmail, nome, cognome, amount, password } = parsed.data;
+    // Normalise in code, not only in the schema: a mixed-case address stored as-is
+    // is unreachable at login (the login lookup lowercases, Postgres compares
+    // case-sensitively), which silently locks the client out of their own account.
+    const email = rawEmail.trim().toLowerCase();
 
     // Round to cents once: IEEE floats must never reach money columns raw
     const cents = Math.round(amount * 100) / 100;
