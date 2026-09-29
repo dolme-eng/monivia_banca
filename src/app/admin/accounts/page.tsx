@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Pencil,
   Lock,
+  KeyRound,
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -57,6 +58,11 @@ export default function AccountsPage() {
   const [editingIban, setEditingIban] = useState<{ id: string; value: string } | null>(null);
   const [ibanSaving, setIbanSaving] = useState(false);
   const [ibanError, setIbanError] = useState<string | null>(null);
+  const [pwTarget, setPwTarget] = useState<Account | null>(null);
+  const [pwValue, setPwValue] = useState('');
+  const [pwSaving, setPwSaving] = useState(false);
+  const [pwError, setPwError] = useState<string | null>(null);
+  const [pwDone, setPwDone] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(searchQuery), 400);
@@ -167,6 +173,52 @@ export default function AccountsPage() {
     } finally {
       setIbanSaving(false);
     }
+  };
+
+  const pwChecks = [
+    { label: '8+ caratteri', ok: pwValue.length >= 8 },
+    { label: 'Maiuscola', ok: /[A-Z]/.test(pwValue) },
+    { label: 'Minuscola', ok: /[a-z]/.test(pwValue) },
+    { label: 'Numero', ok: /[0-9]/.test(pwValue) },
+    { label: 'Speciale', ok: /[^A-Za-z0-9]/.test(pwValue) },
+  ];
+  const pwValid = pwChecks.every((c) => c.ok);
+
+  const savePassword = async () => {
+    if (!pwTarget || pwSaving || !pwValid) return;
+    setPwSaving(true);
+    setPwError(null);
+    try {
+      const res = await csrfFetch(`/api/admin/accounts/${pwTarget.id}/password`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwValue }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setPwDone(true);
+        setAccounts((prev) =>
+          prev.map((a) =>
+            a.id === pwTarget.id
+              ? { ...a, user: { ...a.user, failedAttempts: 0, lockedUntil: null } }
+              : a
+          )
+        );
+      } else {
+        setPwError(data.error || 'Impossibile aggiornare la password.');
+      }
+    } catch {
+      setPwError('Errore di connessione.');
+    } finally {
+      setPwSaving(false);
+    }
+  };
+
+  const closePasswordModal = () => {
+    setPwTarget(null);
+    setPwValue('');
+    setPwError(null);
+    setPwDone(false);
   };
 
   const statusLabel = (s: string) => {
@@ -359,6 +411,14 @@ export default function AccountsPage() {
                       </button>
                     )}
                     <button
+                      onClick={() => { setPwTarget(acc); setPwValue(''); setPwError(null); setPwDone(false); }}
+                      disabled={actionLoading !== null}
+                      className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-xs font-black hover:bg-slate-200 transition-colors"
+                    >
+                      <KeyRound size={14} />
+                      Reimposta password
+                    </button>
+                    <button
                       onClick={() => { setEditingIban({ id: acc.id, value: acc.iban }); setIbanError(null); }}
                       disabled={actionLoading !== null}
                       className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-xs font-black hover:bg-slate-200 transition-colors"
@@ -432,6 +492,105 @@ export default function AccountsPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Admin-set client password */}
+      {pwTarget && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => !pwSaving && closePasswordModal()} />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pw-modal-title"
+            className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+          >
+            <button
+              onClick={closePasswordModal}
+              disabled={pwSaving}
+              aria-label="Chiudi"
+              className="absolute right-3 top-3 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400"
+            >
+              <XCircle size={16} />
+            </button>
+
+            <h3 id="pw-modal-title" className="text-lg font-black text-primary mb-1">
+              {pwDone ? 'Password aggiornata' : 'Reimposta password'}
+            </h3>
+            <p className="text-xs text-slate-500 mb-5">
+              {pwTarget.user.nome} {pwTarget.user.cognome} · {pwTarget.user.email}
+            </p>
+
+            {pwDone ? (
+              <div className="space-y-4">
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-sm font-black text-emerald-700 flex items-center gap-2">
+                  <CheckCircle2 size={16} />
+                  Password aggiornata e sessioni chiuse.
+                </div>
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800">
+                  <p className="font-black mb-1">Comunica la password al cliente</p>
+                  <p>
+                    Non viene salvata né mostrata di nuovo. Trasmettila con un canale sicuro
+                    e chiedi di cambiarla al primo accesso.
+                  </p>
+                </div>
+                <button onClick={closePasswordModal} className="w-full btn-primary py-3 text-sm">
+                  Chiudi
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="admin-pw" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">
+                    Nuova password *
+                  </label>
+                  <input
+                    id="admin-pw"
+                    type="text"
+                    value={pwValue}
+                    onChange={(e) => setPwValue(e.target.value)}
+                    autoComplete="off"
+                    spellCheck={false}
+                    className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary"
+                    placeholder="Es. Marco453_34"
+                  />
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
+                    {pwChecks.map((c) => (
+                      <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-600' : 'text-slate-400'}`}>
+                        {c.ok ? '✓' : '○'} {c.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {pwError && (
+                  <p role="alert" className="text-sm font-black text-red-600">{pwError}</p>
+                )}
+
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
+                  Verranno anche azzerati i tentativi falliti e chiuse tutte le sessioni attive.
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={closePasswordModal}
+                    disabled={pwSaving}
+                    className="flex-1 px-4 py-3 min-h-[44px] rounded-xl border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    onClick={savePassword}
+                    disabled={pwSaving || !pwValid}
+                    className="flex-1 px-4 py-3 min-h-[44px] rounded-xl text-sm font-black text-white bg-primary hover:bg-slate-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {pwSaving ? <Loader2 size={16} className="animate-spin" /> : <KeyRound size={16} />}
+                    Salva
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
