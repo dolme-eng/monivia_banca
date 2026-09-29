@@ -63,14 +63,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
     }
 
-    // Generic response on lockout too: a distinct 429 would reveal that the
-    // account exists (user-enumeration oracle). Locked users simply fail
-    // until the window expires, then succeed with the right password.
-    if (user.lockedUntil && user.lockedUntil > new Date()) {
-      return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
-    }
-
+    // Password is verified BEFORE any account-state message is returned.
+    // Revealing "locked" / "not active" only after a correct password carries
+    // no enumeration risk (the caller already proved knowledge of the secret),
+    // while hiding it entirely locks real users out with no explanation.
     const valid = await bcrypt.compare(password, user.hashedPassword);
+
     if (!valid) {
       const newAttempts = user.failedAttempts + 1;
       const lockUntil = newAttempts >= MAX_FAILED_ATTEMPTS
@@ -88,11 +86,20 @@ export async function POST(req: NextRequest) {
       if (lockUntil) {
         return NextResponse.json({
           success: false,
-          error: `Troppi tentativi falliti. Account bloccato per 15 minuti.`,
+          error: 'Troppi tentativi falliti. Account bloccato per 15 minuti.',
         }, { status: 429 });
       }
 
       return NextResponse.json({ success: false, error: 'Credenziali non valide' }, { status: 401 });
+    }
+
+    // Correct password: now safe to explain the account state
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      const remaining = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000);
+      return NextResponse.json({
+        success: false,
+        error: `Password corretta, ma l'account è bloccato per troppi tentativi falliti. Riprova tra ${remaining} minuti.`,
+      }, { status: 429 });
     }
 
     if (user.failedAttempts > 0 || user.lockedUntil) {
@@ -107,10 +114,16 @@ export async function POST(req: NextRequest) {
       select: { status: true },
     });
 
-    // Single generic message: distinct per-status messages would confirm
-    // valid credentials to an attacker (oracle).
+    // Password is proven correct at this point, so the account state can be
+    // reported precisely — no enumeration oracle (an attacker without the
+    // password never reaches this branch).
     if (account && account.status !== 'ACTIVE') {
-      return NextResponse.json({ success: false, error: 'Il conto non è attivo. Contatta il supporto.' }, { status: 403 });
+      const msg = account.status === 'PENDING'
+        ? 'Il tuo conto è in attesa di validazione. Ti avviseremo via email appena attivo.'
+        : account.status === 'FROZEN'
+          ? 'Il tuo conto è congelato. Contatta il supporto per maggiori informazioni.'
+          : 'Il tuo conto è chiuso. Contatta il supporto.';
+      return NextResponse.json({ success: false, error: msg }, { status: 403 });
     }
 
     const accessToken = await new SignJWT({

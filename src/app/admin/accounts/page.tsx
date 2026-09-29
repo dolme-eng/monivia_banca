@@ -16,6 +16,7 @@ import {
   Clock,
   AlertTriangle,
   Pencil,
+  Lock,
 } from 'lucide-react';
 import { csrfFetch } from '@/lib/csrf-client';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -28,12 +29,19 @@ interface Account {
   status: string;
   blockedAt: string | null;
   createdAt: string;
-  user: { id: string; email: string; nome: string; cognome: string };
+  user: {
+    id: string;
+    email: string;
+    nome: string;
+    cognome: string;
+    failedAttempts: number;
+    lockedUntil: string | null;
+  };
   cards: { number: string; holder: string }[];
 }
 
 type ConfirmAction = {
-  type: 'validate' | 'freeze' | 'unfreeze' | 'block' | 'unblock' | 'delete';
+  type: 'validate' | 'freeze' | 'unfreeze' | 'block' | 'unblock' | 'delete' | 'unlockLogin';
   account: Account;
 };
 
@@ -86,6 +94,24 @@ export default function AccountsPage() {
         });
         if (res.ok) {
           setAccounts((prev) => prev.filter((a) => a.id !== action.account.id));
+        }
+      } else if (action.type === 'unlockLogin') {
+        const res = await csrfFetch(`/api/admin/accounts/${action.account.id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'unlockLogin' }),
+        });
+        if (res.ok) {
+          setAccounts((prev) =>
+            prev.map((a) =>
+              a.id === action.account.id
+                ? {
+                    ...a,
+                    user: { ...a.user, failedAttempts: 0, lockedUntil: null },
+                  }
+                : a
+            )
+          );
         }
       } else {
         const res = await csrfFetch(`/api/admin/accounts/${action.account.id}/status`, {
@@ -227,6 +253,7 @@ export default function AccountsPage() {
         <div className="space-y-3">
           {accounts.map((acc) => {
             const st = statusLabel(acc.status);
+            const loginLocked = !!acc.user.lockedUntil && new Date(acc.user.lockedUntil) > new Date();
             return (
               <div
                 key={acc.id}
@@ -246,9 +273,17 @@ export default function AccountsPage() {
                         </p>
                         <p className="text-[11px] text-slate-400 truncate">{acc.user.email}</p>
                       </div>
-                      <span className={`ml-auto text-[11px] font-black px-2 py-0.5 rounded-full shrink-0 ${st.cls}`}>
-                        {st.text}
-                      </span>
+                      <div className="ml-auto flex items-center gap-2 shrink-0">
+                        {loginLocked && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-red-50 text-red-600">
+                            <Lock size={10} />
+                            Accesso bloccato
+                          </span>
+                        )}
+                        <span className={`text-[11px] font-black px-2 py-0.5 rounded-full ${st.cls}`}>
+                          {st.text}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex flex-wrap gap-x-6 gap-y-1 ml-14">
                       <div>
@@ -313,6 +348,16 @@ export default function AccountsPage() {
 
                   {/* Actions */}
                   <div className="flex flex-wrap gap-2 shrink-0">
+                    {loginLocked && (
+                      <button
+                        onClick={() => setConfirm({ type: 'unlockLogin', account: acc })}
+                        disabled={actionLoading !== null}
+                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-black hover:bg-red-100 transition-colors"
+                      >
+                        <Unlock size={14} />
+                        Sblocca accesso
+                      </button>
+                    )}
                     <button
                       onClick={() => { setEditingIban({ id: acc.id, value: acc.iban }); setIbanError(null); }}
                       disabled={actionLoading !== null}
@@ -398,11 +443,14 @@ export default function AccountsPage() {
           confirm?.type === 'unfreeze' ? 'Scongelare il conto?' :
           confirm?.type === 'block' ? 'Bloccare i trasferimenti?' :
           confirm?.type === 'unblock' ? 'Sbloccare i trasferimenti?' :
+          confirm?.type === 'unlockLogin' ? 'Sbloccare l\'accesso?' :
           'Eliminare il conto definitivamente?'
         }
         message={
           confirm?.type === 'delete'
             ? `Questa azione è irreversibile. Il conto di ${confirm?.account.user.nome} ${confirm?.account.user.cognome} e tutti i suoi dati verranno eliminati permanentemente.`
+            : confirm?.type === 'unlockLogin'
+            ? `${confirm?.account.user.nome} ${confirm?.account.user.cognome} potrà riprovare ad accedere immediatamente. Il contatore dei tentativi falliti verrà azzerato.`
             : confirm?.type === 'validate'
             ? `Il conto di ${confirm?.account.user.nome} ${confirm?.account.user.cognome} verrà attivato e il cliente potrà accedere al servizio.`
             : confirm?.type === 'freeze'
@@ -417,6 +465,7 @@ export default function AccountsPage() {
           confirm?.type === 'unfreeze' ? 'Scongela' :
           confirm?.type === 'block' ? 'Blocca' :
           confirm?.type === 'unblock' ? 'Sblocca' :
+          confirm?.type === 'unlockLogin' ? 'Sblocca accesso' :
           'Elimina'
         }
         variant={confirm?.type === 'delete' ? 'danger' : 'info'}

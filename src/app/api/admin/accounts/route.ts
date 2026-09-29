@@ -79,7 +79,14 @@ export async function GET(req: NextRequest) {
         blockedAt: true,
         createdAt: true,
         user: {
-          select: { id: true, email: true, nome: true, cognome: true },
+          select: {
+            id: true,
+            email: true,
+            nome: true,
+            cognome: true,
+            failedAttempts: true,
+            lockedUntil: true,
+          },
         },
         cards: {
           select: { last4: true, holder: true },

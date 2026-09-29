@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { logAudit } from '@/lib/audit';
 
 const statusSchema = z.object({
-  action: z.enum(['validate', 'freeze', 'unfreeze', 'block', 'unblock', 'delete']),
+  action: z.enum(['validate', 'freeze', 'unfreeze', 'block', 'unblock', 'delete', 'unlockLogin']),
 });
 
 export async function PATCH(
@@ -52,6 +52,25 @@ export async function PATCH(
     }
 
     let updateData: Record<string, unknown> = {};
+
+    // Clears the login lockout (failedAttempts / lockedUntil) on the owner.
+    // Separate from Account.status: this is an auth-level lock, not a funds lock.
+    if (action === 'unlockLogin') {
+      const cleared = await prisma.user.update({
+        where: { id: account.userId },
+        data: { failedAttempts: 0, lockedUntil: null },
+        select: { id: true },
+      });
+      await logAudit({
+        actorId: auth.session.userId!,
+        action: 'USER_UNLOCK_LOGIN',
+        entity: 'User',
+        entityId: cleared.id,
+        before: 'LOCKED',
+        after: 'UNLOCKED',
+      });
+      return NextResponse.json({ success: true, message: 'Accesso sbloccato' });
+    }
 
     switch (action) {
       case 'validate':
