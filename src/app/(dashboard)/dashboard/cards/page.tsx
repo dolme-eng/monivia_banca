@@ -77,6 +77,13 @@ export default function CardsPage() {
     fetchUser();
   }, []);
 
+  // Must stay above the `if (loading)` early return: a hook placed after a
+  // conditional return changes hook order across renders and crashes React
+  // ("Rendered fewer hooks than expected") when `loading` flips to false.
+  useEffect(() => {
+    setRevealedPan(null);
+  }, [selectedCard, selectedAccountId]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -89,11 +96,6 @@ export default function CardsPage() {
   const cards = account?.cards ?? [];
   const card = cards[selectedCard];
   const transactions = account?.transactions ?? [];
-
-  // Clear a revealed PAN when switching cards
-  useEffect(() => {
-    setRevealedPan(null);
-  }, [selectedCard, selectedAccountId]);
   const balance = account?.balance ?? 0;
   const spentPercent = account?.balance != null ? Math.min(Math.max(((5000 - balance) / 5000) * 100, 0), 100) : 0;
 
