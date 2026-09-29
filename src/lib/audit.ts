@@ -7,17 +7,46 @@ export interface AuditInput {
   entityId: string;
   before?: string;
   after?: string;
+  /** Extra context (amounts, emails, reasons). Never put secrets here. */
+  meta?: Record<string, string | number | boolean | null>;
 }
 
+// One flag per process: if the very first audit write fails (missing model, DB
+// down), every later write would fail identically and the console would fill
+// with identical lines nobody reads. Warn loudly, once.
+let auditStoreBroken = false;
+
 /**
- * Best-effort audit write. Never throws — a failing audit store must not
- * block the underlying operation. Uses (prisma as any) so the app boots
- * even before `prisma generate` picks up the AuditLog model.
+ * Best-effort audit write: a failing audit store must never roll back or break
+ * the business operation it documents.
+ *
+ * It is NOT silent though — a money movement that leaves no trace is worse than
+ * a failed request, so a broken store reports itself loudly on first use.
  */
 export async function logAudit(input: AuditInput): Promise<void> {
   try {
-    await (prisma as any).auditLog.create({ data: input });
-  } catch {
-    console.error('[AUDIT] write failed');
+    const delegate = (prisma as unknown as { auditLog?: { create: (a: { data: AuditInput }) => Promise<unknown> } })
+      .auditLog;
+    if (!delegate?.create) {
+      if (!auditStoreBroken) {
+        auditStoreBroken = true;
+        console.error(
+          '[AUDIT] AuditLog model unavailable — run `prisma generate` and apply the ' +
+            'add_pan_enc_and_audit_log migration. Sensitive operations are NOT being recorded.'
+        );
+      }
+      return;
+    }
+    await delegate.create({ data: input });
+  } catch (err) {
+    if (!auditStoreBroken) {
+      auditStoreBroken = true;
+      console.error('[AUDIT] audit store unavailable — sensitive operations are not being recorded', err);
+    }
   }
+}
+
+/** Exposed for the admin health panel. */
+export function isAuditStoreHealthy(): boolean {
+  return !auditStoreBroken;
 }

@@ -94,7 +94,12 @@ export default function CardsPage() {
 
   const account = user?.accounts?.find((a) => a.id === selectedAccountId) || user?.accounts?.[0];
   const cards = account?.cards ?? [];
-  const card = cards[selectedCard];
+  // `selectedCard` is an index into a list that shrinks when the selected
+  // account changes (e.g. account B has 1 card, account A had 2). Without the
+  // clamp, `cards[selectedCard]` is undefined and the `.number` access below
+  // throws -> blank screen. Clamp, then drop the index when the list changes.
+  const safeIndex = cards.length > 0 ? Math.min(selectedCard, cards.length - 1) : 0;
+  const card = cards[safeIndex];
   const transactions = account?.transactions ?? [];
   const balance = account?.balance ?? 0;
   const spentPercent = account?.balance != null ? Math.min(Math.max(((5000 - balance) / 5000) * 100, 0), 100) : 0;

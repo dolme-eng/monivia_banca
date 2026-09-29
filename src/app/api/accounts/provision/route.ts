@@ -9,6 +9,7 @@ import { validateCsrfToken } from '@/lib/csrf';
 import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
+import { logAudit } from '@/lib/audit';
 import { sendAdminInviteNotification } from '@/lib/email-notify';
 
 function luhnCheck(num: string): boolean {
@@ -76,7 +77,10 @@ function generateItalianIban(): string {
 const ALLOWED_ORIGINS = ['https://banca.monivia.it', 'https://monivia.it'];
 
 const provisionSchema = z.object({
-  email: z.string().email().max(254),
+  // Lowercased like the login schema: a user created as `Admin@X.com` would be
+  // unreachable afterwards, because login lowercases before the lookup and
+  // Postgres compares text case-sensitively.
+  email: z.string().email().max(254).trim().toLowerCase(),
   nome: z.string().min(1).max(100).trim(),
   cognome: z.string().min(1).max(100).trim(),
   amount: z.number().positive().max(1000000),
@@ -274,6 +278,18 @@ export async function POST(req: NextRequest) {
     }
 
     let inviteUrl: string | undefined;
+
+    // Money movement + account creation: this is the entry path, it was the one
+    // missing from the audit trail. Recorded after the transaction commits, with
+    // the IBAN and amount that actually landed.
+    await logAudit({
+      actorId: auth.session.userId!,
+      action: 'ACCOUNT_PROVISION',
+      entity: 'Account',
+      entityId: result.userId!,
+      after: `iban=${result.account.iban}`,
+      meta: { amount: cents, cardLast4: result.card?.number?.slice(-4) ?? null, isNew: true },
+    });
 
     if (result.isNew) {
       // Row already created inside the transaction; only build the link here

@@ -6,6 +6,7 @@ import { validateCsrfToken } from '@/lib/csrf';
 import { checkRateLimit, getClientIp, rateLimitedResponse } from '@/lib/rate-limit';
 import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin';
+import { logAudit } from '@/lib/audit';
 
 const topupSchema = z.object({
   accountId: z.string().uuid(),
@@ -78,12 +79,28 @@ export async function POST(req: NextRequest) {
       });
 
       return {
-        success: true,
+        success: true as const,
+        accountId: account.id,
         account: { iban: updated.iban, balance: Number(updated.balance) },
       };
     });
 
-    return NextResponse.json(result);
+    if (!result.success) {
+      return NextResponse.json({ success: false, error: result.error }, { status: 400 });
+    }
+
+    // Balance credit: previously unlogged. The amount and the resulting balance
+    // are recorded so a disputed credit can be reconstructed.
+    await logAudit({
+      actorId: auth.session.userId!,
+      action: 'ACCOUNT_TOPUP',
+      entity: 'Account',
+      entityId: result.accountId,
+      after: `balance=${result.account.balance}`,
+      meta: { amount: cents, iban: result.account.iban },
+    });
+
+    return NextResponse.json({ success: true, account: result.account });
   } catch (error) {
     console.error('Top-up error:', error);
     return NextResponse.json({ success: false, error: "Errore durante l'accredito" }, { status: 500 });
