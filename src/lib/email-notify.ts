@@ -7,22 +7,29 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 // --- SMTP fallback ---
+// Values pasted into Vercel often carry a trailing space or newline. The server
+// then compares the literal string including that whitespace and answers
+// 535 authentication failed, while a hand-typed copy in another project works.
+// Trim everything before handing it to nodemailer.
+const smtpHost = (process.env.SMTP_HOST || 'smtp.hostinger.com').trim();
+const smtpUser = (process.env.SMTP_USER || '').trim();
+const smtpPass = (process.env.SMTP_PASS || '').trim();
+const smtpPort = Number((process.env.SMTP_PORT || '').trim()) || 465;
 // `secure` is derived from the port: 465 is implicit TLS, 587/25 expect STARTTLS.
 // Hardcoding secure:true breaks every non-465 host (STARTTLS is then never
 // negotiated and the server answers 535 authentication failed).
-const smtpPort = Number(process.env.SMTP_PORT) || 465;
 const smtpSecure = smtpPort === 465;
 
-const transporter = (!resend && process.env.SMTP_USER && process.env.SMTP_PASS)
+const transporter = (!resend && smtpUser && smtpPass)
   ? nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+      host: smtpHost,
       port: smtpPort,
       secure: smtpSecure,
       // Only ask for STARTTLS on the submission ports; implicit TLS already covers 465.
       requireTLS: smtpPort === 587,
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: smtpUser,
+        pass: smtpPass,
       },
     })
   : null;
@@ -31,17 +38,20 @@ export function getSmtpConfig() {
   // Never return the password. For SMTP_USER we expose only its SHAPE, which is
   // what actually matters for diagnosis: some providers reject the local part
   // alone and require the full address (user@domain) as the login.
-  const user = process.env.SMTP_USER || '';
-  const at = user.indexOf('@');
+  const at = smtpUser.indexOf('@');
   return {
-    host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+    host: smtpHost,
     port: smtpPort,
     secure: smtpSecure,
-    user: user ? `${user.slice(0, 2)}***` : null,
-    userIsFullAddress: user.includes('@'),
-    userDomain: at > -1 ? user.slice(at + 1) : null,
-    passLength: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0,
-    hasPass: !!process.env.SMTP_PASS,
+    user: smtpUser ? `${smtpUser.slice(0, 2)}***` : null,
+    userIsFullAddress: smtpUser.includes('@'),
+    userDomain: at > -1 ? smtpUser.slice(at + 1) : null,
+    passLength: smtpPass.length,
+    hasPass: !!smtpPass,
+    // A raw value longer than the trimmed one means the stored secret had
+    // surrounding whitespace — the usual cause of a bare 535.
+    passHadWhitespace:
+      (process.env.SMTP_PASS || '').length !== smtpPass.length,
   };
 }
 
