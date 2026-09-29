@@ -42,7 +42,7 @@ interface Account {
 }
 
 type ConfirmAction = {
-  type: 'validate' | 'freeze' | 'unfreeze' | 'block' | 'unblock' | 'delete' | 'unlockLogin';
+  type: 'validate' | 'freeze' | 'unfreeze' | 'block' | 'unblock' | 'close' | 'purge' | 'unlockLogin';
   account: Account;
 };
 
@@ -54,6 +54,7 @@ export default function AccountsPage() {
   const [filterStatus, setFilterStatus] = useState<string>('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<ConfirmAction | null>(null);
+  const [purgeIban, setPurgeIban] = useState('');
   const [actionError, setActionError] = useState<string | null>(null);
   const [editingIban, setEditingIban] = useState<{ id: string; value: string } | null>(null);
   const [ibanSaving, setIbanSaving] = useState(false);
@@ -92,14 +93,27 @@ export default function AccountsPage() {
   const handleAction = async (action: ConfirmAction) => {
     setActionLoading(action.type);
     try {
-      if (action.type === 'delete') {
+      if (action.type === 'close' || action.type === 'purge') {
         const res = await csrfFetch(`/api/admin/accounts/${action.account.id}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'delete' }),
+          body: JSON.stringify({
+            action: action.type,
+            ...(action.type === 'purge' ? { confirmIban: purgeIban } : {}),
+          }),
         });
         if (res.ok) {
-          setAccounts((prev) => prev.filter((a) => a.id !== action.account.id));
+          if (action.type === 'purge') {
+            setAccounts((prev) => prev.filter((a) => a.id !== action.account.id));
+          } else {
+            setAccounts((prev) =>
+              prev.map((a) =>
+                a.id === action.account.id
+                  ? { ...a, status: 'CLOSED', blockedAt: new Date().toISOString() }
+                  : a
+              )
+            );
+          }
         }
       } else if (action.type === 'unlockLogin') {
         const res = await csrfFetch(`/api/admin/accounts/${action.account.id}/status`, {
@@ -478,7 +492,15 @@ export default function AccountsPage() {
                           </button>
                         )}
                         <button
-                          onClick={() => setConfirm({ type: 'delete', account: acc })}
+                          onClick={() => setConfirm({ type: 'close', account: acc })}
+                          disabled={actionLoading !== null}
+                          className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-50 text-slate-600 border border-slate-200 rounded-lg text-xs font-black hover:bg-slate-100 transition-colors"
+                        >
+                          <Lock size={14} />
+                          Chiudi conto
+                        </button>
+                        <button
+                          onClick={() => { setPurgeIban(''); setConfirm({ type: 'purge', account: acc }); }}
                           disabled={actionLoading !== null}
                           className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-black hover:bg-red-100 transition-colors"
                         >
@@ -603,11 +625,14 @@ export default function AccountsPage() {
           confirm?.type === 'block' ? 'Bloccare i trasferimenti?' :
           confirm?.type === 'unblock' ? 'Sbloccare i trasferimenti?' :
           confirm?.type === 'unlockLogin' ? 'Sbloccare l\'accesso?' :
-          'Eliminare il conto definitivamente?'
+          confirm?.type === 'close' ? 'Chiudere il conto?' :
+          'Eliminare definitivamente tutti i dati del cliente?'
         }
         message={
-          confirm?.type === 'delete'
-            ? `Questa azione è irreversibile. Il conto di ${confirm?.account.user.nome} ${confirm?.account.user.cognome} e tutti i suoi dati verranno eliminati permanentemente.`
+          confirm?.type === 'purge'
+            ? `STORIA E ANAGRAFICA DISTRUTTE. Verranno eliminati per sempre conto, carte, ${confirm?.account.user.nome} ${confirm?.account.user.cognome} e ogni movimento. Consentito solo se il saldo è 0 e non ci sono movimenti da 10 anni (obbligo di conservazione).`
+            : confirm?.type === 'close'
+            ? `Il conto di ${confirm?.account.user.nome} ${confirm?.account.user.cognome} verrà chiuso: carte congelate, trasferimenti bloccati, sessioni e inviti revocati. I movimenti e i dati anagrafici restano conservati per gli obblighi di legge.`
             : confirm?.type === 'unlockLogin'
             ? `${confirm?.account.user.nome} ${confirm?.account.user.cognome} potrà riprovare ad accedere immediatamente. Il contatore dei tentativi falliti verrà azzerato.`
             : confirm?.type === 'validate'
@@ -625,12 +650,15 @@ export default function AccountsPage() {
           confirm?.type === 'block' ? 'Blocca' :
           confirm?.type === 'unblock' ? 'Sblocca' :
           confirm?.type === 'unlockLogin' ? 'Sblocca accesso' :
-          'Elimina'
+          confirm?.type === 'close' ? 'Chiudi conto' :
+          'Elimina per sempre'
         }
-        variant={confirm?.type === 'delete' ? 'danger' : 'info'}
+        variant={confirm?.type === 'purge' ? 'danger' : 'info'}
         loading={actionLoading !== null}
+        requireTyped={confirm?.type === 'purge' ? confirm?.account.iban : undefined}
+        expected={confirm?.account.iban}
         onConfirm={() => confirm && handleAction(confirm)}
-        onCancel={() => setConfirm(null)}
+        onCancel={() => { setConfirm(null); setPurgeIban(''); }}
       />
     </div>
   );

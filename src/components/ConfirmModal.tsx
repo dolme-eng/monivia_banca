@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
 interface ConfirmModalProps {
@@ -13,6 +13,13 @@ interface ConfirmModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   loading?: boolean;
+  /**
+   * When set, the confirm button stays disabled until this value matches
+   * `expected` (ignoring case and spaces). Used for irreversible actions so a
+   * stray click cannot destroy something: the operator must retype the IBAN.
+   */
+  requireTyped?: string;
+  expected?: string;
 }
 
 export default function ConfirmModal({
@@ -25,6 +32,8 @@ export default function ConfirmModal({
   onConfirm,
   onCancel,
   loading = false,
+  requireTyped,
+  expected,
 }: ConfirmModalProps) {
   const backdropRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -47,6 +56,17 @@ export default function ConfirmModal({
   }, [open, loading, onCancel]);
 
   if (!open) return null;
+
+  const [typed, setTyped] = useState('');
+
+  // Clear the typed value every time the dialog opens so a previous confirmation
+  // cannot pre-fill the next destructive one.
+  useEffect(() => {
+    if (open) setTyped('');
+  }, [open]);
+
+  const normalizeIban = (v: string) => v.replace(/\s+/g, '').toUpperCase();
+  const typedOk = !requireTyped || normalizeIban(typed) === normalizeIban(expected || '');
 
   const colors = {
     danger: { bg: 'bg-red-50', icon: 'text-red-500', btn: 'bg-red-600 hover:bg-red-700' },
@@ -86,6 +106,24 @@ export default function ConfirmModal({
         <h3 id="confirm-modal-title" className="text-lg font-black text-primary mb-2">{title}</h3>
         <p id="confirm-modal-message" className="text-sm text-slate-500 mb-6 leading-relaxed">{message}</p>
 
+        {requireTyped && (
+          <div className="mb-6">
+            <label htmlFor="confirm-typed" className="block text-xs font-black text-slate-600 mb-1.5">
+              Digita <span className="font-mono text-primary">{expected}</span> per confermare
+            </label>
+            <input
+              id="confirm-typed"
+              value={typed}
+              onChange={(e) => setTyped(e.target.value)}
+              disabled={loading}
+              autoComplete="off"
+              spellCheck={false}
+              placeholder={expected}
+              className="w-full px-3 py-2.5 min-h-[44px] rounded-xl border border-slate-200 font-mono text-sm text-primary focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100"
+            />
+          </div>
+        )}
+
         <div className="flex gap-3">
           <button
             onClick={onCancel}
@@ -96,7 +134,7 @@ export default function ConfirmModal({
           </button>
           <button
             onClick={onConfirm}
-            disabled={loading}
+            disabled={loading || !typedOk}
             className={`flex-1 px-4 py-3 min-h-[44px] rounded-xl text-sm font-black text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${colors.btn}`}
           >
             {loading && (

@@ -102,8 +102,7 @@ export async function POST(req: NextRequest) {
       action: 'ACCOUNT_TOPUP',
       entity: 'Account',
       entityId: result.accountId,
-      after: `balance=${result.account.balance}`,
-      meta: { amount: cents, iban: result.account.iban },
+      after: `balance=${result.account.balance} amount=${cents.toFixed(2)} iban=${result.account.iban}`,
     });
 
     return NextResponse.json({ success: true, account: result.account });

@@ -297,8 +297,7 @@ export async function POST(req: NextRequest) {
       action: 'ACCOUNT_PROVISION',
       entity: 'Account',
       entityId: result.userId!,
-      after: `iban=${result.account.iban}`,
-      meta: { amount: cents, cardLast4: result.card?.number?.slice(-4) ?? null, isNew: true },
+      after: `iban=${result.account.iban} balance=${cents.toFixed(2)} card=${result.card?.number?.slice(-4) ?? 'none'}`,
     });
 
     if (result.isNew) {

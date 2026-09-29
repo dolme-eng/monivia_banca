@@ -6,9 +6,8 @@ export interface AuditInput {
   entity: string;
   entityId: string;
   before?: string;
+  /** Context is packed into this free-text column (e.g. `balance=750.00 iban=…`). */
   after?: string;
-  /** Extra context (amounts, emails, reasons). Never put secrets here. */
-  meta?: Record<string, string | number | boolean | null>;
 }
 
 // One flag per process: if the very first audit write fails (missing model, DB
