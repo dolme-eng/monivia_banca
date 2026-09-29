@@ -28,11 +28,20 @@ const transporter = (!resend && process.env.SMTP_USER && process.env.SMTP_PASS)
   : null;
 
 export function getSmtpConfig() {
+  // Never return the password. For SMTP_USER we expose only its SHAPE, which is
+  // what actually matters for diagnosis: some providers reject the local part
+  // alone and require the full address (user@domain) as the login.
+  const user = process.env.SMTP_USER || '';
+  const at = user.indexOf('@');
   return {
     host: process.env.SMTP_HOST || 'smtp.hostinger.com',
     port: smtpPort,
     secure: smtpSecure,
-    user: process.env.SMTP_USER ? `${process.env.SMTP_USER.slice(0, 2)}***` : null,
+    user: user ? `${user.slice(0, 2)}***` : null,
+    userIsFullAddress: user.includes('@'),
+    userDomain: at > -1 ? user.slice(at + 1) : null,
+    passLength: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0,
+    hasPass: !!process.env.SMTP_PASS,
   };
 }
 
