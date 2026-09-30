@@ -89,23 +89,42 @@ export async function checkRateLimit(
 }
 
 export function getClientIp(req: Request): string {
-  // Edge-controlled headers first. A raw client-sent X-Forwarded-For is
-  // attacker-controlled (XFF spoofing bypasses IP-only buckets).
-  const realIp = req.headers.get('x-real-ip');
-  if (realIp && realIp.trim()) return realIp.trim();
+  // Trust order matters more than it looks: this string becomes the rate-limit
+  // bucket, so ANY header a client can set freely is a bypass — the attacker
+  // just rotates it to get a fresh bucket per guess.
+  //
+  // x-real-ip is deliberately NOT trusted: on Vercel it is not a header the
+  // platform rewrites, so a client can send `x-real-ip: <anything>` and, since
+  // it was checked first, it won outright. It was the first thing an attacker
+  // had to try.
+  const vercelIp = req.headers.get('x-vercel-forwarded-for');
+  if (vercelIp && vercelIp.trim()) return firstAddress(vercelIp);
+
+  // Only meaningful if a Cloudflare proxy actually sits in front of Vercel;
+  // harmless otherwise because Cloudflare overwrites this header.
   const cfIp = req.headers.get('cf-connecting-ip');
-  if (cfIp && cfIp.trim()) return cfIp.trim();
+  if (cfIp && cfIp.trim()) return firstAddress(cfIp);
+
+  // Vercel appends the real client IP to x-forwarded-for, so the RIGHTMOST
+  // entry is the trustworthy one; everything to its left is client-supplied.
   const xff = req.headers.get('x-forwarded-for');
   if (xff) {
     const parts = xff
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean);
-    // Rightmost entry is appended by our own edge proxy (Vercel appends the
-    // client IP); leftmost entries are attacker-controlled.
     if (parts.length > 0) return parts[parts.length - 1];
   }
+
+  // No usable IP: collapse to a single shared bucket instead of returning a
+  // per-request value, so a missing header cannot be used to dodge limits.
   return 'unknown';
+}
+
+/** Some proxies send a comma separated list even in single-IP headers. */
+function firstAddress(value: string): string {
+  const first = value.split(',')[0]?.trim();
+  return first || 'unknown';
 }
 
 /** 429 JSON response with Retry-After (seconds until window reset). */
