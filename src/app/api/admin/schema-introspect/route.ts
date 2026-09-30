@@ -44,22 +44,54 @@ export async function GET(req: NextRequest) {
       (await prisma.$queryRawUnsafe(sql, ...params)) as Record<string, unknown>[];
 
     const columns = await q(
-      `SELECT table_name, column_name, data_type, is_nullable
+      `SELECT table_name, column_name, data_type, udt_name, is_nullable, column_default
          FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = ANY($1)
         ORDER BY table_name, ordinal_position`,
       [TABLES]
     );
 
-    const byTable: Record<string, { name: string; type: string; nullable: string }[]> = {};
+    const byTable: Record<
+      string,
+      { name: string; type: string; udt: string; nullable: string; default: string | null }[]
+    > = {};
     for (const c of columns) {
       const t = String(c.table_name);
       (byTable[t] ||= []).push({
         name: String(c.column_name),
         type: String(c.data_type),
+        udt: String(c.udt_name),
         nullable: String(c.is_nullable),
+        default: c.column_default === null ? null : String(c.column_default),
       });
     }
+
+    // Referential actions matter: schema.prisma declares Cascade on these
+    // relations while add_refresh_token.sql created RESTRICT. The live action
+    // is what a baseline has to record.
+    const fks = await q(
+      `SELECT tc.table_name, tc.constraint_name, kcu.column_name,
+              ccu.table_name AS foreign_table, ccu.column_name AS foreign_column,
+              rc.update_rule, rc.delete_rule
+         FROM information_schema.table_constraints tc
+         JOIN information_schema.key_column_usage kcu
+           ON tc.constraint_name = kcu.constraint_name
+          AND tc.table_schema = kcu.table_schema
+         JOIN information_schema.constraint_column_usage ccu
+           ON ccu.constraint_name = tc.constraint_name
+          AND ccu.table_schema = tc.table_schema
+         JOIN information_schema.referential_constraints rc
+           ON rc.constraint_name = tc.constraint_name
+          AND rc.constraint_schema = tc.table_schema
+        WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema = 'public'
+        ORDER BY tc.table_name, tc.constraint_name`
+    );
+
+    const indexes = await q(
+      `SELECT tablename AS table_name, indexname AS name, indexdef AS def
+         FROM pg_indexes WHERE schemaname = 'public'
+        ORDER BY tablename, indexname`
+    );
 
     const checks = await q(
       `SELECT conrelid::regclass::text AS tbl, conname, pg_get_constraintdef(oid) AS def
@@ -113,6 +145,8 @@ export async function GET(req: NextRequest) {
       migrations,
       tables: byTable,
       checkConstraints: checks,
+      foreignKeys: fks,
+      indexes,
       enumValues,
       rowCounts: counts,
     });
