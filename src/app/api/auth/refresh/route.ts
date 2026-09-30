@@ -116,7 +116,9 @@ export async function POST(req: NextRequest) {
       where: {
         userId: user.id,
         createdAt: { lte: dbToken.createdAt },
-        OR: [{ consumedAt: null }, { consumedAt: { gte: SESSION_HYGIENE_MS } }],
+        // `consumedAt` is a DateTime, so the cut-off must be a Date: comparing it
+        // to a number of milliseconds is a type error.
+        OR: [{ consumedAt: null }, { consumedAt: { gte: new Date(Date.now() - SESSION_HYGIENE_MS) } }],
       },
       orderBy: { createdAt: 'asc' },
       select: { createdAt: true },
