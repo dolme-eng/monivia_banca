@@ -17,6 +17,8 @@ const REFRESH_TOKEN_TTL_DAYS = 7;
 // even with continuous activity (sliding 7d rotation would otherwise be infinite).
 const REFRESH_ABSOLUTE_TTL_DAYS = 30;
 const MAX_ACTIVE_SESSIONS = 5;
+// Consumed rows older than this are hygiene noise, not part of a live chain.
+const SESSION_HYGIENE_MS = 24 * 60 * 60 * 1000;
 
 export async function POST(req: NextRequest) {
   if (!secret) {
@@ -103,9 +105,38 @@ export async function POST(req: NextRequest) {
       .setExpirationTime(ACCESS_TOKEN_TTL)
       .sign(secret);
 
+    // The new token inherits the ORIGINAL session start instead of starting a
+    // fresh window. The absolute check above reads `createdAt`, and since
+    // rotation used to write a brand new row every time, `createdAt` was always
+    // "now" — so the 30-day limit was measured from the latest refresh and never
+    // actually elapsed. The session could be renewed forever, one 7-day token
+    // at a time. Anchoring to the oldest row in the chain restores the intended
+    // meaning: no matter how often you refresh, you log in again every 30 days.
+    const chainStart = await prisma.refreshToken.findFirst({
+      where: {
+        userId: user.id,
+        createdAt: { lte: dbToken.createdAt },
+        OR: [{ consumedAt: null }, { consumedAt: { gte: SESSION_HYGIENE_MS } }],
+      },
+      orderBy: { createdAt: 'asc' },
+      select: { createdAt: true },
+    });
+    const sessionStartedAt = chainStart?.createdAt ?? dbToken.createdAt;
+
+    const remainingMs =
+      sessionStartedAt.getTime() + REFRESH_ABSOLUTE_TTL_DAYS * 24 * 60 * 60 * 1000 - Date.now();
+    if (remainingMs <= 0) {
+      await prisma.refreshToken.deleteMany({ where: { userId: user.id } });
+      return NextResponse.json({ success: false, error: 'Sessione scaduta. Effettua nuovamente il login.' }, { status: 401 });
+    }
+
+    // Never mint a refresh token that outlives the absolute session deadline:
+    // the cookie and the DB row must agree, or a token could outlive its window.
+    const newExpiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000);
+    const hardExpiresAt = new Date(sessionStartedAt.getTime() + REFRESH_ABSOLUTE_TTL_DAYS * 24 * 60 * 60 * 1000);
+    const expiresAt = newExpiresAt < hardExpiresAt ? newExpiresAt : hardExpiresAt;
+
     const newRefreshToken = newToken(40);
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
 
     // Atomic single-use claim: concurrent replays race here and exactly one wins.
     // The loser gets count 0 -> plain 401 (mass revocation already happened above
@@ -123,12 +154,16 @@ export async function POST(req: NextRequest) {
         token: hashToken(newRefreshToken),
         userId: user.id,
         expiresAt,
+        // Explicitly backdated to the session start so the absolute check works
+        // on every row of the chain, not just on the row that happens to be
+        // presented. Without this, `createdAt` is "now" for each rotation.
+        createdAt: sessionStartedAt,
       },
     });
 
     // Hygiene, best-effort: drop long-consumed tokens and cap concurrent sessions
     try {
-      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const dayAgo = new Date(Date.now() - SESSION_HYGIENE_MS);
       await prisma.refreshToken.deleteMany({
         where: { userId: user.id, consumedAt: { lt: dayAgo } },
       });
@@ -161,7 +196,9 @@ export async function POST(req: NextRequest) {
       secure: true,
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * REFRESH_TOKEN_TTL_DAYS,
+      // Matches the clamped DB expiry, so the cookie cannot outlive the server
+      // side token it points at.
+      maxAge: Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000)),
     });
 
     return response;
