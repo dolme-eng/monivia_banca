@@ -125,4 +125,79 @@ describe('ConfirmModal', () => {
     const confirmBtn = screen.getByText('Conferma').closest('button');
     expect(confirmBtn?.className).toContain('bg-secondary');
   });
+
+  // The regression that shipped: `useState` sat after `if (!open) return null`,
+  // so the hook count went from 4 to 6 the moment the dialog opened and React
+  // threw "Rendered more hooks than during the previous render". Every
+  // confirmation flow in the app broke. Each test below mounts CLOSED and then
+  // opens on the SAME instance — the transition the old suite never exercised.
+  it('opens without a hook error when toggled on an already-mounted instance', () => {
+    const { rerender } = render(<ConfirmModal {...defaultProps} open={false} />);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    expect(() => rerender(<ConfirmModal {...defaultProps} open={true} />)).not.toThrow();
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('survives repeated open/close cycles', () => {
+    const { rerender } = render(<ConfirmModal {...defaultProps} open={false} />);
+    for (let i = 0; i < 3; i++) {
+      expect(() => rerender(<ConfirmModal {...defaultProps} open={true} />)).not.toThrow();
+      expect(() => rerender(<ConfirmModal {...defaultProps} open={false} />)).not.toThrow();
+    }
+  });
+
+  describe('requireTyped (destructive confirmation)', () => {
+    it('blocks confirm until the value is typed', () => {
+      render(
+        <ConfirmModal
+          {...defaultProps}
+          requireTyped="IT60X0542811101000000123456"
+          expected="IT60X0542811101000000123456"
+        />
+      );
+      const confirmBtn = screen.getByText('Conferma').closest('button');
+      expect(confirmBtn).toBeDisabled();
+    });
+
+    it('enables confirm once the value matches, ignoring case and spaces', () => {
+      render(
+        <ConfirmModal
+          {...defaultProps}
+          requireTyped="IT60X0542811101000000123456"
+          expected="IT60X0542811101000000123456"
+        />
+      );
+      fireEvent.change(screen.getByLabelText(/Digita/), {
+        target: { value: 'it60 x0542 8111 0100 0000 123 456' },
+      });
+      const confirmBtn = screen.getByText('Conferma').closest('button');
+      expect(confirmBtn).not.toBeDisabled();
+    });
+
+    it('does not pre-fill the field on reopen', () => {
+      const { rerender } = render(
+        <ConfirmModal
+          {...defaultProps}
+          requireTyped="IT60X0542811101000000123456"
+          expected="IT60X0542811101000000123456"
+        />
+      );
+      fireEvent.change(screen.getByLabelText(/Digita/), {
+        target: { value: 'IT60X0542811101000000123456' },
+      });
+      expect(screen.getByText('Conferma').closest('button')).not.toBeDisabled();
+
+      rerender(<ConfirmModal {...defaultProps} open={false} />);
+      rerender(
+        <ConfirmModal
+          {...defaultProps}
+          requireTyped="IT60X0542811101000000123456"
+          expected="IT60X0542811101000000123456"
+        />
+      );
+      // A stale value must never carry over to the next destructive action.
+      expect(screen.getByText('Conferma').closest('button')).toBeDisabled();
+    });
+  });
 });

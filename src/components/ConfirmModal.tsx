@@ -37,6 +37,15 @@ export default function ConfirmModal({
 }: ConfirmModalProps) {
   const backdropRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [typed, setTyped] = useState('');
+
+  // Every hook must run on every render, unconditionally. Placing `useState` or
+  // `useEffect` after the `if (!open) return null` below changes the hook count
+  // between the closed and open state, and React throws
+  // "Rendered more hooks than during the previous render" the moment the dialog
+  // opens — which is every confirmation flow in the app (withdrawal, transfer,
+  // approval, purge). This component stays mounted with `open={false}`, so the
+  // transition always happens on the same instance.
 
   useEffect(() => {
     if (open) {
@@ -55,15 +64,13 @@ export default function ConfirmModal({
     return () => window.removeEventListener('keydown', handler);
   }, [open, loading, onCancel]);
 
-  if (!open) return null;
-
-  const [typed, setTyped] = useState('');
-
   // Clear the typed value every time the dialog opens so a previous confirmation
   // cannot pre-fill the next destructive one.
   useEffect(() => {
     if (open) setTyped('');
   }, [open]);
+
+  if (!open) return null;
 
   const normalizeIban = (v: string) => v.replace(/\s+/g, '').toUpperCase();
   const typedOk = !requireTyped || normalizeIban(typed) === normalizeIban(expected || '');
