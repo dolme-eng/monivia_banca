@@ -20,6 +20,8 @@ interface ConfirmModalProps {
    */
   requireTyped?: string;
   expected?: string;
+  /** Fires whenever the typed value changes, so the parent can send it along. */
+  onTypedChange?: (value: string) => void;
 }
 
 export default function ConfirmModal({
@@ -34,10 +36,23 @@ export default function ConfirmModal({
   loading = false,
   requireTyped,
   expected,
+  onTypedChange,
 }: ConfirmModalProps) {
   const backdropRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const [typed, setTyped] = useState('');
+  const [typedOk, setTypedOk] = useState(false);
+
+  const normalizeIban = (v: string) => v.replace(/\s+/g, '').toUpperCase();
+
+  // The parent needs the typed value: it is the proof-of-intent sent to the
+  // server (`confirmIban`). It used to live only inside this component, so the
+  // parent always sent an empty string and the purge was silently refused.
+  const handleTyped = (raw: string) => {
+    setTyped(raw);
+    setTypedOk(normalizeIban(raw) === normalizeIban(expected || ''));
+    onTypedChange?.(raw);
+  };
 
   // Every hook must run on every render, unconditionally. Placing `useState` or
   // `useEffect` after the `if (!open) return null` below changes the hook count
@@ -67,13 +82,15 @@ export default function ConfirmModal({
   // Clear the typed value every time the dialog opens so a previous confirmation
   // cannot pre-fill the next destructive one.
   useEffect(() => {
-    if (open) setTyped('');
+    if (open) {
+      setTyped('');
+      setTypedOk(false);
+      onTypedChange?.('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   if (!open) return null;
-
-  const normalizeIban = (v: string) => v.replace(/\s+/g, '').toUpperCase();
-  const typedOk = !requireTyped || normalizeIban(typed) === normalizeIban(expected || '');
 
   const colors = {
     danger: { bg: 'bg-red-50', icon: 'text-red-500', btn: 'bg-red-600 hover:bg-red-700' },
@@ -121,7 +138,7 @@ export default function ConfirmModal({
             <input
               id="confirm-typed"
               value={typed}
-              onChange={(e) => setTyped(e.target.value)}
+              onChange={(e) => handleTyped(e.target.value)}
               disabled={loading}
               autoComplete="off"
               spellCheck={false}
@@ -141,7 +158,7 @@ export default function ConfirmModal({
           </button>
           <button
             onClick={onConfirm}
-            disabled={loading || !typedOk}
+            disabled={loading || (!!requireTyped && !typedOk)}
             className={`flex-1 px-4 py-3 min-h-[44px] rounded-xl text-sm font-black text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${colors.btn}`}
           >
             {loading && (

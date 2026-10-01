@@ -90,8 +90,22 @@ export default function AccountsPage() {
     fetchAccounts();
   }, [fetchAccounts]);
 
+  // Reads the server's refusal and surfaces it. Without this the `if (res.ok)`
+  // branches below silently swallowed every 400/403/409: the modal closed, the
+  // list did not change, no message appeared, and the admin concluded the action
+  // had succeeded. On `purge` that meant believing an account had been erased.
+  const reportFailure = async (res: Response, fallback: string) => {
+    try {
+      const data = await res.json();
+      setActionError(data?.error || fallback);
+    } catch {
+      setActionError(fallback);
+    }
+  };
+
   const handleAction = async (action: ConfirmAction) => {
     setActionLoading(action.type);
+    setActionError(null);
     try {
       if (action.type === 'close' || action.type === 'purge') {
         const res = await csrfFetch(`/api/admin/accounts/${action.account.id}/status`, {
@@ -114,6 +128,8 @@ export default function AccountsPage() {
               )
             );
           }
+        } else {
+          await reportFailure(res, 'Impossibile completare l\'operazione.');
         }
       } else if (action.type === 'unlockLogin') {
         const res = await csrfFetch(`/api/admin/accounts/${action.account.id}/status`, {
@@ -132,6 +148,8 @@ export default function AccountsPage() {
                 : a
             )
           );
+        } else {
+          await reportFailure(res, 'Impossibile sbloccare l\'accesso.');
         }
       } else {
         const res = await csrfFetch(`/api/admin/accounts/${action.account.id}/status`, {
@@ -148,12 +166,12 @@ export default function AccountsPage() {
                 : a
             )
           );
+        } else {
+          await reportFailure(res, 'Impossibile completare l\'operazione.');
         }
       }
     } catch {
       setActionError('Errore durante l\'esecuzione dell\'azione.');
-      setActionLoading(null);
-      setConfirm(null);
     } finally {
       setActionLoading(null);
       setConfirm(null);
@@ -657,6 +675,7 @@ export default function AccountsPage() {
         loading={actionLoading !== null}
         requireTyped={confirm?.type === 'purge' ? confirm?.account.iban : undefined}
         expected={confirm?.account.iban}
+        onTypedChange={setPurgeIban}
         onConfirm={() => confirm && handleAction(confirm)}
         onCancel={() => { setConfirm(null); setPurgeIban(''); }}
       />

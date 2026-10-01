@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface AmountInputProps {
   value: number;
@@ -35,6 +35,20 @@ export default function AmountInput({
       maximumFractionDigits: 2,
     });
   }
+
+  // `displayValue` used to be seeded once at mount and never resynchronised, so
+  // any external change to `value` — the quick-amount buttons, the reset to 0
+  // after a successful submission, the account switcher — left the input
+  // showing a stale number (or nothing at all) while the real value had changed.
+  // This keeps the field in step with its own state.
+  const lastExternalValue = useRef(value);
+
+  useEffect(() => {
+    if (value === lastExternalValue.current) return;
+    lastExternalValue.current = value;
+    if (isFocused) return; // do not overwrite what the user is currently typing
+    setDisplayValue(value > 0 ? formatAmount(value) : '');
+  }, [value, isFocused]);
 
   function parseAmount(str: string): number {
     const cleaned = str.replace(/[^\d,]/g, '').replace(',', '.');
