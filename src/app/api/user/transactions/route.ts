@@ -24,10 +24,21 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get('type');
     const skip = (page - 1) * limit;
 
-    const account = await prisma.account.findFirst({
-      where: { userId: auth.session.userId },
-      select: { id: true },
-    });
+    // Honour the account the client is actually looking at. `findFirst` always
+    // returned the FIRST account, so on a multi-account client this page showed
+    // one account's history while the shell displayed another.
+    // Ownership is enforced in the query, not trusted from the parameter.
+    const requestedAccountId = searchParams.get('accountId');
+
+    const account = requestedAccountId
+      ? await prisma.account.findFirst({
+          where: { id: requestedAccountId, userId: auth.session.userId },
+          select: { id: true },
+        })
+      : await prisma.account.findFirst({
+          where: { userId: auth.session.userId },
+          select: { id: true },
+        });
 
     if (!account) {
       return NextResponse.json({ success: false, error: 'Conto non trovato' }, { status: 404 });

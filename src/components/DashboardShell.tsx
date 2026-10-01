@@ -33,8 +33,11 @@ const NAV_ITEMS = [
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { data: session } = useMySession();
-  const { accounts, selectedAccount, setSelectedAccount } = useSelectedAccount();
+  // The session hook needs the selected account id so `accountStatus` reflects
+  // the account on screen, not always the first one.
+  const { accounts, selectedAccount, setSelectedAccount, selectedAccountId } =
+    useSelectedAccount();
+  const { data: session } = useMySession(selectedAccountId);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
 

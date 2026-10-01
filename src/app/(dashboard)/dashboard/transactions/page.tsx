@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSelectedAccount } from '@/lib/selected-account';
 import {
   ArrowUpRight,
   ArrowDownLeft,
@@ -9,6 +10,7 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  AlertTriangle,
   ChevronLeft,
   ChevronRight,
   Loader2,
@@ -55,6 +57,9 @@ export default function TransactionsPage() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
+  const [error, setError] = useState('');
+  // Refetch when the client switches account so the history matches the shell.
+  const { selectedAccountId } = useSelectedAccount();
 
   const fetchTransactions = useCallback(async (page = 1) => {
     setLoading(true);
@@ -62,23 +67,37 @@ export default function TransactionsPage() {
       const params = new URLSearchParams({ page: String(page), limit: '20' });
       if (statusFilter !== 'ALL') params.set('status', statusFilter);
       if (typeFilter !== 'ALL') params.set('type', typeFilter);
+      // Ask for the account currently selected, otherwise the server falls back
+      // to the first one and this page contradicts the rest of the dashboard.
+      if (selectedAccountId) params.set('accountId', selectedAccountId);
 
       const res = await authFetch(`/api/user/transactions?${params}`);
       if (res.status === 401) {
         window.location.replace('/login');
         return;
       }
+      if (!res.ok) {
+        // A failed load must not read as "no movements": that is how a 500 or a
+        // rate-limit looked like an empty account.
+        setError(
+          res.status === 429
+            ? 'Troppe richieste. Attendi un momento e riprova.'
+            : 'Impossibile caricare i movimenti.'
+        );
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         setTransactions(data.transactions);
         setPagination(data.pagination);
+        setError('');
       }
     } catch {
-      console.error('Failed to fetch transactions');
+      setError('Errore di connessione.');
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, typeFilter]);
+  }, [statusFilter, typeFilter, selectedAccountId]);
 
   useEffect(() => {
     fetchTransactions(1);
@@ -160,6 +179,14 @@ export default function TransactionsPage() {
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 size={24} className="animate-spin text-secondary" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-16 px-6">
+            <AlertTriangle size={40} className="text-red-400 mx-auto mb-3" />
+            <p className="text-sm font-black text-primary">{error}</p>
+            <p className="text-xs text-slate-500 mt-1">
+              I tuoi movimenti non sono stati caricati. Non sono spariti.
+            </p>
           </div>
         ) : transactions.length === 0 ? (
           <div className="text-center py-16">
