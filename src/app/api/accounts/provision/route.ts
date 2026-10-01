@@ -159,9 +159,22 @@ export async function POST(req: NextRequest) {
       const existingUser = await tx.user.findUnique({ where: { email } });
       let user;
       if (existingUser) {
+        // Only fill in a password the client does not have yet. The typed value
+        // used to be hashed and then silently dropped for every existing User,
+        // so provisioning could never rescue an account left without a usable
+        // password — the field was accepted, validated, and thrown away.
+        // Refusing to overwrite an existing password is deliberate: a re-provision
+        // must not silently hang a client out of their own session.
+        const updates: { nome: string; cognome: string; hashedPassword?: string } = {
+          nome,
+          cognome,
+        };
+        if (!existingUser.hashedPassword) {
+          updates.hashedPassword = hashedPassword;
+        }
         user = await tx.user.update({
           where: { id: existingUser.id },
-          data: { nome, cognome },
+          data: updates,
         });
       } else {
         user = await tx.user.create({
