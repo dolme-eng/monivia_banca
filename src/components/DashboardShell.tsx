@@ -18,7 +18,7 @@ import {
   History,
   ChevronDown,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { csrfFetch } from '@/lib/csrf-client';
 import NotificationBell from '@/components/NotificationBell';
 
@@ -40,6 +40,41 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const { data: session } = useMySession(selectedAccountId);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
+  const [mobileAccountOpen, setMobileAccountOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
+  const mobileAccountMenuRef = useRef<HTMLDivElement>(null);
+
+  // Both switchers had no dismissal path: Escape did nothing and a click
+  // outside left the menu hanging open over the page.
+  useEffect(() => {
+    if (!accountDropdownOpen && !mobileAccountOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setAccountDropdownOpen(false);
+        setMobileAccountOpen(false);
+      }
+    };
+    const onPointer = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (accountDropdownOpen && accountMenuRef.current && !accountMenuRef.current.contains(t)) {
+        setAccountDropdownOpen(false);
+      }
+      if (mobileAccountOpen && mobileAccountMenuRef.current && !mobileAccountMenuRef.current.contains(t)) {
+        setMobileAccountOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('mousedown', onPointer);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('mousedown', onPointer);
+    };
+  }, [accountDropdownOpen, mobileAccountOpen]);
+
+  // Opening the mobile drawer must not leave the inline switcher open.
+  useEffect(() => {
+    if (mobileOpen) setAccountDropdownOpen(false);
+  }, [mobileOpen]);
 
   const handleSignOut = async () => {
     try {
@@ -85,19 +120,29 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         {/* Account Switcher */}
         {accounts.length > 1 && selectedAccount && (
           <div className="px-3 mb-2">
-            <div className="relative">
+            <div className="relative" ref={accountMenuRef}>
               <button
                 onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+                aria-haspopup="listbox"
+                aria-expanded={accountDropdownOpen}
+                aria-controls="account-switcher-list"
                 className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-white/10 text-white text-sm font-black hover:bg-white/15 transition-colors"
               >
                 <span className="truncate">{selectedAccount.iban.slice(0, 12)}...</span>
                 <ChevronDown size={14} className={`shrink-0 transition-transform ${accountDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {accountDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 z-50 overflow-hidden">
+                <div
+                  id="account-switcher-list"
+                  role="listbox"
+                  aria-label="Seleziona un conto"
+                  className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 z-50 overflow-hidden"
+                >
                   {accounts.map((acc) => (
                     <button
                       key={acc.id}
+                      role="option"
+                      aria-selected={acc.id === selectedAccount.id}
                       onClick={() => { setSelectedAccount(acc.id); setAccountDropdownOpen(false); }}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-slate-50 transition-colors ${
                         acc.id === selectedAccount.id ? 'bg-secondary/10' : ''
@@ -125,6 +170,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               <Link
                 key={href}
                 href={href}
+                aria-current={active ? 'page' : undefined}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-black transition-all ${
                   active
                     ? 'bg-secondary text-primary'
@@ -185,6 +231,56 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 <X size={20} />
               </button>
             </div>
+            {/* Account Switcher — was missing entirely here, so a mobile client
+                with more than one account could never switch. */}
+            {accounts.length > 1 && selectedAccount && (
+              <div className="mb-2" ref={mobileAccountMenuRef}>
+                <button
+                  onClick={() => setMobileAccountOpen(!mobileAccountOpen)}
+                  aria-haspopup="listbox"
+                  aria-expanded={mobileAccountOpen}
+                  aria-controls="mobile-account-switcher-list"
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2.5 min-h-[44px] rounded-lg bg-white/10 text-white text-sm font-black hover:bg-white/15 transition-colors"
+                >
+                  <span className="truncate">{selectedAccount.iban.slice(0, 16)}...</span>
+                  <ChevronDown size={14} className={`shrink-0 transition-transform ${mobileAccountOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {mobileAccountOpen && (
+                  <div
+                    id="mobile-account-switcher-list"
+                    role="listbox"
+                    aria-label="Seleziona un conto"
+                    className="mt-1 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden"
+                  >
+                    {accounts.map((acc) => (
+                      <button
+                        key={acc.id}
+                        role="option"
+                        aria-selected={acc.id === selectedAccount.id}
+                        onClick={() => {
+                          setSelectedAccount(acc.id);
+                          setMobileAccountOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 px-3 py-3 min-h-[44px] text-left hover:bg-slate-50 transition-colors ${
+                          acc.id === selectedAccount.id ? 'bg-secondary/10' : ''
+                        }`}
+                      >
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-black shrink-0">
+                          {acc.iban.slice(-2)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-black text-primary truncate">{acc.iban}</p>
+                          <p className="text-[11px] text-slate-500">
+                            {acc.balance.toLocaleString('it-IT')} €
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <nav className="flex flex-col gap-1 flex-grow">
               {(isRestricted ? NAV_ITEMS.slice(0, 1) : NAV_ITEMS).map(({ href, label, icon: Icon }) => {
                 const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
@@ -193,6 +289,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                     key={href}
                     href={href}
                     onClick={() => setMobileOpen(false)}
+                    aria-current={active ? 'page' : undefined}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-black transition-all ${
                       active
                         ? 'bg-secondary text-primary'
@@ -251,6 +348,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               <Link
                 key={href}
                 href={href}
+                aria-current={active ? 'page' : undefined}
                 className={`flex flex-col items-center gap-1 py-2 px-2 min-w-[48px] text-[11px] rounded-lg transition-colors ${
                   active ? 'text-secondary font-black bg-secondary/10' : 'text-slate-400'
                 }`}
