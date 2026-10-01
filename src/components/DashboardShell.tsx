@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { csrfFetch } from '@/lib/csrf-client';
+import NotificationBell from '@/components/NotificationBell';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Conto', icon: Wallet },
@@ -227,6 +228,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             </button>
           </div>
           <div className="flex items-center gap-1">
+            <NotificationBell />
             <div className="w-9 h-9 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-xs font-black ml-1">
               {initials}
             </div>

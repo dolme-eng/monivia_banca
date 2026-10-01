@@ -16,6 +16,7 @@ model User {
   failedAttempts Int       @default(0)
   lockedUntil    DateTime?
   accounts       Account[]
+  notificationsSeen NotificationSeen[]
   refreshTokens  RefreshToken[]
   invites        InviteToken[]
   passwordResets PasswordResetToken[]
@@ -146,6 +147,21 @@ model AuditLog {
   @@index([actorId])
   @@index([entity, entityId])
   @@index([createdAt])
+}
+
+// Read-markers only: which events a client has already been shown. The event
+// content itself stays derivable from Transaction / Account / AuditLog, so
+// nothing is duplicated here. CASCADE so erasing a client erases their markers.
+model NotificationSeen {
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Stable identifier for a derivable event, e.g. `tx:<id>:approved`.
+  eventKey String
+  seenAt   DateTime @default(now())
+
+  @@unique([userId, eventKey])
+  @@index([userId])
 }
 
 enum UserRole {
