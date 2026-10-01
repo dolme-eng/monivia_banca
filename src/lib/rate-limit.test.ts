@@ -12,7 +12,7 @@ const mockTransaction = vi.fn(async (fn: any) => fn(mockTx));
 
 vi.mock('./prisma', () => ({
   prisma: {
-    $transaction: (...args: any[]) => mockTransaction(...args),
+    $transaction: (...args: unknown[]) => (mockTransaction as any)(...args),
   },
 }));
 
@@ -100,11 +100,28 @@ describe('rateLimitedResponse', () => {
 });
 
 describe('getClientIp', () => {
-  it('prefers x-real-ip over x-forwarded-for (edge-controlled)', () => {
+  // A client-settable header must never pick its own rate-limit bucket. This
+  // test used to assert the opposite — it encoded the bypass — which is why it
+  // failed once getClientIp stopped trusting x-real-ip.
+  it('ignores a forged x-real-ip and uses the rightmost XFF entry', () => {
     const req = new Request('http://localhost', {
       headers: { 'x-real-ip': '9.9.9.9', 'x-forwarded-for': '1.2.3.4, 5.6.7.8' },
     });
-    expect(getClientIp(req)).toBe('9.9.9.9');
+    expect(getClientIp(req)).toBe('5.6.7.8');
+  });
+
+  it('does not let a forged x-real-ip override the Vercel header', () => {
+    const req = new Request('http://localhost', {
+      headers: { 'x-real-ip': '9.9.9.9', 'x-vercel-forwarded-for': '203.0.113.7' },
+    });
+    expect(getClientIp(req)).toBe('203.0.113.7');
+  });
+
+  it('prefers x-vercel-forwarded-for over x-forwarded-for', () => {
+    const req = new Request('http://localhost', {
+      headers: { 'x-vercel-forwarded-for': '203.0.113.7', 'x-forwarded-for': '1.2.3.4, 5.6.7.8' },
+    });
+    expect(getClientIp(req)).toBe('203.0.113.7');
   });
 
   it('prefers cf-connecting-ip', () => {

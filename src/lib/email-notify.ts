@@ -11,28 +11,50 @@ const resend = process.env.RESEND_API_KEY
 // then compares the literal string including that whitespace and answers
 // 535 authentication failed, while a hand-typed copy in another project works.
 // Trim everything before handing it to nodemailer.
-const smtpHost = (process.env.SMTP_HOST || 'smtp.hostinger.com').trim();
-const smtpUser = (process.env.SMTP_USER || '').trim();
-const smtpPass = (process.env.SMTP_PASS || '').trim();
-const smtpPort = Number((process.env.SMTP_PORT || '').trim()) || 465;
-// `secure` is derived from the port: 465 is implicit TLS, 587/25 expect STARTTLS.
-// Hardcoding secure:true breaks every non-465 host (STARTTLS is then never
-// negotiated and the server answers 535 authentication failed).
-const smtpSecure = smtpPort === 465;
+let transporter: ReturnType<typeof nodemailer.createTransport> | null = null;
 
-const transporter = (!resend && smtpUser && smtpPass)
-  ? nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpSecure,
-      // Only ask for STARTTLS on the submission ports; implicit TLS already covers 465.
-      requireTLS: smtpPort === 587,
-      auth: {
-        user: smtpUser,
-        pass: smtpPass,
-      },
-    })
-  : null;
+/**
+ * Builds the provider from the current environment.
+ *
+ * Exported (and re-runnable) because the configuration is process-wide state: a
+ * module-level `const` is frozen at import time, so on a serverless runtime a
+ * cold start that booted without credentials stays mute for the lifetime of the
+ * instance even after the variables are fixed. Calling this again re-reads the
+ * environment, so a corrected configuration takes effect without a redeploy.
+ */
+export function refreshEmailConfig() {
+  const user = (process.env.SMTP_USER || '').trim();
+  const pass = (process.env.SMTP_PASS || '').trim();
+  const host = (process.env.SMTP_HOST || 'smtp.hostinger.com').trim();
+  const port = Number((process.env.SMTP_PORT || '').trim()) || 465;
+
+  smtpUser = user;
+  smtpPass = pass;
+  smtpHost = host;
+  smtpPort = port;
+  smtpSecure = port === 465;
+
+  transporter = !resend && user && pass
+    ? nodemailer.createTransport({
+        host,
+        port,
+        secure: smtpSecure,
+        // Only ask for STARTTLS on the submission ports; implicit TLS already covers 465.
+        requireTLS: port === 587,
+        auth: { user, pass },
+      })
+    : null;
+
+  return isEmailConfigured();
+}
+
+let smtpHost = '';
+let smtpUser = '';
+let smtpPass = '';
+let smtpPort = 465;
+let smtpSecure = true;
+
+refreshEmailConfig();
 
 export function getSmtpConfig() {
   // Never return the password. For SMTP_USER we expose only its SHAPE, which is
