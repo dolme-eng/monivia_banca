@@ -46,7 +46,7 @@ const TYPE_CONFIG: Record<string, { icon: typeof ArrowUpRight; color: string; la
 
 const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; color: string; bg: string; label: string }> = {
   PENDING: { icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', label: 'In attesa' },
-  APPROVED: { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-200', label: 'Approvata' },
+  APPROVED: { icon: CheckCircle2, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', label: 'Approvata' },
   REJECTED: { icon: XCircle, color: 'text-red-600', bg: 'bg-red-50 border-red-200', label: 'Rifiutata' },
   CANCELLED: { icon: AlertCircle, color: 'text-slate-500', bg: 'bg-slate-50 border-slate-200', label: 'Annullata' },
 };
@@ -124,7 +124,7 @@ export default function TransactionsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-primary flex items-center gap-2">
-          <History size={24} className="text-secondary" />
+          <History size={24} className="text-secondary-text" />
           Storico Movimenti
         </h1>
         <p className="text-sm text-slate-500 mt-1">
@@ -178,7 +178,7 @@ export default function TransactionsPage() {
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 size={24} className="animate-spin text-secondary" />
+            <Loader2 size={24} className="animate-spin text-secondary-text" />
           </div>
         ) : error ? (
           <div className="text-center py-16 px-6">
@@ -219,7 +219,7 @@ export default function TransactionsPage() {
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className={`text-sm font-black ${positive ? 'text-emerald-600' : 'text-red-600'}`}>
+                      <p className={`text-sm font-black ${positive ? 'text-emerald-700' : 'text-red-600'}`}>
                         {formatAmount(tx.amount, tx.type)}
                       </p>
                       {tx.reference && (

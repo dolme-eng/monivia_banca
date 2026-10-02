@@ -418,7 +418,7 @@ export default function ProvisionPage() {
                   {formData.password.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
                       {passwordChecks.map((c) => (
-                        <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-600' : 'text-red-500'}`}>
+                        <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-700' : 'text-red-500'}`}>
                           {c.ok ? '✓' : '○'} {c.label}
                         </span>
                       ))}
@@ -505,7 +505,7 @@ export default function ProvisionPage() {
                 {/* Invite Link */}
                 {createResult.inviteUrl && (
                   <div className="mt-4 rounded-lg bg-secondary/5 border border-secondary/20 p-4">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-secondary mb-2">Link di invito (scade tra 24 ore)</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-secondary-text mb-2">Link di invito (scade tra 24 ore)</p>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-primary truncate">
                         {createResult.inviteUrl}
@@ -515,7 +515,7 @@ export default function ProvisionPage() {
                         className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-secondary/30 hover:bg-secondary/10 transition-colors"
                         aria-label="Copia link invito"
                       >
-                        {copied === 'invite' ? <CheckCircle2 size={14} className="text-emerald-500" /> : <Copy size={14} className="text-secondary" />}
+                        {copied === 'invite' ? <CheckCircle2 size={14} className="text-emerald-500" /> : <Copy size={14} className="text-secondary-text" />}
                       </button>
                       <a
                         href={createResult.inviteUrl}
@@ -524,7 +524,7 @@ export default function ProvisionPage() {
                         className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-secondary/30 hover:bg-secondary/10 transition-colors"
                         aria-label="Apri link invito"
                       >
-                        <ExternalLink size={14} className="text-secondary" />
+                        <ExternalLink size={14} className="text-secondary-text" />
                       </a>
                     </div>
                     <p className="mt-2 text-[11px] text-slate-600">
@@ -540,7 +540,7 @@ export default function ProvisionPage() {
                     className={`flex items-center justify-center gap-2 px-5 py-3 text-sm font-black rounded-xl transition-colors min-h-[44px] ${
                       emailSent
                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-secondary/10 text-secondary border border-secondary/30 hover:bg-secondary/20'
+                        : 'bg-secondary/10 text-secondary-text border border-secondary/30 hover:bg-secondary/20'
                     }`}
                   >
                     {emailSending ? (

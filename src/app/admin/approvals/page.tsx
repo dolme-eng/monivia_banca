@@ -121,11 +121,11 @@ export default function ApprovalsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <Loader2 size={24} className="animate-spin text-secondary" />
+          <Loader2 size={24} className="animate-spin text-secondary-text" />
         </div>
       ) : transactions.length === 0 ? (
         <div className="bg-white rounded-xl p-16 text-center border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
             <CheckCircle2 size={32} />
           </div>
           <h3 className="mb-2 text-xl font-black text-primary">Nessuna transazione in sospeso</h3>
@@ -144,7 +144,7 @@ export default function ApprovalsPage() {
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
                     tx.type === 'DEBIT' || tx.type === 'TRANSFER_OUT'
                       ? 'bg-amber-50 text-amber-600'
-                      : 'bg-emerald-50 text-emerald-600'
+                      : 'bg-emerald-50 text-emerald-700'
                   }`}>
                     {tx.type === 'DEBIT' || tx.type === 'TRANSFER_OUT' ? <Send size={16} /> : <CreditCard size={16} />}
                   </div>
@@ -169,7 +169,7 @@ export default function ApprovalsPage() {
                   <div className="flex gap-2">
                     <Link
                       href={`/admin/prelievo/${tx.id}`}
-                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-secondary/40 hover:text-secondary transition-colors text-slate-500"
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-secondary/40 hover:text-secondary-text transition-colors text-slate-500"
                       aria-label={`Vedi il dettaglio della transazione di ${formatAmount(Math.abs(Number(tx.amount)))} €`}
                     >
                       <ArrowRight size={14} />

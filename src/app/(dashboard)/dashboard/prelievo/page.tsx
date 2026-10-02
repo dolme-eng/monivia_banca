@@ -145,7 +145,7 @@ export default function PrelievoPage() {
   if (loadingAccount) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-secondary" />
+        <Loader2 size={24} className="animate-spin text-secondary-text" />
       </div>
     );
   }
@@ -190,7 +190,7 @@ export default function PrelievoPage() {
             {account && (
               <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl mb-6">
                 <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-                  <Wallet size={20} className="text-secondary" />
+                  <Wallet size={20} className="text-secondary-text" />
                 </div>
                 <div className="flex-1">
                   <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Il mio conto</p>
@@ -272,7 +272,7 @@ export default function PrelievoPage() {
               {success && (
                 <div role="status" className="flex items-center gap-2 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
                   <CheckCircle2 size={14} className="text-emerald-500" />
-                  <span className="text-xs text-emerald-600">Richiesta inviata con successo!</span>
+                  <span className="text-xs text-emerald-700">Richiesta inviata con successo!</span>
                 </div>
               )}
 
@@ -304,7 +304,7 @@ export default function PrelievoPage() {
           <div className="bg-primary rounded-xl p-5 text-white shadow-lg relative overflow-hidden">
             <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} aria-hidden />
             <div className="relative z-10">
-              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-secondary mb-1">Saldo Disponibile</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-secondary-text mb-1">Saldo Disponibile</p>
               <p className="text-3xl font-black tracking-tight">{account?.balance.toLocaleString('it-IT') || '0'} €</p>
             </div>
           </div>
@@ -322,7 +322,7 @@ export default function PrelievoPage() {
                 {recentPrelievi.map((p) => (
                   <div key={p.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <ArrowDownToLine size={14} className="text-secondary" />
+                      <ArrowDownToLine size={14} className="text-secondary-text" />
                       <div>
                         <p className="text-xs font-black text-primary">{p.description}</p>
                         <p className="text-[11px] text-slate-600">
@@ -349,7 +349,7 @@ export default function PrelievoPage() {
                 { step: '3', text: 'Il prelievo viene confermato e i fondi accreditati' },
               ].map(({ step, text }) => (
                 <div key={step} className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-[11px] font-black shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary-text text-[11px] font-black shrink-0">
                     {step}
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">{text}</p>

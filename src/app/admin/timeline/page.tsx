@@ -106,7 +106,7 @@ export default function AdminTimelinePage() {
         {[
           { label: 'Totale', value: stats.total, color: 'text-primary' },
           { label: 'In Attesa', value: stats.pending, color: 'text-amber-600' },
-          { label: 'Approvate', value: stats.approved, color: 'text-emerald-600' },
+          { label: 'Approvate', value: stats.approved, color: 'text-emerald-700' },
           { label: 'Rifiutate', value: stats.rejected, color: 'text-red-500' },
           { label: 'Annullate', value: stats.cancelled, color: 'text-slate-500' },
         ].map((stat) => (
@@ -135,7 +135,7 @@ export default function AdminTimelinePage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <Loader2 size={24} className="animate-spin text-secondary" />
+          <Loader2 size={24} className="animate-spin text-secondary-text" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16">
@@ -156,7 +156,7 @@ export default function AdminTimelinePage() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
+                      tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700' :
                       tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
                       tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-500' :
                       'bg-amber-50 text-amber-600'
@@ -192,7 +192,7 @@ export default function AdminTimelinePage() {
                   <div className="flex justify-between mt-1.5">
                     <span className="text-[11px] text-slate-500">Richiesta</span>
                     <span className={`text-[11px] font-black ${
-                      tx.status === 'APPROVED' ? 'text-emerald-600' :
+                      tx.status === 'APPROVED' ? 'text-emerald-700' :
                       tx.status === 'REJECTED' ? 'text-red-500' :
                       tx.status === 'CANCELLED' ? 'text-slate-500' :
                       'text-amber-600'
@@ -203,7 +203,7 @@ export default function AdminTimelinePage() {
                 </div>
 
                 <div className="flex justify-end mt-2">
-                  <span className="text-[11px] text-secondary font-black sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                  <span className="text-[11px] text-secondary-text font-black sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1">
                     Vedi dettaglio <ArrowRight size={10} />
                   </span>
                 </div>

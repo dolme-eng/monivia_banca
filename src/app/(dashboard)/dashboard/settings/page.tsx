@@ -103,7 +103,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-secondary" />
+        <Loader2 size={24} className="animate-spin text-secondary-text" />
       </div>
     );
   }
@@ -143,12 +143,12 @@ export default function SettingsPage() {
         <div className="lg:col-span-5 bg-white rounded-xl border border-slate-200/80 p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-sm font-black text-primary flex items-center gap-2">
-              <User size={16} className="text-secondary" />
+              <User size={16} className="text-secondary-text" />
               Informazioni Profilo
             </h2>
           </div>
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-xl font-black">
+            <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary-text text-xl font-black">
               {initials}
             </div>
             <div>
@@ -171,7 +171,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">Ruolo</label>
-              <span className="inline-flex items-center px-2 py-0.5 rounded bg-secondary/10 text-secondary text-[11px] font-black uppercase">
+              <span className="inline-flex items-center px-2 py-0.5 rounded bg-secondary/10 text-secondary-text text-[11px] font-black uppercase">
                 {user?.role === 'ADMIN' ? 'Amministratore' : 'Cliente'}
               </span>
             </div>
@@ -188,7 +188,7 @@ export default function SettingsPage() {
         <div className="lg:col-span-7 space-y-6">
           <div className="bg-white rounded-xl border border-slate-200/80 p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
             <h2 className="text-sm font-black text-primary mb-5 flex items-center gap-2">
-              <Key size={16} className="text-secondary" />
+              <Key size={16} className="text-secondary-text" />
               Cambia Password
             </h2>
 
@@ -293,17 +293,17 @@ export default function SettingsPage() {
           {/* Security Center */}
           <div className="bg-white rounded-xl border border-slate-200/80 p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
             <h2 className="text-sm font-black text-primary mb-5 flex items-center gap-2">
-              <Shield size={16} className="text-secondary" />
+              <Shield size={16} className="text-secondary-text" />
               Centro Sicurezza
             </h2>
             <div className="space-y-3">
               {[
-                { icon: Lock, title: 'Blocco Account', desc: 'Blocco automatico dopo 5 tentativi falliti', status: 'Attivo', statusColor: 'bg-emerald-50 text-emerald-600' },
-                { icon: Shield, title: 'Token di Sessione', desc: 'Scadenza: 15 minuti + refresh automatico', status: 'Attivo', statusColor: 'bg-emerald-50 text-emerald-600' },
+                { icon: Lock, title: 'Blocco Account', desc: 'Blocco automatico dopo 5 tentativi falliti', status: 'Attivo', statusColor: 'bg-emerald-50 text-emerald-700' },
+                { icon: Shield, title: 'Token di Sessione', desc: 'Scadenza: 15 minuti + refresh automatico', status: 'Attivo', statusColor: 'bg-emerald-50 text-emerald-700' },
               ].map(({ icon: Icon, title, desc, status, statusColor }) => (
                 <div key={title} className="flex items-center justify-between p-4 rounded-lg border border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
+                    <div className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary-text">
                       <Icon size={16} />
                     </div>
                     <div>

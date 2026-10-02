@@ -134,7 +134,7 @@ export default function AmountInput({
         onClick={() => !disabled && inputRef.current?.focus()}
       >
         <span className={`text-xl sm:text-2xl font-black mr-2 transition-colors ${
-          isFocused ? 'text-secondary' : 'text-slate-600'
+          isFocused ? 'text-secondary-text' : 'text-slate-600'
         }`}>
           {currency}
         </span>

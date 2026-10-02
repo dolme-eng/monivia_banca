@@ -160,7 +160,7 @@ export default function CardsPage() {
 
   const statusLabel = (s: string) => {
     switch (s) {
-      case 'ACTIVE': return { text: 'Attiva', cls: 'bg-emerald-50 text-emerald-600' };
+      case 'ACTIVE': return { text: 'Attiva', cls: 'bg-emerald-50 text-emerald-700' };
       case 'FROZEN': return { text: 'Congelata', cls: 'bg-blue-50 text-blue-600' };
       case 'EXPIRED': return { text: 'Scaduta', cls: 'bg-red-50 text-red-500' };
       default: return { text: s, cls: 'bg-slate-100 text-slate-500' };
@@ -170,7 +170,7 @@ export default function CardsPage() {
   const accountStatusLabel = (s: string) => {
     switch (s) {
       case 'PENDING': return { text: 'In attesa', cls: 'bg-amber-50 text-amber-600' };
-      case 'ACTIVE': return { text: 'Attivo', cls: 'bg-emerald-50 text-emerald-600' };
+      case 'ACTIVE': return { text: 'Attivo', cls: 'bg-emerald-50 text-emerald-700' };
       case 'FROZEN': return { text: 'Congelato', cls: 'bg-blue-50 text-blue-600' };
       case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-500' };
       default: return { text: s, cls: 'bg-slate-100 text-slate-500' };
@@ -241,7 +241,7 @@ export default function CardsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-secondary" />
+          <Loader2 size={24} className="animate-spin text-secondary-text" />
         </div>
       ) : cards.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200/80 p-12 text-center" style={{ boxShadow: 'var(--shadow-card)' }}>
@@ -263,7 +263,7 @@ export default function CardsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
-                        <CreditCard size={16} className="text-secondary" />
+                        <CreditCard size={16} className="text-secondary-text" />
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-black text-primary truncate">{card.holder}</p>
@@ -342,7 +342,7 @@ export default function CardsPage() {
                       <button
                         onClick={() => setConfirm({ type: 'unfreeze', card })}
                         disabled={actionLoading !== null}
-                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg text-xs font-black hover:bg-emerald-100 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-black hover:bg-emerald-100 transition-colors"
                       >
                         <Unlock size={14} />
                         Scongela
@@ -362,7 +362,7 @@ export default function CardsPage() {
                       <button
                         onClick={() => setConfirm({ type: 'reactivate', card })}
                         disabled={actionLoading !== null}
-                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg text-xs font-black hover:bg-emerald-100 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-black hover:bg-emerald-100 transition-colors"
                       >
                         <RotateCcw size={14} />
                         Riattiva

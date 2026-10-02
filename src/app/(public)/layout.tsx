@@ -56,7 +56,7 @@ export default function PublicLayout({
                   <span className="text-2xl font-black tracking-tight text-white">
                     MO<span className="text-secondary">NIVIA</span>
                   </span>
-                  <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/40">
+                  <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/60">
                     Banca
                   </span>
                 </div>

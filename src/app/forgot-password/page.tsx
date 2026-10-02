@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <span className="text-2xl font-black tracking-tight text-primary">
-              MO<span className="text-secondary">NIVIA</span>
+              MO<span className="text-secondary-text">NIVIA</span>
             </span>
             <span className="relative -top-2 text-[11px] font-black uppercase tracking-[0.25em] text-slate-600">
               Banca

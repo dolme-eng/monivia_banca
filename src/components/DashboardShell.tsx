@@ -111,7 +111,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             <span className="text-xl font-black tracking-tight text-white">
               MO<span className="text-secondary">NIVIA</span>
             </span>
-            <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/40">
+            <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/60">
               Banca
             </span>
           </Link>
@@ -200,12 +200,12 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-black text-white truncate">{user?.name ?? '—'}</p>
-              <p className="text-[11px] text-white/40 truncate">{user?.email ?? ''}</p>
+              <p className="text-[11px] text-white/60 truncate">{user?.email ?? ''}</p>
             </div>
           </div>
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-black text-white/40 hover:bg-white/10 hover:text-white transition-all"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-black text-white/60 hover:bg-white/10 hover:text-white transition-all"
           >
             <LogOut size={18} />
             Esci
@@ -223,7 +223,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 <span className="text-xl font-black tracking-tight text-white">
                   MO<span className="text-secondary">NIVIA</span>
                 </span>
-                <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/40">
+                <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/60">
                   Banca
                 </span>
               </span>
@@ -304,7 +304,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             </nav>
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-black text-white/40 hover:bg-white/10 hover:text-white transition-all"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-black text-white/60 hover:bg-white/10 hover:text-white transition-all"
             >
               <LogOut size={18} />
               Esci

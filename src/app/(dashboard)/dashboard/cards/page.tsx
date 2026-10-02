@@ -87,7 +87,7 @@ export default function CardsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-secondary" />
+        <Loader2 size={24} className="animate-spin text-secondary-text" />
       </div>
     );
   }
@@ -182,7 +182,7 @@ export default function CardsPage() {
                   <p className="text-[11px] uppercase tracking-[0.2em] opacity-80">Carta Prepagata</p>
                   <p className="text-lg font-black mt-1">Monivia Banca</p>
                 </div>
-                <Wifi size={24} className="text-secondary -rotate-90" />
+                <Wifi size={24} className="text-secondary-text -rotate-90" />
               </div>
               <div className="z-10">
                 <p className="font-mono text-sm tracking-[0.2em] mb-2">
@@ -196,7 +196,7 @@ export default function CardsPage() {
                       ? undefined
                       : 'Numero completo non disponibile per questa carta'
                   }
-                  className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-secondary hover:text-white transition-colors min-h-[32px] disabled:opacity-40"
+                  className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-secondary-text hover:text-white transition-colors min-h-[32px] disabled:opacity-40"
                 >
                   {revealLoading ? (
                     <Loader2 size={12} className="animate-spin" />
@@ -236,7 +236,7 @@ export default function CardsPage() {
               )}
               <div className="flex justify-between items-center mb-4">
                 <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black uppercase ${
-                  card.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
+                  card.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-500'
                 }`}>
                   <span className={`h-1.5 w-1.5 rounded-full ${card.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-red-500'}`} />
                   {card.status === 'ACTIVE' ? 'Attiva' : card.status === 'FROZEN' ? 'Congelata' : 'Scaduta'}
@@ -285,7 +285,7 @@ export default function CardsPage() {
                     <div key={tx.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          isCredit ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'
+                          isCredit ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
                         }`}>
                           <Icon size={16} />
                         </div>
@@ -295,7 +295,7 @@ export default function CardsPage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`text-sm font-black ${isCredit ? 'text-emerald-600' : 'text-primary'}`}>
+                        <p className={`text-sm font-black ${isCredit ? 'text-emerald-700' : 'text-primary'}`}>
                           {isCredit ? '+' : '-'}{formatAmount(tx.amount)} €
                         </p>
                         {tx.status === 'PENDING' ? (
@@ -311,7 +311,7 @@ export default function CardsPage() {
                             Annullata
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-600">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-700">
                             <CheckCircle2 size={8} /> OK
                           </span>
                         )}
@@ -340,7 +340,7 @@ export default function CardsPage() {
                     }`}
                   >
                     <div className={`w-10 h-6 rounded flex items-center justify-center text-[11px] font-black ${
-                      i === 0 ? 'bg-primary text-secondary' : 'bg-accent text-white'
+                      i === 0 ? 'bg-primary text-secondary-text' : 'bg-accent text-white'
                     }`}>
                       {i === 0 ? 'FIS' : 'VRT'}
                     </div>
@@ -350,7 +350,7 @@ export default function CardsPage() {
                       </p>
                       <p className="text-[11px] text-slate-600">{c.holder}</p>
                     </div>
-                    {i === selectedCard && <CheckCircle2 size={14} className="text-secondary shrink-0" />}
+                    {i === selectedCard && <CheckCircle2 size={14} className="text-secondary-text shrink-0" />}
                   </button>
                 ))}
               </div>

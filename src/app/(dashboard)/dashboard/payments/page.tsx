@@ -154,7 +154,7 @@ export default function PaymentsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-secondary" />
+        <Loader2 size={24} className="animate-spin text-secondary-text" />
       </div>
     );
   }
@@ -194,7 +194,7 @@ export default function PaymentsPage() {
         <section className="lg:col-span-8 space-y-4">
           <div className="bg-white border border-slate-200/80 rounded-xl p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
             <h2 className="text-sm font-black text-primary mb-5 flex items-center gap-2">
-              <Send size={16} className="text-secondary" />
+              <Send size={16} className="text-secondary-text" />
               Nuovo Trasferimento
             </h2>
 
@@ -205,7 +205,7 @@ export default function PaymentsPage() {
             )}
 
             {success && (
-              <div role="status" className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm font-black text-emerald-600 flex items-center gap-2">
+              <div role="status" className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm font-black text-emerald-700 flex items-center gap-2">
                 <CheckCircle2 size={16} />
                 Trasferimento inviato! In attesa di approvazione.
               </div>
@@ -321,7 +321,7 @@ export default function PaymentsPage() {
                     <div key={tx.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${
-                          isCredit ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'
+                          isCredit ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
                         }`}>
                           <Send size={14} />
                         </div>
@@ -331,7 +331,7 @@ export default function PaymentsPage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`text-xs font-black ${isCredit ? 'text-emerald-600' : 'text-primary'}`}>
+                        <p className={`text-xs font-black ${isCredit ? 'text-emerald-700' : 'text-primary'}`}>
                           {isCredit ? '+' : '-'}{formatAmount(tx.amount)} €
                         </p>
                         {tx.status === 'PENDING' ? (
@@ -339,7 +339,7 @@ export default function PaymentsPage() {
                             <Clock size={8} /> In attesa
                           </span>
                         ) : tx.status === 'APPROVED' ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-600">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-700">
                             <CheckCircle2 size={8} /> OK
                           </span>
                         ) : tx.status === 'CANCELLED' ? (
@@ -367,13 +367,13 @@ export default function PaymentsPage() {
             <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} aria-hidden />
             <div className="relative z-10 space-y-4">
               <div className="flex justify-between items-start">
-                <h3 className="text-xs font-black text-secondary uppercase tracking-wider">Saldo Disponibile</h3>
-                <Info size={14} className="text-white/40" />
+                <h3 className="text-xs font-black text-secondary-text uppercase tracking-wider">Saldo Disponibile</h3>
+                <Info size={14} className="text-white/60" />
               </div>
               <div>
                 <p className="text-3xl font-black">{formatAmount(balance)} €</p>
               </div>
-              <p className="text-[11px] text-white/40">
+              <p className="text-[11px] text-white/60">
                 I fondi sono soggetti ad approvazione per prelievi e trasferimenti.
               </p>
             </div>

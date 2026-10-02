@@ -22,7 +22,7 @@ const SCENES = [
     loanPct: 100,
     loanDetail: '25.000 € disponibili su 25.000 €',
     txs: [
-      { icon: ArrowDownToLine, color: 'text-emerald-600', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-600' },
+      { icon: ArrowDownToLine, color: 'text-emerald-700', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-700' },
     ],
   },
   {
@@ -30,7 +30,7 @@ const SCENES = [
     loanPct: 98.6,
     loanDetail: '24.660 € disponibili su 25.000 €',
     txs: [
-      { icon: ArrowDownToLine, color: 'text-emerald-600', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-600' },
+      { icon: ArrowDownToLine, color: 'text-emerald-700', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-700' },
       { icon: CreditCard, color: 'text-slate-500', bg: 'bg-slate-100', title: 'Pagamento carta', time: '10 Giu 2026', amount: '-340 €', amountColor: 'text-red-500' },
     ],
   },
@@ -39,8 +39,8 @@ const SCENES = [
     loanPct: 88.6,
     loanDetail: '22.160 € disponibili su 25.000 €',
     txs: [
-      { icon: ArrowDownToLine, color: 'text-emerald-600', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-600' },
-      { icon: ArrowUpFromLine, color: 'text-secondary', bg: 'bg-secondary/10', title: 'Prelievo', time: 'In attesa di approvazione', amount: '', amountColor: '', badge: 'In Attesa', badgeColor: 'bg-amber-50 text-amber-600' },
+      { icon: ArrowDownToLine, color: 'text-emerald-700', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-700' },
+      { icon: ArrowUpFromLine, color: 'text-secondary-text', bg: 'bg-secondary/10', title: 'Prelievo', time: 'In attesa di approvazione', amount: '', amountColor: '', badge: 'In Attesa', badgeColor: 'bg-amber-50 text-amber-600' },
       { icon: CreditCard, color: 'text-slate-500', bg: 'bg-slate-100', title: 'Pagamento carta', time: '10 Giu 2026', amount: '-340 €', amountColor: 'text-red-500' },
     ],
   },
@@ -49,8 +49,8 @@ const SCENES = [
     loanPct: 60.8,
     loanDetail: '15.200 € disponibili su 25.000 €',
     txs: [
-      { icon: ArrowDownToLine, color: 'text-emerald-600', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-600' },
-      { icon: ArrowUpFromLine, color: 'text-secondary', bg: 'bg-secondary/10', title: 'Prelievo', time: 'In attesa di approvazione', amount: '', amountColor: '', badge: 'In Attesa', badgeColor: 'bg-amber-50 text-amber-600' },
+      { icon: ArrowDownToLine, color: 'text-emerald-700', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-700' },
+      { icon: ArrowUpFromLine, color: 'text-secondary-text', bg: 'bg-secondary/10', title: 'Prelievo', time: 'In attesa di approvazione', amount: '', amountColor: '', badge: 'In Attesa', badgeColor: 'bg-amber-50 text-amber-600' },
       { icon: CreditCard, color: 'text-slate-500', bg: 'bg-slate-100', title: 'Pagamento carta', time: '10 Giu 2026', amount: '-340 €', amountColor: 'text-red-500' },
       { icon: Send, color: 'text-accent', bg: 'bg-accent/10', title: 'Trasferimento', time: '8 Giu 2026', amount: '-6.500 €', amountColor: 'text-red-500' },
     ],
@@ -86,21 +86,21 @@ export default function DashboardDemo() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
         </span>
-        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">Live</span>
+        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">Live</span>
       </div>
 
       {/* Header */}
       <div className="flex items-center justify-between mb-4 shrink-0">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center">
-            <Wallet size={16} className="text-secondary" />
+            <Wallet size={16} className="text-secondary-text" />
           </div>
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">Il mio conto</p>
             <p className="text-sm font-black text-primary">Conto Personale</p>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider text-emerald-600">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider text-emerald-700">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
           Attivo
         </span>
@@ -118,7 +118,7 @@ export default function DashboardDemo() {
       <div className="mb-4 shrink-0">
         <div className="flex items-center justify-between mb-1.5">
           <p className="text-xs font-black text-slate-600">Prestito erogato</p>
-          <p className="text-xs font-black text-secondary">25.000 €</p>
+          <p className="text-xs font-black text-secondary-text">25.000 €</p>
         </div>
         <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
           <div

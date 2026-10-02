@@ -81,7 +81,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-secondary" />
+        <Loader2 size={24} className="animate-spin text-secondary-text" />
       </div>
     );
   }
@@ -135,8 +135,8 @@ export default function DashboardPage() {
           <div className="absolute -right-8 -top-8 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" aria-hidden />
           <div className="relative z-10">
             <div className="flex justify-between items-start">
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-secondary">Saldo Totale</span>
-              <Wallet size={18} className="text-secondary" />
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-secondary-text">Saldo Totale</span>
+              <Wallet size={18} className="text-secondary-text" />
             </div>
             <div className="mt-4">
               <p className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">{formatAmount(balance)} €</p>
@@ -168,7 +168,7 @@ export default function DashboardPage() {
             <div className="relative z-10 flex justify-between items-start">
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/50">Carta Principale</p>
-                <p className="text-sm font-black mt-1 text-secondary">{account?.currency ?? 'EUR'}</p>
+                <p className="text-sm font-black mt-1 text-secondary-text">{account?.currency ?? 'EUR'}</p>
               </div>
               <div className="flex gap-2">
                 <Link href="/dashboard/cards" className="px-3 py-1.5 min-h-[44px] text-[11px] font-black bg-white/10 hover:bg-white/20 rounded-lg transition-colors flex items-center">
@@ -182,11 +182,11 @@ export default function DashboardPage() {
               </p>
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-[11px] text-white/40 uppercase">Titolare</p>
+                  <p className="text-[11px] text-white/60 uppercase">Titolare</p>
                   <p className="text-sm font-black mt-0.5">{user?.nome} {user?.cognome}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[11px] text-white/40 uppercase">Scadenza</p>
+                  <p className="text-[11px] text-white/60 uppercase">Scadenza</p>
                   <p className="text-sm font-black font-mono mt-0.5">{account?.cards?.[0]?.expiry ?? '••/••'}</p>
                 </div>
               </div>
@@ -198,7 +198,7 @@ export default function DashboardPage() {
         <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200/80 rounded-xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
             <h3 className="text-sm font-black text-primary">Transazioni Recenti</h3>
-            <Link href="/dashboard/payments" className="text-secondary text-xs font-black hover:underline py-2 px-1 min-h-[44px] flex items-center shrink-0">
+            <Link href="/dashboard/payments" className="text-secondary-text text-xs font-black hover:underline py-2 px-1 min-h-[44px] flex items-center shrink-0">
               Vedi tutte
             </Link>
           </div>
@@ -216,7 +216,7 @@ export default function DashboardPage() {
                   <div key={tx.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        isCredit ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'
+                        isCredit ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
                       }`}>
                         <Icon size={16} />
                       </div>
@@ -226,7 +226,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className={`text-sm font-black ${isCredit ? 'text-emerald-600' : 'text-primary'}`}>
+                      <p className={`text-sm font-black ${isCredit ? 'text-emerald-700' : 'text-primary'}`}>
                         {isCredit ? '+' : '-'}{formatAmount(Math.abs(tx.amount))} €
                       </p>
                       {tx.status === 'PENDING' ? (
@@ -234,7 +234,7 @@ export default function DashboardPage() {
                           <Clock size={8} /> In sospeso
                         </span>
                       ) : tx.status === 'APPROVED' ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-600">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-emerald-700">
                           <CheckCircle2 size={8} /> Completato
                         </span>
                       ) : tx.status === 'CANCELLED' ? (

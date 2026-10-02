@@ -183,14 +183,14 @@ export default function AdminDashboardPage() {
         {/* Metrics */}
         <section className="md:col-span-3 lg:col-span-2 bg-white rounded-xl p-5 border border-slate-200/80 flex flex-col justify-between" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h3 className="text-sm font-black text-primary mb-4 flex items-center gap-2">
-            <Activity size={16} className="text-secondary" />
+            <Activity size={16} className="text-secondary-text" />
             Panoramica Generale
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Conti Totali</p>
               <p className="text-xl font-black text-primary">{loading ? '—' : stats.totalAccounts}</p>
-              <div className="flex items-center gap-1 mt-2 text-emerald-600">
+              <div className="flex items-center gap-1 mt-2 text-emerald-700">
                 <TrendingUp size={12} />
                 <span className="text-[11px] font-black">+{stats.newAccountsThisMonth} questo mese</span>
               </div>
@@ -239,7 +239,7 @@ export default function AdminDashboardPage() {
         <section className="md:col-span-3 lg:col-span-1 bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-black text-primary">Da Approvare</h3>
-            <Link href="/admin/approvals" className="text-secondary text-[11px] font-black hover:underline py-2 px-1 min-h-[44px] flex items-center">
+            <Link href="/admin/approvals" className="text-secondary-text text-[11px] font-black hover:underline py-2 px-1 min-h-[44px] flex items-center">
               Vedi tutte
             </Link>
           </div>
@@ -261,7 +261,7 @@ export default function AdminDashboardPage() {
                   className="p-3 bg-slate-50 rounded-lg flex items-center justify-between hover:bg-slate-100 transition-colors cursor-pointer block"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary-text">
                       {item.type === 'DEBIT' || item.type === 'TRANSFER_OUT' ? (
                         <Send size={14} />
                       ) : (
@@ -290,7 +290,7 @@ export default function AdminDashboardPage() {
         <section className="md:col-span-3 lg:col-span-2 bg-white rounded-xl p-5 border border-slate-200/80 flex flex-col" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-black text-primary">Attività Recenti</h3>
-            <Link href="/admin/timeline" className="text-secondary text-xs font-black hover:underline py-2 px-1 min-h-[44px] flex items-center">
+            <Link href="/admin/timeline" className="text-secondary-text text-xs font-black hover:underline py-2 px-1 min-h-[44px] flex items-center">
               Vedi tutto
             </Link>
           </div>
@@ -320,7 +320,7 @@ export default function AdminDashboardPage() {
                   {stats.recentTransactions.map((tx: any) => (
                     <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="py-3 flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center text-[11px] font-black text-secondary shrink-0">
+                        <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center text-[11px] font-black text-secondary-text shrink-0">
                           {tx.account?.user?.nome?.[0] || '?'}{tx.account?.user?.cognome?.[0] || '?'}
                         </div>
                         {tx.account?.user?.nome} {tx.account?.user?.cognome}
@@ -330,7 +330,7 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="py-3">
                         <span className={`text-[11px] font-black px-2 py-0.5 rounded ${
-                          tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
+                          tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700' :
                           tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
                           tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-500' :
                           'bg-amber-50 text-amber-600'

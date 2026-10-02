@@ -138,7 +138,7 @@ export default function AdminPrelievoDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-secondary" />
+        <Loader2 size={24} className="animate-spin text-secondary-text" />
       </div>
     );
   }
@@ -148,7 +148,7 @@ export default function AdminPrelievoDetailPage() {
       <div className="text-center py-20">
         <AlertTriangle size={32} className="text-amber-400 mx-auto mb-3" />
         <p className="text-sm text-slate-500">Transazione non trovata</p>
-        <Link href="/admin/approvals" className="text-sm text-secondary font-black hover:underline mt-2 inline-block">
+        <Link href="/admin/approvals" className="text-sm text-secondary-text font-black hover:underline mt-2 inline-block">
           Torna alle Approvazioni
         </Link>
       </div>
@@ -197,10 +197,10 @@ export default function AdminPrelievoDetailPage() {
               <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
                 step.done
                   ? tx.status === 'APPROVED'
-                    ? 'bg-emerald-100 text-emerald-600'
+                    ? 'bg-emerald-100 text-emerald-700'
                     : tx.status === 'REJECTED' && i === 2
                     ? 'bg-red-100 text-red-500'
-                    : 'bg-secondary/10 text-secondary'
+                    : 'bg-secondary/10 text-secondary-text'
                   : 'bg-slate-100 text-slate-600'
               }`}>
                 <step.icon size={18} />
@@ -214,7 +214,7 @@ export default function AdminPrelievoDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h3 className="text-sm font-black text-primary mb-4 flex items-center gap-2">
-            <User size={14} className="text-secondary" />
+            <User size={14} className="text-secondary-text" />
             Cliente
           </h3>
           <div className="space-y-3">
@@ -239,7 +239,7 @@ export default function AdminPrelievoDetailPage() {
 
         <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h3 className="text-sm font-black text-primary mb-4 flex items-center gap-2">
-            <CreditCard size={14} className="text-secondary" />
+            <CreditCard size={14} className="text-secondary-text" />
             Transazione
           </h3>
           <div className="space-y-3">
@@ -256,7 +256,7 @@ export default function AdminPrelievoDetailPage() {
             <div className="flex justify-between">
               <span className="text-xs text-slate-600">Stato</span>
               <span className={`text-xs font-black px-2 py-0.5 rounded ${
-                tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
+                tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700' :
                 tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
                 tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-500' :
                 'bg-amber-50 text-amber-600'
@@ -274,7 +274,7 @@ export default function AdminPrelievoDetailPage() {
 
       <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
         <h3 className="text-sm font-black text-primary mb-3 flex items-center gap-2">
-          <FileText size={14} className="text-secondary" />
+          <FileText size={14} className="text-secondary-text" />
           Descrizione
         </h3>
         <p className="text-sm text-slate-600 leading-relaxed">{tx.description}</p>
@@ -340,7 +340,7 @@ export default function AdminPrelievoDetailPage() {
       )}
 
       <div className="text-center">
-        <Link href="/admin/approvals" className="text-sm text-secondary font-black hover:underline">
+        <Link href="/admin/approvals" className="text-sm text-secondary-text font-black hover:underline">
           ← Torna alle Approvazioni
         </Link>
       </div>

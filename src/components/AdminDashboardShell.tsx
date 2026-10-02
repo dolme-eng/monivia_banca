@@ -100,11 +100,11 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
                 <span className="text-lg font-black tracking-tight text-white">
                   MO<span className="text-secondary">NIVIA</span>
                 </span>
-                <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/40">
+                <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/60">
                   Banca
                 </span>
               </span>
-              <span className="text-[11px] text-white/40 uppercase tracking-[0.18em] block mt-0.5">Amministrazione</span>
+              <span className="text-[11px] text-white/60 uppercase tracking-[0.18em] block mt-0.5">Amministrazione</span>
             </div>
           </Link>
         </div>
@@ -149,7 +149,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
 
         <button
           onClick={handleSignOut}
-          className="w-full py-2.5 text-white/40 hover:text-white text-xs font-black flex items-center justify-center gap-2 transition-colors"
+          className="w-full py-2.5 text-white/60 hover:text-white text-xs font-black flex items-center justify-center gap-2 transition-colors"
         >
           <LogOut size={14} />
           Esci
@@ -166,7 +166,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
                 <span className="text-xl font-black tracking-tight text-white">
                   MO<span className="text-secondary">NIVIA</span>
                 </span>
-                <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/40">
+                <span className="relative -top-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/60">
                   Banca
                 </span>
               </span>
@@ -201,7 +201,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
             </nav>
             <button
               onClick={() => { setMobileOpen(false); handleSignOut(); }}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-black text-white/40 hover:bg-white/10 hover:text-white transition-all"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-black text-white/60 hover:bg-white/10 hover:text-white transition-all"
             >
               <LogOut size={18} />
               Esci

@@ -95,7 +95,7 @@ export default function ConfirmModal({
   const colors = {
     danger: { bg: 'bg-red-50', icon: 'text-red-500', btn: 'bg-red-600 hover:bg-red-700' },
     warning: { bg: 'bg-amber-50', icon: 'text-amber-500', btn: 'bg-amber-600 hover:bg-amber-700' },
-    info: { bg: 'bg-secondary/10', icon: 'text-secondary', btn: 'bg-secondary text-primary hover:bg-secondary/90' },
+    info: { bg: 'bg-secondary/10', icon: 'text-secondary-text', btn: 'bg-secondary text-primary hover:bg-secondary/90' },
   }[variant];
 
   return (

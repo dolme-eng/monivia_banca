@@ -256,7 +256,7 @@ export default function AccountsPage() {
   const statusLabel = (s: string) => {
     switch (s) {
       case 'PENDING': return { text: 'In attesa', cls: 'bg-amber-50 text-amber-600' };
-      case 'ACTIVE': return { text: 'Attivo', cls: 'bg-emerald-50 text-emerald-600' };
+      case 'ACTIVE': return { text: 'Attivo', cls: 'bg-emerald-50 text-emerald-700' };
       case 'FROZEN': return { text: 'Congelato', cls: 'bg-blue-50 text-blue-600' };
       case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-500' };
       default: return { text: s, cls: 'bg-slate-100 text-slate-500' };
@@ -329,7 +329,7 @@ export default function AccountsPage() {
       {/* Accounts list */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-secondary" />
+          <Loader2 size={24} className="animate-spin text-secondary-text" />
         </div>
       ) : accounts.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200/80 p-12 text-center" style={{ boxShadow: 'var(--shadow-card)' }}>
@@ -404,7 +404,7 @@ export default function AccountsPage() {
                             </div>
                             <p className="text-[11px] text-slate-600 mt-1">
                               Formato: IT + 2 cifre di controllo + 23 caratteri
-                              (<span className={editingIban.value.replace(/[\s-]/g, '').length === 27 ? 'text-emerald-600 font-black' : ''}>
+                              (<span className={editingIban.value.replace(/[\s-]/g, '').length === 27 ? 'text-emerald-700 font-black' : ''}>
                                 {editingIban.value.replace(/[\s-]/g, '').length}/27
                               </span>)
                             </p>
@@ -485,7 +485,7 @@ export default function AccountsPage() {
                       <button
                         onClick={() => setConfirm({ type: 'unfreeze', account: acc })}
                         disabled={actionLoading !== null}
-                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg text-xs font-black hover:bg-emerald-100 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-black hover:bg-emerald-100 transition-colors"
                       >
                         <Unlock size={14} />
                         Scongela
@@ -506,7 +506,7 @@ export default function AccountsPage() {
                           <button
                             onClick={() => setConfirm({ type: 'unblock', account: acc })}
                             disabled={actionLoading !== null}
-                            className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg text-xs font-black hover:bg-emerald-100 transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-black hover:bg-emerald-100 transition-colors"
                           >
                             <Shield size={14} />
                             Sblocca trasferimenti
@@ -599,7 +599,7 @@ export default function AccountsPage() {
                   />
                   <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
                     {pwChecks.map((c) => (
-                      <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-600' : 'text-slate-600'}`}>
+                      <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-700' : 'text-slate-600'}`}>
                         {c.ok ? '✓' : '○'} {c.label}
                       </span>
                     ))}

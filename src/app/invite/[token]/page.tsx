@@ -68,7 +68,7 @@ export default function InvitePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 size={32} className="animate-spin text-secondary" />
+        <Loader2 size={32} className="animate-spin text-secondary-text" />
       </div>
     );
   }
@@ -97,7 +97,7 @@ export default function InvitePage() {
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <span className="text-2xl font-black tracking-tight text-primary">
-              MO<span className="text-secondary">NIVIA</span>
+              MO<span className="text-secondary-text">NIVIA</span>
             </span>
             <span className="relative -top-2 text-[11px] font-black uppercase tracking-[0.25em] text-slate-600">
               Banca
@@ -112,7 +112,7 @@ export default function InvitePage() {
         {/* Credentials Card */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="bg-primary p-6 text-center">
-            <CreditCard size={40} className="text-secondary mx-auto mb-3" />
+            <CreditCard size={40} className="text-secondary-text mx-auto mb-3" />
             <p className="text-sm text-white/60">Benvenut{invite?.nome ? 'o' : 'a'}</p>
             <p className="text-lg font-black text-white">{invite?.nome} {invite?.cognome}</p>
           </div>

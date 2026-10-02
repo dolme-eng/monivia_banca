@@ -15,8 +15,8 @@ interface Notification {
 }
 
 const TONE = {
-  info: { icon: Info, color: 'text-secondary bg-secondary/10' },
-  success: { icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50' },
+  info: { icon: Info, color: 'text-secondary-text bg-secondary/10' },
+  success: { icon: CheckCircle2, color: 'text-emerald-700 bg-emerald-50' },
   warning: { icon: AlertTriangle, color: 'text-amber-600 bg-amber-50' },
 } as const;
 
@@ -95,7 +95,7 @@ export default function NotificationBell() {
         }
         aria-expanded={open}
         aria-haspopup="true"
-        className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-secondary transition-colors"
+        className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-secondary-text transition-colors"
       >
         <Bell size={18} />
         {count > 0 && (

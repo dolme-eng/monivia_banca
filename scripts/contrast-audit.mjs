@@ -22,29 +22,82 @@ const audit = () => {
     const hi = Math.max(l1, l2), lo = Math.min(l1, l2);
     return (hi + 0.05) / (lo + 0.05);
   };
-  const parse = (c) => {
-    // Tailwind v4 emits oklch()/color-mix(); a naive regex read those as sRGB
-    // and produced nonsense ratios. Letting the browser normalise through a
-    // canvas is the only reliable conversion.
-    const cv = document.createElement('canvas');
-    cv.width = cv.height = 1;
-    const ctx = cv.getContext('2d', { willReadFrequently: true });
-    ctx.clearRect(0, 0, 1, 1);
-    ctx.fillStyle = '#000';
-    ctx.fillStyle = c;
-    ctx.fillRect(0, 0, 1, 1);
-    const d = ctx.getImageData(0, 0, 1, 1).data;
-    return [d[0], d[1], d[2], d[3] / 255];
+  // Two different colour spaces, easily conflated:
+  //  - CSS lab():  L is 0..100, needs the CIE XYZ path.
+  //  - oklab():    L is 0..1,   needs the direct OKLab matrices.
+  // Getting this wrong silently reports background-coloured text as failing.
+  const gamma = (v) => {
+    v = v > 0.0031308 ? 1.055 * Math.pow(Math.max(v, 0), 1 / 2.4) - 0.055 : 12.92 * v;
+    return Math.min(255, Math.max(0, Math.round(v * 255)));
   };
+  const xyzToRgb = (L, a, b) => {
+    const fwd = (t) => (t > 216 / 24389 ? Math.cbrt(t) : (24389 / 27 * t + 16) / 116);
+    const l = (L + 16) / 116, m = l + a / 500, s = l - b / 200;
+    // Inverse of fwd: cubic above the knee, LINEAR below it. Using l**3
+    // everywhere washes dark colours out and was the source of the bogus
+    // readings.
+    const inv = (t) => (t > 6 / 29 ? t ** 3 : 3 * (6 / 29) ** 2 * (t - 4 / 29));
+    const X = 0.9504559271 * inv(l);
+    const Y = 1.0 * inv(m);
+    const Z = 1.0890577508 * inv(s);
+    const fx = fwd(X / 0.9504559271), fy = fwd(Y), fz = fwd(Z / 1.0890577508);
+    return [gamma(3.2404542 * fx - 1.5371385 * fy - 0.4985314 * fz),
+            gamma(-0.9692660 * fx + 1.8760108 * fy + 0.0415560 * fz),
+            gamma(0.0556434 * fx - 0.2040259 * fy + 1.0572252 * fz)];
+  };
+  const oklabToRgb = (L, a, b) => {
+    const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+    const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+    const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+    const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+    return [gamma(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+            gamma(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+            gamma(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s)];
+  };
+  const oklchToRgb = (L, C, Hdeg) => {
+    const h = (Hdeg * Math.PI) / 180;
+    return oklabToRgb(L, C * Math.cos(h), C * Math.sin(h));
+  };
+  const parseAny = (c) => {
+    if (!c) return null;
+    let m = c.match(/^rgba?\(([^)]+)\)/);
+    if (m) {
+      const p = m[1].split(/[,\s/]+/).filter(Boolean).map(Number);
+      return { rgb: [p[0], p[1], p[2]], a: p.length > 3 ? p[3] : 1 };
+    }
+    m = c.match(/^lab\(([^)]+)\)/);
+    if (m) {
+      const p = m[1].split(/[\s/]+/).filter(Boolean);
+      return { rgb: xyzToRgb(+p[0] / 100, +p[1], +p[2]), a: p.length > 3 ? +p[3] : 1 };
+    }
+    m = c.match(/^oklab\(([^)]+)\)/);
+    if (m) {
+      const p = m[1].split(/[\s/]+/).filter(Boolean);
+      return { rgb: oklabToRgb(+p[0], +p[1], +p[2]), a: p.length > 3 ? +p[3] : 1 };
+    }
+    m = c.match(/^oklch\(([^)]+)\)/);
+    if (m) {
+      const p = m[1].split(/[\s/]+/).filter(Boolean);
+      return { rgb: oklchToRgb(+p[0], +p[1], +p[2]), a: p.length > 3 ? +p[3] : 1 };
+    }
+    if (c === 'transparent') return { rgb: [0, 0, 0], a: 0 };
+    return null;
+  };
+  const over = (fg, bg, alpha) => fg.map((v, i) => Math.round(v * alpha + bg[i] * (1 - alpha)));
+
   const bgOf = (el) => {
     let n = el;
+    let acc = null;
     while (n && n !== document.documentElement) {
-      const c = getComputedStyle(n).backgroundColor;
-      const m = parse(c);
-      if (m[3] > 0) return [m[0], m[1], m[2]];
+      const p = parseAny(getComputedStyle(n).backgroundColor);
+      if (p && p.a > 0) {
+        acc = acc === null ? (p.a === 1 ? p.rgb : over(p.rgb, [255, 255, 255], p.a))
+                           : over(p.rgb, acc, p.a);
+        if (p.a === 1) break;
+      }
       n = n.parentElement;
     }
-    return [255, 255, 255];
+    return acc || [255, 255, 255];
   };
 
   const out = [];
@@ -62,9 +115,12 @@ const audit = () => {
     const bold = parseInt(cs.fontWeight, 10) >= 700;
     const large = size >= 24 || (size >= 18.66 && bold);
     const need = large ? 3 : 4.5;
-    const fg = parse(cs.color);
-    if (fg[3] < 0.4) return; // fully transparent text is not rendered
-    const r = ratio([fg[0], fg[1], fg[2]], bgOf(el));
+    const bg = bgOf(el);
+    const fgp = parseAny(cs.color);
+    if (!fgp) return;
+    if (fgp.a < 0.15) return; // effectively invisible
+    const fg = over(fgp.rgb, bg, fgp.a); // composite the text onto its real backdrop
+    const r = ratio(fg, bg);
     if (r < need) out.push({ txt: txt.slice(0, 40), r: +r.toFixed(2), need, size: Math.round(size) });
   });
   return out;
