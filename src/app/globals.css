@@ -3,7 +3,12 @@
 @theme {
   /* === Core Palette — Monivia Premium === */
   --color-primary: #0a1628;
+  /* Brand cyan. On white it is only 1.76:1 — fine as a fill, unreadable as
+     text. Never use text-secondary for copy on a light background. */
   --color-secondary: #00d4ff;
+  /* Darkened brand cyan for text on light surfaces: 4.9:1 on white, so it
+     passes WCAG AA while staying recognisably the same hue. */
+  --color-secondary-text: #046b86;
   --color-accent: #6366f1;
   --color-surface: #f5f8ff;
   --color-muted: #64748b;
@@ -107,7 +112,7 @@
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-sm font-black text-white transition-all duration-200 ease-out;
     @apply hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-lg;
-    @apply focus:outline-none focus:ring-4 focus:ring-secondary/30;
+    @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-white;
     @apply active:translate-y-0 active:scale-[0.98];
     @apply disabled:pointer-events-none disabled:opacity-50;
     min-height: 48px;
@@ -116,7 +121,7 @@
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-6 py-3.5 text-sm font-black text-primary transition-all duration-200 ease-out;
     @apply hover:-translate-y-0.5 hover:border-secondary/50 hover:text-secondary;
-    @apply focus:outline-none focus:ring-4 focus:ring-secondary/20;
+    @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-white;
     @apply active:translate-y-0 active:scale-[0.98];
     min-height: 48px;
   }
@@ -125,7 +130,7 @@
     @apply inline-flex items-center justify-center gap-2 rounded-lg bg-secondary px-6 py-3.5 text-sm font-black text-primary transition-all duration-200 ease-out;
     box-shadow: var(--shadow-soft);
     @apply hover:-translate-y-0.5 hover:bg-cyan-300;
-    @apply focus:outline-none focus:ring-4 focus:ring-secondary/40;
+    @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white;
     @apply active:translate-y-0 active:scale-[0.98];
     @apply disabled:pointer-events-none disabled:opacity-50;
     min-height: 48px;
@@ -134,14 +139,14 @@
   .btn-ghost-white {
     @apply inline-flex items-center justify-center gap-2 rounded-lg border border-white/25 bg-primary/40 px-6 py-3.5 text-sm font-black text-white transition-all duration-200;
     @apply hover:bg-white hover:text-primary;
-    @apply focus:outline-none focus:ring-4 focus:ring-white/20;
+    @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary;
     min-height: 48px;
   }
 
   .field-shell {
     @apply w-full rounded-lg border-2 border-slate-200 bg-slate-50/80 px-4 py-4 text-base font-medium text-slate-900 outline-none transition-all;
     @apply placeholder:text-slate-400;
-    @apply focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/10;
+    @apply focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary-text/25;
     min-height: 56px;
   }
 

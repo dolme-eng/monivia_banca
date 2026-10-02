@@ -169,22 +169,23 @@ export default function ApprovalsPage() {
                   <div className="flex gap-2">
                     <Link
                       href={`/admin/prelievo/${tx.id}`}
-                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-400 hover:text-secondary"
-                      title="Vedi dettaglio"
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-secondary/40 hover:text-secondary transition-colors text-slate-500"
+                      aria-label={`Vedi il dettaglio della transazione di ${formatAmount(Math.abs(Number(tx.amount)))} €`}
                     >
                       <ArrowRight size={14} />
                     </Link>
                     <button
                       onClick={() => openConfirm(tx.id, 'REJECT')}
                       disabled={actionId === tx.id}
-                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors text-slate-400 hover:text-red-500 disabled:opacity-50"
-                      title="Rifiuta"
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors text-slate-500 hover:text-red-600 disabled:opacity-50"
+                      aria-label={`Rifiuta la richiesta di ${formatAmount(Math.abs(Number(tx.amount)))} €`}
                     >
                       {actionId === tx.id ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
                     </button>
                     <button
                       onClick={() => openConfirm(tx.id, 'APPROVE')}
                       disabled={actionId === tx.id}
+                      aria-label={`Approva la richiesta di ${formatAmount(Math.abs(Number(tx.amount)))} €`}
                       className="px-4 py-3 min-h-[44px] bg-emerald-600 text-white rounded-lg text-xs font-black hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-1.5"
                     >
                       {actionId === tx.id ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}

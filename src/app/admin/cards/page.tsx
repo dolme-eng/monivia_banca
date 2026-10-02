@@ -211,7 +211,10 @@ export default function CardsPage() {
           <div className="relative flex-1">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
-              type="text"
+              id="admin-cards-search"
+              type="search"
+              role="searchbox"
+              aria-label="Cerca una carta per intestatario, numero o email"
               placeholder="Cerca per intestatario, numero carta o email…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

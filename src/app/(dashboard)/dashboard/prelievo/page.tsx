@@ -206,10 +206,11 @@ export default function PrelievoPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Amount */}
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 ml-1">
+                <label htmlFor="prelievo-amount" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 ml-1">
                   Importo da prelevare *
                 </label>
                 <AmountInput
+                  id="prelievo-amount"
                   value={amount}
                   onChange={setAmount}
                   max={account?.balance || 999999}

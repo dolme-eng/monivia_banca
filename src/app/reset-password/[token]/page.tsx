@@ -101,17 +101,20 @@ export default function ResetPasswordPage() {
               )}
 
               <div>
-                <label className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-400">
+                <label htmlFor="new-password" className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-500">
                   Nuova password *
                 </label>
                 <div className="relative">
                   <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
+                    id="new-password"
+                    name="new-password"
                     type={showPassword ? 'text' : 'password'}
                     required
                     minLength={8}
                     autoComplete="new-password"
-                    className="w-full pl-10 pr-10 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary"
+                    aria-describedby="new-password-help"
+                    className="w-full pl-10 pr-10 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-text/40 focus:border-secondary-text"
                     placeholder="Minimo 8 caratteri"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -119,8 +122,8 @@ export default function ResetPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-slate-600"
-                    aria-label={showPassword ? 'Nascondi' : 'Mostra'}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600"
+                    aria-label={showPassword ? 'Nascondi la password' : 'Mostra la password'}
                   >
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
@@ -128,15 +131,17 @@ export default function ResetPasswordPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-400">
+                <label htmlFor="confirm-password" className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-500">
                   Conferma password *
                 </label>
                 <input
+                  id="confirm-password"
+                  name="confirm-password"
                   type={showPassword ? 'text' : 'password'}
                   required
                   minLength={8}
                   autoComplete="new-password"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-text/40 focus:border-secondary-text"
                   placeholder="Ripeti la password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}

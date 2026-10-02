@@ -208,23 +208,25 @@ export default function SettingsPage() {
 
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <div>
-                <label className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-400">
+<label htmlFor="current-password" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-500">
                   Password attuale *
                 </label>
                 <div className="relative">
                   <input
+                    id="current-password"
+                    name="current-password"
                     type={showCurrent ? 'text' : 'password'}
                     required
                     autoComplete="current-password"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary pr-10"
+                    className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-text/40 focus:border-secondary-text pr-10"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                   />
                   <button
                     type="button"
                     onClick={() => setShowCurrent(!showCurrent)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-slate-600"
-                    aria-label={showCurrent ? 'Nascondi' : 'Mostra'}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600"
+                    aria-label={showCurrent ? 'Nascondi la password attuale' : 'Mostra la password attuale'}
                   >
                     {showCurrent ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
@@ -232,16 +234,18 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-400">
+<label htmlFor="new-password" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-500">
                   Nuova password *
                 </label>
                 <div className="relative">
                   <input
+                    id="new-password"
+                    name="new-password"
                     type={showNew ? 'text' : 'password'}
                     required
                     minLength={8}
                     autoComplete="new-password"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary pr-10"
+                    className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-text/40 focus:border-secondary-text pr-10"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Minimo 8 caratteri"
@@ -249,8 +253,8 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => setShowNew(!showNew)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-slate-600"
-                    aria-label={showNew ? 'Nascondi' : 'Mostra'}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600"
+                    aria-label={showNew ? 'Nascondi la nuova password' : 'Mostra la nuova password'}
                   >
                     {showNew ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
@@ -258,15 +262,17 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-400">
+                <label htmlFor="confirm-new-password" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-500">
                   Conferma nuova password *
                 </label>
                 <input
+                  id="confirm-new-password"
+                  name="confirm-new-password"
                   type={showNew ? 'text' : 'password'}
                   required
                   minLength={8}
                   autoComplete="new-password"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-text/40 focus:border-secondary-text"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Ripeti la nuova password"

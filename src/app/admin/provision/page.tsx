@@ -318,10 +318,13 @@ export default function ProvisionPage() {
                               )}
                               <div className="flex gap-3 items-end">
                                 <div className="flex-1">
-                                  <label className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-400">
+                                  <label htmlFor="topup-amount" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-500">
                                     Importo da accreditare (€)
                                   </label>
                                   <input
+                                    id="topup-amount"
+                                    name="topup-amount"
+                                    inputMode="decimal"
                                     type="number"
                                     min={1}
                                     className="field-shell text-lg font-black"
@@ -376,22 +379,25 @@ export default function ProvisionPage() {
               <div className="space-y-5">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Nome *</label>
-                    <input type="text" required className="field-shell" value={formData.nome} onChange={(e) => setFormData({ ...formData, nome: e.target.value })} />
+                    <label htmlFor="prov-nome" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Nome *</label>
+                    <input id="prov-nome" name="nome" autoComplete="given-name" type="text" required className="field-shell" value={formData.nome} onChange={(e) => setFormData({ ...formData, nome: e.target.value })} />
                   </div>
                   <div>
-                    <label className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Cognome *</label>
-                    <input type="text" required className="field-shell" value={formData.cognome} onChange={(e) => setFormData({ ...formData, cognome: e.target.value })} />
+                    <label htmlFor="prov-cognome" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Cognome *</label>
+                    <input id="prov-cognome" name="cognome" autoComplete="family-name" type="text" required className="field-shell" value={formData.cognome} onChange={(e) => setFormData({ ...formData, cognome: e.target.value })} />
                   </div>
                 </div>
                 <div>
-                  <label className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Email del richiedente *</label>
-                  <input type="email" required className="field-shell" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                  <label htmlFor="prov-email" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Email del richiedente *</label>
+                  <input id="prov-email" name="email" autoComplete="email" type="email" required className="field-shell" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                 </div>
                 <div>
-                  <label className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Password per l&apos;accesso *</label>
+                  <label htmlFor="prov-password" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Password per l&apos;accesso *</label>
                   <div className="relative">
                     <input
+                      id="prov-password"
+                      name="password"
+                      autoComplete="new-password"
                       type={showPassword ? 'text' : 'password'}
                       required
                       minLength={8}
@@ -420,8 +426,8 @@ export default function ProvisionPage() {
                   )}
                 </div>
                 <div>
-                  <label className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Importo del prestito approvato (€) *</label>
-                  <input type="number" required min={1} className="field-shell text-2xl font-black" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
+                  <label htmlFor="prov-amount" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Importo del prestito approvato (€) *</label>
+                  <input id="prov-amount" name="amount" inputMode="decimal" type="number" required min={1} className="field-shell text-2xl font-black" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
                 </div>
               </div>
 

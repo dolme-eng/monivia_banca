@@ -298,7 +298,10 @@ export default function AccountsPage() {
           <div className="relative flex-1">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
-              type="text"
+              id="admin-accounts-search"
+              type="search"
+              role="searchbox"
+              aria-label="Cerca un conto per nome, email o IBAN"
               placeholder="Cerca per nome, email o IBAN…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

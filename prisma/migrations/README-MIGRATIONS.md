@@ -23,10 +23,43 @@ donc `migrate deploy` le saute et n'applique que les migrations futures.
 npx prisma migrate resolve --applied 20260930000000_baseline_current_schema
 ```
 
-À faire **une seule fois**, depuis un environnement qui atteint la base en port
-5432 (`DIRECT_URL`), pas le pooler transactionnel 6543.
+> Le CLI exige la **session mode** (port 5432), pas le pooler transactionnel
+> 6543. `prisma.config.ts` lit `DATABASE_URL` ; pour ces commandes, pointez-le
+> sur `DIRECT_URL` :
+>
+> ```powershell
+> $env:DATABASE_URL = ((Get-Content .env | Select-String '^DIRECT_URL=') -replace '^DIRECT_URL=','').Trim('"')
+> ```
 
-> Le CLI refuse le port 6543 (transaction mode) : il faut la session mode.
+## État (résolu le 2026-10-02)
+
+- Les 7 migrations marquées à la main ont été reprises par le vrai CLI, qui a
+  recalculé leurs checksums.
+- `add_refresh_token_consumed_at`, `add_pan_enc_and_audit_log` et
+  `add_money_guards` sont elles aussi marquées appliquées : leurs effets
+  étaient déjà en base. Sans cela, `migrate deploy` rejouait un
+  `ALTER TABLE ... ADD COLUMN "consumedAt"` **sans garde** et échouait.
+- `20261002090000_add_missing_indexes` a créé les 2 index déclarés dans le
+  schéma mais absents de la base (`RateLimitEntry(resetAt)` et
+  `Transaction(accountId, status)`).
+
+`npx prisma migrate status` → **Database schema is up to date!**
+
+## Écarts assumés restants
+
+`migrate diff` signale encore des différences sur :
+
+- **Actions des clés étrangères** : la base est en `NO ACTION`, le schéma déclare
+  `Cascade` (ou `Restrict` par défaut). Sémantiquement équivalent pour notre
+  usage, mais `migrate dev` voudrait les réécrire. Corriger = recréer des FK sur
+  des tables en production : à planifier.
+- **Types temporels** : la base mélange `timestamptz` (`createdAt`) et
+  `timestamp without time zone` (`updatedAt` sur plusieurs tables). Uniformiser
+  = `ALTER TABLE ... TYPE` sur des colonnes vivantes.
+- `Account.status` a `DEFAULT 'ACTIVE'` en base et `PENDING` dans le schéma.
+
+Ces trois points sont documentés, pas corrigés : chacun demande une migration
+DDL sur des tables qui contiennent de vraies données.
 
 ## Les dossiers historiques non reconnus
 

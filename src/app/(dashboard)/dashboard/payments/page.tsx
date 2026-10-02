@@ -215,16 +215,18 @@ export default function PaymentsPage() {
               <div className="grid grid-cols-1 gap-5">
                 {/* Sender account */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Conto mittente</label>
-                  <select className="field-shell" disabled>
+                  <label htmlFor="payment-from" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Conto mittente</label>
+                  <select id="payment-from" name="payment-from" className="field-shell" disabled>
                     <option>Conto Personale •• {account?.iban?.slice(-4) ?? '—'} ({formatAmount(balance)} €)</option>
                   </select>
                 </div>
 
                 {/* IBAN */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">IBAN destinatario *</label>
+                  <label htmlFor="payment-iban" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">IBAN destinatario *</label>
                   <input
+                    id="payment-iban"
+                    name="payment-iban"
                     type="text"
                     value={form.iban}
                     onChange={(e) => handleIbanChange(e.target.value)}
@@ -233,14 +235,22 @@ export default function PaymentsPage() {
                     spellCheck={false}
                     autoComplete="off"
                     inputMode="text"
+                    aria-describedby={form.iban && !isValidIban(form.iban) ? 'payment-iban-error' : undefined}
+                    aria-invalid={!!form.iban && !isValidIban(form.iban)}
                     className="field-shell font-mono"
                   />
+                  {form.iban && !isValidIban(form.iban) && (
+                    <p id="payment-iban-error" role="alert" className="text-xs font-black text-red-600">
+                      IBAN non valido: verifica il codice e riprova.
+                    </p>
+                  )}
                 </div>
 
                 {/* Amount */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Importo *</label>
+                  <label htmlFor="payment-amount" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Importo *</label>
                   <AmountInput
+                    id="payment-amount"
                     value={form.amount}
                     onChange={(val) => setForm({ ...form, amount: val })}
                     max={balance}

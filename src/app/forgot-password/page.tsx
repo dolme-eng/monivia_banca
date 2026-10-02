@@ -83,15 +83,18 @@ export default function ForgotPasswordPage() {
               )}
 
               <div>
-                <label className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-400">
+                <label htmlFor="reset-email" className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-500">
                   Email *
                 </label>
                 <div className="relative">
                   <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
+                    id="reset-email"
+                    name="email"
+                    autoComplete="email"
                     type="email"
                     required
-                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary"
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-text/40 focus:border-secondary-text"
                     placeholder="la-tua@email.it"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}

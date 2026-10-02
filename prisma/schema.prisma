@@ -49,7 +49,7 @@ model Card {
   numberHash String     @unique
   last4      String
   // Full PAN encrypted with AES-256-GCM (CARD_PAN_SECRET). NULL for cards
-  // issued before encrypted storage — those can never reveal the full number.
+  // issued before encrypted storage â€” those can never reveal the full number.
   panEnc     String?
   expiry     String
   holder    String
@@ -76,6 +76,7 @@ model Transaction {
   @@index([accountId])
   @@index([status])
   @@index([createdAt])
+  // Exists in the database; the pending-approvals query filters on both.
   @@index([accountId, status])
 }
 
@@ -87,6 +88,9 @@ model RefreshToken {
   expiresAt  DateTime
   consumedAt DateTime?
   createdAt  DateTime  @default(now())
+  // Present in the database since the table was created by hand; declared here
+  // so the schema matches reality instead of showing phantom drift.
+  updatedAt  DateTime  @default(now())
 
   @@index([userId])
   @@index([token])
@@ -103,6 +107,7 @@ model InviteToken {
   cognome   String
   expiresAt DateTime
   usedAt    DateTime?
+  updatedAt   DateTime  @default(now())
   createdAt DateTime @default(now())
 
   @@index([token])
@@ -116,6 +121,7 @@ model PasswordResetToken {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   usedAt    DateTime?
+  updatedAt   DateTime  @default(now())
   createdAt DateTime @default(now())
 
   @@index([token])
@@ -133,7 +139,7 @@ model RateLimitEntry {
 }
 
 // Immutable audit trail for sensitive operations (PAN reveals, IBAN changes,
-// approvals). Best-effort writes — never blocks the underlying operation.
+// approvals). Best-effort writes â€” never blocks the underlying operation.
 model AuditLog {
   id        String   @id @default(uuid())
   actorId   String

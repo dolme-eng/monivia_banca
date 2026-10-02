@@ -31,7 +31,7 @@ test.describe('Confirmation modal and amount input', () => {
     await page.waitForURL(/\/dashboard/, { timeout: 30000 });
 
     await page.goto('/dashboard/prelievo');
-    const amount = page.locator('input[aria-label="Importo"]');
+    const amount = page.locator('#prelievo-amount');
     // Client island: it fetches the account before rendering the form.
     await amount.waitFor({ state: 'visible', timeout: 25000 });
     await expect(amount).toHaveValue('');

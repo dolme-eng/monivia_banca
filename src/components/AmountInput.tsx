@@ -11,6 +11,12 @@ interface AmountInputProps {
   min?: number;
   max?: number;
   error?: string;
+  /**
+   * Makes the visible <label htmlFor> actually bind to this input. Without an
+   * id the label is decorative and the field is only named by aria-label, which
+   * breaks WCAG 2.5.3 (Label in Name) when the visible wording differs.
+   */
+  id?: string;
 }
 
 export default function AmountInput({
@@ -22,6 +28,7 @@ export default function AmountInput({
   min = 0,
   max,
   error,
+  id,
 }: AmountInputProps) {
   const [displayValue, setDisplayValue] = useState(
     value > 0 ? formatAmount(value) : ''
@@ -133,6 +140,8 @@ export default function AmountInput({
         </span>
         <input
           ref={inputRef}
+          id={id}
+          name={id}
           type="text"
           inputMode="decimal"
           value={displayValue}
@@ -142,8 +151,8 @@ export default function AmountInput({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full bg-transparent text-2xl sm:text-3xl md:text-4xl font-black text-primary text-center outline-none py-4 sm:py-6 placeholder:text-slate-300"
-          aria-label="Importo"
+          className="w-full bg-transparent text-2xl sm:text-3xl md:text-4xl font-black text-primary text-center outline-none py-4 sm:py-6 placeholder:text-slate-400"
+          aria-label={id ? undefined : 'Importo'}
           aria-invalid={!!error}
           aria-describedby={error ? 'amount-error' : undefined}
         />
