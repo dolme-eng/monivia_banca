@@ -147,7 +147,7 @@ export default function AdminPrelievoDetailPage() {
     return (
       <div className="text-center py-20">
         <AlertTriangle size={32} className="text-amber-400 mx-auto mb-3" />
-        <p className="text-sm text-slate-500">Transazione non trovata</p>
+        <p className="text-sm text-slate-600">Transazione non trovata</p>
         <Link href="/admin/approvals" className="text-sm text-secondary-text font-black hover:underline mt-2 inline-block">
           Torna alle Approvazioni
         </Link>
@@ -162,7 +162,7 @@ export default function AdminPrelievoDetailPage() {
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-center gap-3">
         <button onClick={() => router.back()} className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-slate-100 rounded-lg transition-colors">
-          <ArrowLeft size={18} className="text-slate-500" />
+          <ArrowLeft size={18} className="text-slate-600" />
         </button>
         <div>
           <h1 className="text-xl font-black text-primary">Dettaglio Transazione</h1>
@@ -199,13 +199,13 @@ export default function AdminPrelievoDetailPage() {
                   ? tx.status === 'APPROVED'
                     ? 'bg-emerald-100 text-emerald-700'
                     : tx.status === 'REJECTED' && i === 2
-                    ? 'bg-red-100 text-red-500'
+                    ? 'bg-red-100 text-red-600'
                     : 'bg-secondary/10 text-secondary-text'
                   : 'bg-slate-100 text-slate-600'
               }`}>
                 <step.icon size={18} />
               </div>
-              <span className="text-[11px] font-black mt-2 text-slate-500">{step.label}</span>
+              <span className="text-[11px] font-black mt-2 text-slate-600">{step.label}</span>
             </div>
           ))}
         </div>
@@ -257,8 +257,8 @@ export default function AdminPrelievoDetailPage() {
               <span className="text-xs text-slate-600">Stato</span>
               <span className={`text-xs font-black px-2 py-0.5 rounded ${
                 tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700' :
-                tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
-                tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-500' :
+                tx.status === 'REJECTED' ? 'bg-red-50 text-red-600' :
+                tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-600' :
                 'bg-amber-50 text-amber-600'
               }`}>
                 {tx.status === 'APPROVED' ? 'Approvata' : tx.status === 'REJECTED' ? 'Rifiutata' : tx.status === 'CANCELLED' ? 'Annullata' : 'In Attesa'}

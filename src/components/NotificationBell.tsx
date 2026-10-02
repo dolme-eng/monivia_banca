@@ -150,7 +150,7 @@ export default function NotificationBell() {
                         <span className="block text-sm font-black text-primary">
                           {n.title}
                         </span>
-                        <span className="block text-xs text-slate-500 mt-0.5">
+                        <span className="block text-xs text-slate-600 mt-0.5">
                           {n.detail}
                         </span>
                       </span>

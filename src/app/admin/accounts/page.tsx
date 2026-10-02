@@ -258,8 +258,8 @@ export default function AccountsPage() {
       case 'PENDING': return { text: 'In attesa', cls: 'bg-amber-50 text-amber-600' };
       case 'ACTIVE': return { text: 'Attivo', cls: 'bg-emerald-50 text-emerald-700' };
       case 'FROZEN': return { text: 'Congelato', cls: 'bg-blue-50 text-blue-600' };
-      case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-500' };
-      default: return { text: s, cls: 'bg-slate-100 text-slate-500' };
+      case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-600' };
+      default: return { text: s, cls: 'bg-slate-100 text-slate-600' };
     }
   };
 
@@ -270,7 +270,7 @@ export default function AccountsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-primary">Gestione Conti</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-600 mt-1">
             Visualizza, valida, congela ed elimina i conti clienti.
           </p>
         </div>
@@ -316,7 +316,7 @@ export default function AccountsPage() {
                 className={`px-3 py-3 min-h-[44px] text-[11px] font-black rounded-lg transition-colors ${
                   filterStatus === s
                     ? 'bg-primary text-white'
-                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
                 {s === '' ? 'Tutti' : s === 'PENDING' ? 'In attesa' : s === 'ACTIVE' ? 'Attivi' : s === 'FROZEN' ? 'Congelati' : 'Chiusi'}
@@ -397,7 +397,7 @@ export default function AccountsPage() {
                               <button
                                 onClick={() => { setEditingIban(null); setIbanError(null); }}
                                 disabled={ibanSaving}
-                                className="px-3 py-2 min-h-[44px] bg-slate-100 text-slate-500 rounded-lg text-xs font-black hover:bg-slate-200 transition-colors"
+                                className="px-3 py-2 min-h-[44px] bg-slate-100 text-slate-600 rounded-lg text-xs font-black hover:bg-slate-200 transition-colors"
                               >
                                 Annulla
                               </button>
@@ -409,7 +409,7 @@ export default function AccountsPage() {
                               </span>)
                             </p>
                             {ibanError && (
-                              <p role="alert" className="text-[11px] font-black text-red-500 mt-1">{ibanError}</p>
+                              <p role="alert" className="text-[11px] font-black text-red-600 mt-1">{ibanError}</p>
                             )}
                           </div>
                         ) : (
@@ -427,7 +427,7 @@ export default function AccountsPage() {
                       {acc.blockedAt && (
                         <div>
                           <span className="text-[10px] text-red-400 uppercase">Trasferimenti</span>
-                          <p className="text-xs font-black text-red-500">Bloccati</p>
+                          <p className="text-xs font-black text-red-600">Bloccati</p>
                         </div>
                       )}
                     </div>
@@ -560,7 +560,7 @@ export default function AccountsPage() {
             <h3 id="pw-modal-title" className="text-lg font-black text-primary mb-1">
               {pwDone ? 'Password aggiornata' : 'Reimposta password'}
             </h3>
-            <p className="text-xs text-slate-500 mb-5">
+            <p className="text-xs text-slate-600 mb-5">
               {pwTarget.user.nome} {pwTarget.user.cognome} · {pwTarget.user.email}
             </p>
 

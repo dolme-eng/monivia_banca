@@ -158,7 +158,7 @@ export default function AmountInput({
         />
       </div>
       {error && (
-        <p id="amount-error" className="mt-2 text-sm text-red-500 text-center font-black" role="alert">
+        <p id="amount-error" className="mt-2 text-sm text-red-600 text-center font-black" role="alert">
           {error}
         </p>
       )}

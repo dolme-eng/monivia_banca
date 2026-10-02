@@ -216,7 +216,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
         <header className="sticky top-0 z-30 bg-white border-b border-slate-200/70 h-16 flex items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">
             <button
-              className="md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-500 hover:text-primary rounded-lg"
+              className="md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-primary rounded-lg"
               onClick={() => setMobileOpen(true)}
               aria-label="Apri menu"
               aria-expanded={mobileOpen}

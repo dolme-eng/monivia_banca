@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
             </span>
           </div>
           <h1 className="text-xl font-black text-primary">Reimposta Password</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-600 mt-1">
             Inserisci la tua nuova password.
           </p>
         </div>
@@ -81,7 +81,7 @@ export default function ResetPasswordPage() {
                 <CheckCircle2 size={32} className="text-emerald-500" />
               </div>
               <h2 className="text-lg font-black text-primary mb-2">Password aggiornata</h2>
-              <p className="text-sm text-slate-500 mb-6">
+              <p className="text-sm text-slate-600 mb-6">
                 La tua password è stata reimpostata con successo. Verrai reindirizzato al login...
               </p>
               <Link
@@ -101,7 +101,7 @@ export default function ResetPasswordPage() {
               )}
 
               <div>
-                <label htmlFor="new-password" className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-500">
+                <label htmlFor="new-password" className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-600">
                   Nuova password *
                 </label>
                 <div className="relative">
@@ -131,7 +131,7 @@ export default function ResetPasswordPage() {
               </div>
 
               <div>
-                <label htmlFor="confirm-password" className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-500">
+                <label htmlFor="confirm-password" className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-600">
                   Conferma password *
                 </label>
                 <input
@@ -164,7 +164,7 @@ export default function ResetPasswordPage() {
         {!success && (
           <Link
             href="/login"
-            className="flex items-center justify-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors"
+            className="flex items-center justify-center gap-2 text-sm text-slate-600 hover:text-primary transition-colors"
           >
             <ArrowLeft size={14} />
             Torna al Login

@@ -59,7 +59,7 @@ export default function LoginPage() {
                 Banca
               </span>
             </Link>
-            <p className="text-sm text-slate-500 mt-3">
+            <p className="text-sm text-slate-600 mt-3">
               Accedi al tuo conto bancario personale in sicurezza.
             </p>
           </div>
@@ -145,7 +145,7 @@ export default function LoginPage() {
 
           {/* Secondary Action */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-slate-500">Non hai ancora un conto?</p>
+            <p className="text-sm text-slate-600">Non hai ancora un conto?</p>
             <Link
               href="https://www.monivia.it"
               target="_blank"

@@ -104,7 +104,7 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-primary">Dashboard Amministrazione</h1>
-          <p className="text-sm text-slate-500 mt-1">Panoramica dei conti e stato di sicurezza.</p>
+          <p className="text-sm text-slate-600 mt-1">Panoramica dei conti e stato di sicurezza.</p>
         </div>
         <Link
           href="/admin/provision"
@@ -308,7 +308,7 @@ export default function AdminDashboardPage() {
               <div className="min-w-[600px]">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-100 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+                  <tr className="border-b border-slate-100 text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">
                     <th className="pb-2 font-medium">Cliente</th>
                     <th className="pb-2 font-medium">Tipo</th>
                     <th className="pb-2 font-medium">Stato</th>
@@ -325,14 +325,14 @@ export default function AdminDashboardPage() {
                         </div>
                         {tx.account?.user?.nome} {tx.account?.user?.cognome}
                       </td>
-                      <td className="py-3 text-slate-500">
+                      <td className="py-3 text-slate-600">
                         {tx.type === 'DEBIT' ? 'Prelievo' : tx.type === 'TRANSFER_OUT' ? 'Trasferimento' : tx.type}
                       </td>
                       <td className="py-3">
                         <span className={`text-[11px] font-black px-2 py-0.5 rounded ${
                           tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700' :
-                          tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
-                          tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-500' :
+                          tx.status === 'REJECTED' ? 'bg-red-50 text-red-600' :
+                          tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-600' :
                           'bg-amber-50 text-amber-600'
                         }`}>
                           {tx.status === 'APPROVED' ? 'Approvata' : tx.status === 'REJECTED' ? 'Rifiutata' : tx.status === 'CANCELLED' ? 'Annullata' : 'In Attesa'}
@@ -341,7 +341,7 @@ export default function AdminDashboardPage() {
                       <td className="py-3 text-right font-black text-primary">
                         {Number(tx.amount).toLocaleString('it-IT')} €
                       </td>
-                      <td className="py-3 text-right text-slate-500 text-[11px]">
+                      <td className="py-3 text-right text-slate-600 text-[11px]">
                         {formatTime(tx.createdAt)}
                       </td>
                     </tr>
@@ -368,7 +368,7 @@ export default function AdminDashboardPage() {
               <ArrowRight size={12} className="ml-auto group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link href="/admin/approvals" className="flex items-center gap-3 w-full p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all group">
-              <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 shrink-0">
                 <CheckCircle2 size={14} />
               </div>
               <div className="text-left">
@@ -378,7 +378,7 @@ export default function AdminDashboardPage() {
               <ArrowRight size={12} className="ml-auto text-slate-600 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link href="/admin/timeline" className="flex items-center gap-3 w-full p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all group">
-              <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 shrink-0">
                 <Activity size={14} />
               </div>
               <div className="text-left">

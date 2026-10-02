@@ -189,7 +189,7 @@ export default function ProvisionPage() {
             className={`flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-black transition-all ${
               tab === 'search'
                 ? 'bg-primary text-white shadow-lg'
-                : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'
+                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
             }`}
           >
             <Search size={16} />
@@ -200,7 +200,7 @@ export default function ProvisionPage() {
             className={`flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-black transition-all ${
               tab === 'create'
                 ? 'bg-primary text-white shadow-lg'
-                : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'
+                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
             }`}
           >
             <CreditCard size={16} />
@@ -214,7 +214,7 @@ export default function ProvisionPage() {
             {/* Search bar */}
             <div className="surface-card p-6">
               <h3 className="mb-4 font-black text-primary">Cerca un cliente</h3>
-              <p className="mb-4 text-sm text-slate-500">
+              <p className="mb-4 text-sm text-slate-600">
                 Cerca per email, nome, cognome o IBAN.
               </p>
               <div className="flex gap-3">
@@ -242,7 +242,7 @@ export default function ProvisionPage() {
                 {searchResults.length === 0 ? (
                   <div className="text-center py-8">
                     <User size={32} className="text-slate-300 mx-auto mb-3" />
-                    <p className="text-sm text-slate-500">Nessun conto trovato per &ldquo;{searchQuery}&rdquo;</p>
+                    <p className="text-sm text-slate-600">Nessun conto trovato per &ldquo;{searchQuery}&rdquo;</p>
                     <p className="text-xs text-slate-600 mt-1">Prova con un&apos;altra ricerca o crea un nuovo conto.</p>
                   </div>
                 ) : (
@@ -299,7 +299,7 @@ export default function ProvisionPage() {
                           <div className="mt-4 pt-4 border-t border-slate-100">
                             <div className="space-y-3">
                               {account.cards.length > 0 && (
-                                <div className="flex items-center gap-2 text-xs text-slate-500">
+                                <div className="flex items-center gap-2 text-xs text-slate-600">
                                   <CreditCard size={12} />
                                   Carta: {account.cards[0].number}
                                 </div>
@@ -318,7 +318,7 @@ export default function ProvisionPage() {
                               )}
                               <div className="flex gap-3 items-end">
                                 <div className="flex-1">
-                                  <label htmlFor="topup-amount" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-500">
+                                  <label htmlFor="topup-amount" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-600">
                                     Importo da accreditare (€)
                                   </label>
                                   <input
@@ -364,7 +364,7 @@ export default function ProvisionPage() {
             <div className="surface-card p-6 sm:p-8">
               <div className="mb-6">
                 <h3 className="text-xl font-black text-primary">Informazioni del cliente</h3>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-slate-600">
                   Inserisci i dati ricevuti via email o WhatsApp.
                 </p>
               </div>
@@ -379,20 +379,20 @@ export default function ProvisionPage() {
               <div className="space-y-5">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="prov-nome" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Nome *</label>
+                    <label htmlFor="prov-nome" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-600">Nome *</label>
                     <input id="prov-nome" name="nome" autoComplete="given-name" type="text" required className="field-shell" value={formData.nome} onChange={(e) => setFormData({ ...formData, nome: e.target.value })} />
                   </div>
                   <div>
-                    <label htmlFor="prov-cognome" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Cognome *</label>
+                    <label htmlFor="prov-cognome" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-600">Cognome *</label>
                     <input id="prov-cognome" name="cognome" autoComplete="family-name" type="text" required className="field-shell" value={formData.cognome} onChange={(e) => setFormData({ ...formData, cognome: e.target.value })} />
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="prov-email" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Email del richiedente *</label>
+                  <label htmlFor="prov-email" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-600">Email del richiedente *</label>
                   <input id="prov-email" name="email" autoComplete="email" type="email" required className="field-shell" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                 </div>
                 <div>
-                  <label htmlFor="prov-password" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Password per l&apos;accesso *</label>
+                  <label htmlFor="prov-password" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-600">Password per l&apos;accesso *</label>
                   <div className="relative">
                     <input
                       id="prov-password"
@@ -418,7 +418,7 @@ export default function ProvisionPage() {
                   {formData.password.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
                       {passwordChecks.map((c) => (
-                        <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-700' : 'text-red-500'}`}>
+                        <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-700' : 'text-red-600'}`}>
                           {c.ok ? '✓' : '○'} {c.label}
                         </span>
                       ))}
@@ -426,7 +426,7 @@ export default function ProvisionPage() {
                   )}
                 </div>
                 <div>
-                  <label htmlFor="prov-amount" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">Importo del prestito approvato (€) *</label>
+                  <label htmlFor="prov-amount" className="mb-2 block ml-1 text-[11px] font-black uppercase tracking-widest text-slate-600">Importo del prestito approvato (€) *</label>
                   <input id="prov-amount" name="amount" inputMode="decimal" type="number" required min={1} className="field-shell text-2xl font-black" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
                 </div>
               </div>
@@ -497,7 +497,7 @@ export default function ProvisionPage() {
                           {copied === 'card' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-600" />}
                         </button>
                       </div>
-                      <p className="text-xs text-slate-500">{createResult.card.holder}</p>
+                      <p className="text-xs text-slate-600">{createResult.card.holder}</p>
                     </div>
                   )}
                 </div>

@@ -162,8 +162,8 @@ export default function CardsPage() {
     switch (s) {
       case 'ACTIVE': return { text: 'Attiva', cls: 'bg-emerald-50 text-emerald-700' };
       case 'FROZEN': return { text: 'Congelata', cls: 'bg-blue-50 text-blue-600' };
-      case 'EXPIRED': return { text: 'Scaduta', cls: 'bg-red-50 text-red-500' };
-      default: return { text: s, cls: 'bg-slate-100 text-slate-500' };
+      case 'EXPIRED': return { text: 'Scaduta', cls: 'bg-red-50 text-red-600' };
+      default: return { text: s, cls: 'bg-slate-100 text-slate-600' };
     }
   };
 
@@ -172,8 +172,8 @@ export default function CardsPage() {
       case 'PENDING': return { text: 'In attesa', cls: 'bg-amber-50 text-amber-600' };
       case 'ACTIVE': return { text: 'Attivo', cls: 'bg-emerald-50 text-emerald-700' };
       case 'FROZEN': return { text: 'Congelato', cls: 'bg-blue-50 text-blue-600' };
-      case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-500' };
-      default: return { text: s, cls: 'bg-slate-100 text-slate-500' };
+      case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-600' };
+      default: return { text: s, cls: 'bg-slate-100 text-slate-600' };
     }
   };
 
@@ -184,7 +184,7 @@ export default function CardsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-primary">Gestione Carte</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-600 mt-1">
             Visualizza, congela, attiva ed elimina le carte clienti.
           </p>
         </div>
@@ -229,7 +229,7 @@ export default function CardsPage() {
                 className={`px-3 py-3 min-h-[44px] text-[11px] font-black rounded-lg transition-colors ${
                   filterStatus === s
                     ? 'bg-primary text-white'
-                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
                 {s === '' ? 'Tutte' : s === 'ACTIVE' ? 'Attive' : s === 'FROZEN' ? 'Congelate' : 'Scadute'}

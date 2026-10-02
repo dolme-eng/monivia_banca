@@ -92,7 +92,7 @@ export default function ApprovalsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-black text-primary">Approvazioni</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-slate-600 mt-1">
           Controlla e approva le richieste dei clienti. Ogni transazione è in attesa di validazione.
         </p>
       </div>
@@ -129,7 +129,7 @@ export default function ApprovalsPage() {
             <CheckCircle2 size={32} />
           </div>
           <h3 className="mb-2 text-xl font-black text-primary">Nessuna transazione in sospeso</h3>
-          <p className="text-sm text-slate-500">Tutte le richieste sono state elaborate.</p>
+          <p className="text-sm text-slate-600">Tutte le richieste sono state elaborate.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -153,10 +153,10 @@ export default function ApprovalsPage() {
                       <span className="text-sm font-black text-primary">
                         {tx.type === 'DEBIT' ? 'Prelievo' : tx.type === 'TRANSFER_OUT' ? 'Trasferimento' : tx.type}
                       </span>
-                      <span className="text-[11px] text-slate-500">• {formatTime(tx.createdAt)}</span>
+                      <span className="text-[11px] text-slate-600">• {formatTime(tx.createdAt)}</span>
                     </div>
-                    <p className="text-xs text-slate-500 mb-1">{tx.description}</p>
-                    <p className="text-[11px] text-slate-500 truncate">
+                    <p className="text-xs text-slate-600 mb-1">{tx.description}</p>
+                    <p className="text-[11px] text-slate-600 truncate">
                       {tx.account.user.nome} {tx.account.user.cognome} • {tx.account.iban}
                     </p>
                   </div>
@@ -169,7 +169,7 @@ export default function ApprovalsPage() {
                   <div className="flex gap-2">
                     <Link
                       href={`/admin/prelievo/${tx.id}`}
-                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-secondary/40 hover:text-secondary-text transition-colors text-slate-500"
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-secondary/40 hover:text-secondary-text transition-colors text-slate-600"
                       aria-label={`Vedi il dettaglio della transazione di ${formatAmount(Math.abs(Number(tx.amount)))} €`}
                     >
                       <ArrowRight size={14} />
@@ -177,7 +177,7 @@ export default function ApprovalsPage() {
                     <button
                       onClick={() => openConfirm(tx.id, 'REJECT')}
                       disabled={actionId === tx.id}
-                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors text-slate-500 hover:text-red-600 disabled:opacity-50"
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors text-slate-600 hover:text-red-600 disabled:opacity-50"
                       aria-label={`Rifiuta la richiesta di ${formatAmount(Math.abs(Number(tx.amount)))} €`}
                     >
                       {actionId === tx.id ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}

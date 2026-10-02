@@ -89,7 +89,7 @@ export default function AdminTimelinePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-black text-primary">Timeline Transazioni</h1>
-        <p className="text-sm text-slate-500 mt-1">Monitora lo stato di tutte le transazioni in tempo reale.</p>
+        <p className="text-sm text-slate-600 mt-1">Monitora lo stato di tutte le transazioni in tempo reale.</p>
       </div>
 
       {error && (
@@ -107,8 +107,8 @@ export default function AdminTimelinePage() {
           { label: 'Totale', value: stats.total, color: 'text-primary' },
           { label: 'In Attesa', value: stats.pending, color: 'text-amber-600' },
           { label: 'Approvate', value: stats.approved, color: 'text-emerald-700' },
-          { label: 'Rifiutate', value: stats.rejected, color: 'text-red-500' },
-          { label: 'Annullate', value: stats.cancelled, color: 'text-slate-500' },
+          { label: 'Rifiutate', value: stats.rejected, color: 'text-red-600' },
+          { label: 'Annullate', value: stats.cancelled, color: 'text-slate-600' },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-xl p-4 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">{stat.label}</p>
@@ -157,8 +157,8 @@ export default function AdminTimelinePage() {
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                       tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700' :
-                      tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
-                      tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-500' :
+                      tx.status === 'REJECTED' ? 'bg-red-50 text-red-600' :
+                      tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-600' :
                       'bg-amber-50 text-amber-600'
                     }`}>
                       {tx.type === 'DEBIT' || tx.type === 'TRANSFER_OUT' ? (
@@ -190,11 +190,11 @@ export default function AdminTimelinePage() {
                     />
                   </div>
                   <div className="flex justify-between mt-1.5">
-                    <span className="text-[11px] text-slate-500">Richiesta</span>
+                    <span className="text-[11px] text-slate-600">Richiesta</span>
                     <span className={`text-[11px] font-black ${
                       tx.status === 'APPROVED' ? 'text-emerald-700' :
-                      tx.status === 'REJECTED' ? 'text-red-500' :
-                      tx.status === 'CANCELLED' ? 'text-slate-500' :
+                      tx.status === 'REJECTED' ? 'text-red-600' :
+                      tx.status === 'CANCELLED' ? 'text-slate-600' :
                       'text-amber-600'
                     }`}>
                       {tx.status === 'APPROVED' ? 'Completata' : tx.status === 'REJECTED' ? 'Rifiutata' : tx.status === 'CANCELLED' ? 'Annullata' : `In attesa`}

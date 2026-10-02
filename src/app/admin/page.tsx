@@ -29,7 +29,7 @@ export default function AdminHub() {
             <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Dashboard
             </h3>
-            <p className="mb-6 text-sm leading-relaxed text-slate-500">
+            <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Panoramica generale dei conti, statistiche e stato del sistema.
             </p>
             <div className="flex items-center text-secondary-text font-black text-sm gap-2 group-hover:gap-3 transition-all">
@@ -47,7 +47,7 @@ export default function AdminHub() {
             <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Gestione Conti
             </h3>
-            <p className="mb-6 text-sm leading-relaxed text-slate-500">
+            <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Valida, congela, blocca ed elimina i conti clienti. Controllo totale sul ciclo di vita.
             </p>
             <div className="flex items-center text-secondary-text font-black text-sm gap-2 group-hover:gap-3 transition-all">
@@ -65,7 +65,7 @@ export default function AdminHub() {
             <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Gestione Carte
             </h3>
-            <p className="mb-6 text-sm leading-relaxed text-slate-500">
+            <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Congela, attiva, segna scadute ed elimina le carte dei clienti. Controllo totale sullo stato delle carte.
             </p>
             <div className="flex items-center text-secondary-text font-black text-sm gap-2 group-hover:gap-3 transition-all">
@@ -83,7 +83,7 @@ export default function AdminHub() {
             <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Provisionamento
             </h3>
-            <p className="mb-6 text-sm leading-relaxed text-slate-500">
+            <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Inserimento dei dati del cliente e creazione istantanea di account accreditati per i prestiti approvati.
             </p>
             <div className="flex items-center text-secondary-text font-black text-sm gap-2 group-hover:gap-3 transition-all">
@@ -101,7 +101,7 @@ export default function AdminHub() {
             <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Validazioni
             </h3>
-            <p className="mb-6 text-sm leading-relaxed text-slate-500">
+            <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Centro di controllo delle transazioni. Approva o rifiuta le richieste di prelievo e trasferimento.
             </p>
             <div className="flex items-center text-secondary-text font-black text-sm gap-2 group-hover:gap-3 transition-all">
@@ -119,7 +119,7 @@ export default function AdminHub() {
             <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Timeline
             </h3>
-            <p className="mb-6 text-sm leading-relaxed text-slate-500">
+            <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Storico completo delle transazioni con filtri per stato e dettaglio operazioni.
             </p>
             <div className="flex items-center text-secondary-text font-black text-sm gap-2 group-hover:gap-3 transition-all">

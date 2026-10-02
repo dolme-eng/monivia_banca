@@ -114,7 +114,7 @@ export default function SettingsPage() {
         <div className="text-center max-w-md">
           <User size={32} className="text-slate-300 mx-auto mb-3" />
           <h2 className="text-lg font-black text-primary mb-2">Nessun dato disponibile</h2>
-          <p className="text-sm text-slate-500">Impossibile caricare le impostazioni del profilo.</p>
+          <p className="text-sm text-slate-600">Impossibile caricare le impostazioni del profilo.</p>
         </div>
       </div>
     );
@@ -135,7 +135,7 @@ export default function SettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-primary">Impostazioni e Sicurezza</h1>
-        <p className="text-sm text-slate-500 mt-1">Gestisci il tuo profilo, la sicurezza e le preferenze.</p>
+        <p className="text-sm text-slate-600 mt-1">Gestisci il tuo profilo, la sicurezza e le preferenze.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -153,31 +153,31 @@ export default function SettingsPage() {
             </div>
             <div>
               <p className="text-lg font-black text-primary">{user?.nome} {user?.cognome}</p>
-              <p className="text-sm text-slate-500">{user?.email}</p>
+              <p className="text-sm text-slate-600">{user?.email}</p>
             </div>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">Nome</label>
+              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Nome</label>
               <p className="text-sm font-black text-primary">{user?.nome ?? '—'}</p>
             </div>
             <div>
-              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">Cognome</label>
+              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Cognome</label>
               <p className="text-sm font-black text-primary">{user?.cognome ?? '—'}</p>
             </div>
             <div>
-              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">Email</label>
+              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Email</label>
               <p className="text-sm font-black text-primary">{user?.email ?? '—'}</p>
             </div>
             <div>
-              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">Ruolo</label>
+              <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Ruolo</label>
               <span className="inline-flex items-center px-2 py-0.5 rounded bg-secondary/10 text-secondary-text text-[11px] font-black uppercase">
                 {user?.role === 'ADMIN' ? 'Amministratore' : 'Cliente'}
               </span>
             </div>
             {user?.accounts?.find((a) => a.id === selectedAccountId) && (
               <div>
-                <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1">IBAN</label>
+                <label className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">IBAN</label>
                 <p className="text-sm font-black text-primary font-mono truncate">{user.accounts.find((a) => a.id === selectedAccountId)?.iban}</p>
               </div>
             )}
@@ -208,7 +208,7 @@ export default function SettingsPage() {
 
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <div>
-<label htmlFor="current-password" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-500">
+<label htmlFor="current-password" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-600">
                   Password attuale *
                 </label>
                 <div className="relative">
@@ -234,7 +234,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-<label htmlFor="new-password" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-500">
+<label htmlFor="new-password" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-600">
                   Nuova password *
                 </label>
                 <div className="relative">
@@ -262,7 +262,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label htmlFor="confirm-new-password" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-500">
+                <label htmlFor="confirm-new-password" className="mb-1 block text-[11px] font-black uppercase tracking-widest text-slate-600">
                   Conferma nuova password *
                 </label>
                 <input

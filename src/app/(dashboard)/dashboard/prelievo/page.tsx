@@ -162,7 +162,7 @@ export default function PrelievoPage() {
           <h2 className="text-lg font-black text-primary mb-2">
             {account?.status === 'PENDING' ? 'Conto in attesa di validazione' : 'Conto congelato'}
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-600">
             {account?.status === 'PENDING'
               ? 'Non è possibile richiedere prelievi fino a quando il conto non verrà validato.'
               : 'Il tuo conto è congelato. Contatta il supporto per maggiori informazioni.'}
@@ -177,7 +177,7 @@ export default function PrelievoPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-primary">Prelievo</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-slate-600 mt-1">
           Richiedi un prelievo dal tuo conto. Sarà confermato dall&apos;amministrazione.
         </p>
       </div>
@@ -193,11 +193,11 @@ export default function PrelievoPage() {
                   <Wallet size={20} className="text-secondary-text" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Il mio conto</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">Il mio conto</p>
                   <p className="text-sm font-black text-primary truncate">{account.iban}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Saldo</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">Saldo</p>
                   <p className="text-lg font-black text-primary">{account.balance.toLocaleString('it-IT')} €</p>
                 </div>
               </div>
@@ -206,7 +206,7 @@ export default function PrelievoPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Amount */}
               <div className="space-y-1.5">
-                <label htmlFor="prelievo-amount" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 ml-1">
+                <label htmlFor="prelievo-amount" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 ml-1">
                   Importo da prelevare *
                 </label>
                 <AmountInput
@@ -228,7 +228,7 @@ export default function PrelievoPage() {
                     className={`px-3 py-3 rounded-lg text-xs font-black transition-all min-h-[44px] ${
                       amount === qa
                         ? 'bg-secondary text-primary'
-                        : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
                     {qa.toLocaleString('it-IT')} €
@@ -238,7 +238,7 @@ export default function PrelievoPage() {
 
               {/* Description */}
               <div className="space-y-1.5">
-                <label htmlFor="prelievo-desc" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 ml-1">
+                <label htmlFor="prelievo-desc" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 ml-1">
                   Descrizione *
                 </label>
                 <input
@@ -263,7 +263,7 @@ export default function PrelievoPage() {
               {/* Error */}
               {error && (
                 <div role="alert" className="flex items-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
-                  <AlertCircle size={14} className="text-red-500" />
+                  <AlertCircle size={14} className="text-red-600" />
                   <span className="text-xs text-red-600">{error}</span>
                 </div>
               )}
@@ -352,7 +352,7 @@ export default function PrelievoPage() {
                   <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary-text text-[11px] font-black shrink-0">
                     {step}
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">{text}</p>
+                  <p className="text-xs text-slate-600 leading-relaxed">{text}</p>
                 </div>
               ))}
             </div>

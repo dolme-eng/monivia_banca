@@ -39,16 +39,16 @@ interface Pagination {
 
 const TYPE_CONFIG: Record<string, { icon: typeof ArrowUpRight; color: string; label: string }> = {
   CREDIT: { icon: ArrowDownLeft, color: 'text-emerald-500', label: 'Accredito' },
-  DEBIT: { icon: ArrowUpRight, color: 'text-red-500', label: 'Addebito' },
+  DEBIT: { icon: ArrowUpRight, color: 'text-red-600', label: 'Addebito' },
   TRANSFER_IN: { icon: ArrowDownLeft, color: 'text-emerald-500', label: 'Bonifico ricevuto' },
-  TRANSFER_OUT: { icon: ArrowUpRight, color: 'text-red-500', label: 'Bonifico inviato' },
+  TRANSFER_OUT: { icon: ArrowUpRight, color: 'text-red-600', label: 'Bonifico inviato' },
 };
 
 const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; color: string; bg: string; label: string }> = {
   PENDING: { icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', label: 'In attesa' },
   APPROVED: { icon: CheckCircle2, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', label: 'Approvata' },
   REJECTED: { icon: XCircle, color: 'text-red-600', bg: 'bg-red-50 border-red-200', label: 'Rifiutata' },
-  CANCELLED: { icon: AlertCircle, color: 'text-slate-500', bg: 'bg-slate-50 border-slate-200', label: 'Annullata' },
+  CANCELLED: { icon: AlertCircle, color: 'text-slate-600', bg: 'bg-slate-50 border-slate-200', label: 'Annullata' },
 };
 
 export default function TransactionsPage() {
@@ -127,7 +127,7 @@ export default function TransactionsPage() {
           <History size={24} className="text-secondary-text" />
           Storico Movimenti
         </h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-slate-600 mt-1">
           Consulta tutti i movimenti del tuo conto.
         </p>
       </div>
@@ -146,7 +146,7 @@ export default function TransactionsPage() {
               className={`px-3 py-1.5 rounded-lg text-[11px] font-black transition-colors ${
                 typeFilter === t
                   ? 'bg-secondary text-primary'
-                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
               {t === 'ALL' ? 'Tutti' : TYPE_CONFIG[t]?.label || t}
@@ -165,7 +165,7 @@ export default function TransactionsPage() {
               className={`px-3 py-1.5 rounded-lg text-[11px] font-black transition-colors ${
                 statusFilter === s
                   ? 'bg-secondary text-primary'
-                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
               {s === 'ALL' ? 'Tutti' : STATUS_CONFIG[s]?.label || s}
@@ -184,14 +184,14 @@ export default function TransactionsPage() {
           <div className="text-center py-16 px-6">
             <AlertTriangle size={40} className="text-red-400 mx-auto mb-3" />
             <p className="text-sm font-black text-primary">{error}</p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-600 mt-1">
               I tuoi movimenti non sono stati caricati. Non sono spariti.
             </p>
           </div>
         ) : transactions.length === 0 ? (
           <div className="text-center py-16">
             <History size={40} className="text-slate-300 mx-auto mb-3" />
-            <p className="text-sm text-slate-500">Nessun movimento trovato</p>
+            <p className="text-sm text-slate-600">Nessun movimento trovato</p>
           </div>
         ) : (
           <>

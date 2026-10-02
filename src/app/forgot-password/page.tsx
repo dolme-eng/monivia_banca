@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
             </span>
           </div>
           <h1 className="text-xl font-black text-primary">Password dimenticata?</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-600 mt-1">
             Inserisci la tua email e ti invieremo un link per reimpostare la password.
           </p>
         </div>
@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
                 <CheckCircle2 size={32} className="text-emerald-500" />
               </div>
               <h2 className="text-lg font-black text-primary mb-2">Email inviata</h2>
-              <p className="text-sm text-slate-500 mb-6">
+              <p className="text-sm text-slate-600 mb-6">
                 Se l&apos;email <strong>{email}</strong> è associata a un account, riceverai un link per reimpostare la password.
               </p>
               <Link
@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
               )}
 
               <div>
-                <label htmlFor="reset-email" className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-500">
+                <label htmlFor="reset-email" className="mb-2 block text-[11px] font-black uppercase tracking-widest text-slate-600">
                   Email *
                 </label>
                 <div className="relative">
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
         {!success && (
           <Link
             href="/login"
-            className="flex items-center justify-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors"
+            className="flex items-center justify-center gap-2 text-sm text-slate-600 hover:text-primary transition-colors"
           >
             <ArrowLeft size={14} />
             Torna al Login

@@ -171,7 +171,7 @@ export default function PaymentsPage() {
           <h2 className="text-lg font-black text-primary mb-2">
             {account?.status === 'PENDING' ? 'Conto in attesa di validazione' : 'Conto congelato'}
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-600">
             {account?.status === 'PENDING'
               ? 'Non è possibile effettuare trasferimenti fino a quando il conto non verrà validato.'
               : 'Il tuo conto è congelato. Contatta il supporto per maggiori informazioni.'}
@@ -186,7 +186,7 @@ export default function PaymentsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-primary">Pagamenti e Trasferimenti</h1>
-        <p className="text-sm text-slate-500 mt-1">Gestisci i tuoi trasferimenti in modo semplice e sicuro.</p>
+        <p className="text-sm text-slate-600 mt-1">Gestisci i tuoi trasferimenti in modo semplice e sicuro.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -215,7 +215,7 @@ export default function PaymentsPage() {
               <div className="grid grid-cols-1 gap-5">
                 {/* Sender account */}
                 <div className="space-y-1.5">
-                  <label htmlFor="payment-from" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Conto mittente</label>
+                  <label htmlFor="payment-from" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">Conto mittente</label>
                   <select id="payment-from" name="payment-from" className="field-shell" disabled>
                     <option>Conto Personale •• {account?.iban?.slice(-4) ?? '—'} ({formatAmount(balance)} €)</option>
                   </select>
@@ -223,7 +223,7 @@ export default function PaymentsPage() {
 
                 {/* IBAN */}
                 <div className="space-y-1.5">
-                  <label htmlFor="payment-iban" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">IBAN destinatario *</label>
+                  <label htmlFor="payment-iban" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">IBAN destinatario *</label>
                   <input
                     id="payment-iban"
                     name="payment-iban"
@@ -248,7 +248,7 @@ export default function PaymentsPage() {
 
                 {/* Amount */}
                 <div className="space-y-1.5">
-                  <label htmlFor="payment-amount" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Importo *</label>
+                  <label htmlFor="payment-amount" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">Importo *</label>
                   <AmountInput
                     id="payment-amount"
                     value={form.amount}
@@ -321,7 +321,7 @@ export default function PaymentsPage() {
                     <div key={tx.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${
-                          isCredit ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                          isCredit ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
                         }`}>
                           <Send size={14} />
                         </div>
@@ -343,11 +343,11 @@ export default function PaymentsPage() {
                             <CheckCircle2 size={8} /> OK
                           </span>
                         ) : tx.status === 'CANCELLED' ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-slate-500">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-slate-600">
                             Annullato
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-500">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-600">
                             Rifiutato
                           </span>
                         )}

@@ -93,7 +93,7 @@ export default function ConfirmModal({
   if (!open) return null;
 
   const colors = {
-    danger: { bg: 'bg-red-50', icon: 'text-red-500', btn: 'bg-red-600 hover:bg-red-700' },
+    danger: { bg: 'bg-red-50', icon: 'text-red-600', btn: 'bg-red-600 hover:bg-red-700' },
     warning: { bg: 'bg-amber-50', icon: 'text-amber-500', btn: 'bg-amber-600 hover:bg-amber-700' },
     info: { bg: 'bg-secondary/10', icon: 'text-secondary-text', btn: 'bg-secondary text-primary hover:bg-secondary/90' },
   }[variant];
@@ -128,7 +128,7 @@ export default function ConfirmModal({
         </div>
 
         <h3 id="confirm-modal-title" className="text-lg font-black text-primary mb-2">{title}</h3>
-        <p id="confirm-modal-message" className="text-sm text-slate-500 mb-6 leading-relaxed">{message}</p>
+        <p id="confirm-modal-message" className="text-sm text-slate-600 mb-6 leading-relaxed">{message}</p>
 
         {requireTyped && (
           <div className="mb-6">

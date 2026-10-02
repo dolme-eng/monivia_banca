@@ -27,13 +27,13 @@ export default function Error({
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 p-8 text-center">
         <div className="w-14 h-14 mx-auto mb-5 rounded-xl bg-red-50 flex items-center justify-center">
-          <AlertTriangle size={28} className="text-red-500" />
+          <AlertTriangle size={28} className="text-red-600" />
         </div>
 
         <h1 className="text-xl font-black text-primary mb-2">
           Questa pagina non si è caricata
         </h1>
-        <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+        <p className="text-sm text-slate-600 mb-6 leading-relaxed">
           Qualcosa è andato storto durante il caricamento. I tuoi dati non sono
           stati modificati.
         </p>

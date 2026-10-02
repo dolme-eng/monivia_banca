@@ -78,10 +78,10 @@ export default function InvitePage() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-2xl border border-slate-200 p-8 text-center" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
-            <AlertTriangle size={32} className="text-red-500" />
+            <AlertTriangle size={32} className="text-red-600" />
           </div>
           <h1 className="text-xl font-black text-primary mb-2">Invito non valido</h1>
-          <p className="text-sm text-slate-500 mb-6">{error}</p>
+          <p className="text-sm text-slate-600 mb-6">{error}</p>
           <Link href="/login" className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl text-sm font-black hover:bg-slate-800 transition-colors">
             Vai al Login
           </Link>
@@ -104,7 +104,7 @@ export default function InvitePage() {
             </span>
           </div>
           <h1 className="text-xl font-black text-primary">Benvenut{invite?.nome ? 'o' : 'a'}</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-600 mt-1">
             Il tuo conto è stato creato. Accedi con le credenziali ricevute via email.
           </p>
         </div>

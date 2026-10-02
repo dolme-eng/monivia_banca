@@ -154,7 +154,7 @@ export default function CardsPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-primary">Gestione Carte</h1>
-          <p className="text-sm text-slate-500 mt-1">Visualizza e gestisci le tue carte prepagate.</p>
+          <p className="text-sm text-slate-600 mt-1">Visualizza e gestisci le tue carte prepagate.</p>
         </div>
       </div>
 
@@ -164,7 +164,7 @@ export default function CardsPage() {
             <CreditCard size={32} />
           </div>
           <h3 className="mb-2 text-xl font-black text-primary">Nessuna carta associata</h3>
-          <p className="text-sm text-slate-500">Contatta l&apos;amministrazione per richiedere una carta.</p>
+          <p className="text-sm text-slate-600">Contatta l&apos;amministrazione per richiedere una carta.</p>
         </div>
       ) : (
         <div className="grid grid-cols-12 gap-6">
@@ -226,7 +226,7 @@ export default function CardsPage() {
                 <div className={`mb-4 p-3 rounded-lg flex items-center gap-2 text-sm font-black ${
                   card.status === 'FROZEN'
                     ? 'bg-blue-50 text-blue-600 border border-blue-200'
-                    : 'bg-red-50 text-red-500 border border-red-200'
+                    : 'bg-red-50 text-red-600 border border-red-200'
                 }`}>
                   <AlertTriangle size={16} />
                   {card.status === 'FROZEN'
@@ -236,7 +236,7 @@ export default function CardsPage() {
               )}
               <div className="flex justify-between items-center mb-4">
                 <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black uppercase ${
-                  card.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-500'
+                  card.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'
                 }`}>
                   <span className={`h-1.5 w-1.5 rounded-full ${card.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-red-500'}`} />
                   {card.status === 'ACTIVE' ? 'Attiva' : card.status === 'FROZEN' ? 'Congelata' : 'Scaduta'}
@@ -247,11 +247,11 @@ export default function CardsPage() {
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-xs text-slate-500">Saldo disponibile</span>
+                  <span className="text-xs text-slate-600">Saldo disponibile</span>
                   <span className="text-sm font-black text-primary">{formatAmount(balance)} €</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-xs text-slate-500">Limite mensile</span>
+                  <span className="text-xs text-slate-600">Limite mensile</span>
                   <span className="text-sm font-black text-primary">5.000,00 €</span>
                 </div>
                 <div>
@@ -285,7 +285,7 @@ export default function CardsPage() {
                     <div key={tx.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          isCredit ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                          isCredit ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
                         }`}>
                           <Icon size={16} />
                         </div>
@@ -303,11 +303,11 @@ export default function CardsPage() {
                             <Clock size={8} /> In sospeso
                           </span>
                         ) : tx.status === 'REJECTED' ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-500">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-600">
                             <XCircle size={8} /> Rifiutata
                           </span>
                         ) : tx.status === 'CANCELLED' ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-slate-500">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-slate-600">
                             Annullata
                           </span>
                         ) : (

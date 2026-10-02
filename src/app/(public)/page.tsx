@@ -116,7 +116,7 @@ export default function Home() {
                   <CreditCard size={28} />
                 </div>
                 <h3 className="text-xl font-black text-primary sm:text-2xl mb-3">Conto & Carta Monivia</h3>
-                <p className="text-sm leading-relaxed text-slate-500">
+                <p className="text-sm leading-relaxed text-slate-600">
                   Ricevi il tuo prestito direttamente sul conto. Gestisci la tua carta virtuale e fisica,
                   imposta i limiti e controlla ogni transazione in tempo reale.
                 </p>
@@ -156,7 +156,7 @@ export default function Home() {
                 <Banknote size={28} />
               </div>
               <h3 className="text-xl font-black text-primary sm:text-2xl mb-3">Prelievi & Trasferimenti</h3>
-              <p className="text-sm leading-relaxed text-slate-500">
+              <p className="text-sm leading-relaxed text-slate-600">
                 Preleva o trasferisci i tuoi fondi in qualsiasi momento. Ogni operazione viene
                 confermata dall&apos;amministrazione per la tua sicurezza.
               </p>
@@ -168,7 +168,7 @@ export default function Home() {
                 <Clock size={28} />
               </div>
               <h3 className="text-xl font-black text-primary sm:text-2xl mb-3">Controllo Amministrativo</h3>
-              <p className="text-sm leading-relaxed text-slate-500">
+              <p className="text-sm leading-relaxed text-slate-600">
                 Ogni prelievo e trasferimento passa dal team amministrativo.
                 Visualizza lo stato in tempo reale direttamente dalla tua dashboard.
               </p>
@@ -198,7 +198,7 @@ export default function Home() {
                   <span className="text-2xl font-black">1</span>
                 </div>
                 <h3 className="text-lg font-black text-primary mb-3">Richiedi su Monivia</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-600 leading-relaxed">
                   Compila il modulo di richiesta prestito sul sito Monivia.
                   Il nostro team valuterà la tua richiesta.
                 </p>
@@ -211,7 +211,7 @@ export default function Home() {
                   <span className="text-2xl font-black">2</span>
                 </div>
                 <h3 className="text-lg font-black text-primary mb-3">Ricevi le credenziali</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-600 leading-relaxed">
                   Una volta approvato, riceverai email e WhatsApp con i tuoi
                   dati di accesso alla piattaforma bancaria.
                 </p>
@@ -224,7 +224,7 @@ export default function Home() {
                   <span className="text-2xl font-black">3</span>
                 </div>
                 <h3 className="text-lg font-black text-primary mb-3">Gestisci i tuoi fondi</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-600 leading-relaxed">
                   Accedi alla dashboard, visualizza il saldo e preleva quando vuoi.
                   Ogni operazione viene confermata dal nostro team.
                 </p>

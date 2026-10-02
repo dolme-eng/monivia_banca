@@ -153,7 +153,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                       </div>
                       <div className="min-w-0">
                         <p className="text-xs font-black text-primary truncate">{acc.iban}</p>
-                        <p className="text-[11px] text-slate-500">{acc.balance.toLocaleString('it-IT')} €</p>
+                        <p className="text-[11px] text-slate-600">{acc.balance.toLocaleString('it-IT')} €</p>
                       </div>
                     </button>
                   ))}
@@ -270,7 +270,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                         </div>
                         <div className="min-w-0">
                           <p className="text-xs font-black text-primary truncate">{acc.iban}</p>
-                          <p className="text-[11px] text-slate-500">
+                          <p className="text-[11px] text-slate-600">
                             {acc.balance.toLocaleString('it-IT')} €
                           </p>
                         </div>
@@ -319,7 +319,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         <header className="sticky top-0 z-30 bg-white border-b border-slate-200/70 h-16 flex items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">
             <button
-              className="md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-500 hover:text-primary rounded-lg"
+              className="md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-primary rounded-lg"
               onClick={() => setMobileOpen(true)}
               aria-label="Apri menu"
               aria-expanded={mobileOpen}

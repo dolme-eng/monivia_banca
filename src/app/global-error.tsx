@@ -20,7 +20,7 @@ export default function GlobalError({
             <h1 className="text-xl font-black text-slate-800 mb-2">
               Errore dell&apos;applicazione
             </h1>
-            <p className="text-sm text-slate-500 mb-6">
+            <p className="text-sm text-slate-600 mb-6">
               Si è verificato un problema inatteso. Riprova tra un momento.
             </p>
             <button

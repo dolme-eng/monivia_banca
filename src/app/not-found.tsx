@@ -5,10 +5,10 @@ export default function NotFound() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="text-center max-w-md">
         <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-6">
-          <span className="text-3xl font-black text-red-500">404</span>
+          <span className="text-3xl font-black text-red-600">404</span>
         </div>
         <h1 className="text-2xl font-black text-primary mb-3">Pagina non trovata</h1>
-        <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+        <p className="text-slate-600 text-sm mb-8 leading-relaxed">
           La pagina che stai cercando non esiste o è stata spostata.
         </p>
         <Link

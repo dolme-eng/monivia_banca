@@ -102,7 +102,7 @@ export default function DashboardPage() {
           <h2 className="text-lg font-black text-primary mb-2">
             {isPending ? 'Conto in attesa di validazione' : 'Conto congelato'}
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-600">
             {isPending
               ? 'Il tuo conto è stato creato ed è in attesa di validazione da parte del nostro team. Riceverai una notizia via email una volta attivato.'
               : 'Il tuo conto è stato congelato. Contatta il nostro supporto per maggiori informazioni.'}
@@ -124,7 +124,7 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-primary">Panoramica</h1>
-          <p className="text-sm text-slate-500 mt-1">Bentornato, {firstName}. Ecco il tuo conto.</p>
+          <p className="text-sm text-slate-600 mt-1">Bentornato, {firstName}. Ecco il tuo conto.</p>
         </div>
       </div>
 
@@ -216,7 +216,7 @@ export default function DashboardPage() {
                   <div key={tx.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        isCredit ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                        isCredit ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
                       }`}>
                         <Icon size={16} />
                       </div>
@@ -238,11 +238,11 @@ export default function DashboardPage() {
                           <CheckCircle2 size={8} /> Completato
                         </span>
                       ) : tx.status === 'CANCELLED' ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-slate-500">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-slate-600">
                           Annullato
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-500">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase text-red-600">
                           Rifiutato
                         </span>
                       )}
@@ -270,7 +270,7 @@ export default function DashboardPage() {
                 <ArrowRight size={14} className="ml-auto group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link href="/dashboard/prelievo" className="flex items-center gap-3 w-full p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all group">
-                <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 shrink-0">
                   <ArrowUpFromLine size={16} />
                 </div>
                 <div className="text-left">
@@ -280,7 +280,7 @@ export default function DashboardPage() {
                 <ArrowRight size={14} className="ml-auto text-slate-600 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link href="/dashboard/cards" className="flex items-center gap-3 w-full p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all group">
-                <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 shrink-0">
                   <CreditCard size={16} />
                 </div>
                 <div className="text-left">
