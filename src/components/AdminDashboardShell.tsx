@@ -225,7 +225,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
             </button>
           </div>
           <div className="flex items-center gap-1">
-            <Link href="/admin/approvals" className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-secondary transition-colors" aria-label="Notifiche">
+            <Link href="/admin/approvals" className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-300 hover:text-secondary transition-colors" aria-label="Notifiche">
               <Bell size={18} />
               {pendingCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-amber-500 rounded-full text-[11px] font-black text-primary flex items-center justify-center">
@@ -253,7 +253,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
                 key={href}
                 href={href}
                 className={`flex flex-col items-center gap-1 py-2 px-2 min-w-[48px] text-[11px] rounded-lg transition-colors ${
-                  active ? 'text-secondary font-black bg-secondary/10' : 'text-slate-400'
+                  active ? 'text-secondary font-black bg-secondary/10' : 'text-slate-300'
                 }`}
               >
                 <div className="relative">

@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
             <span className="text-2xl font-black tracking-tight text-primary">
               MO<span className="text-secondary">NIVIA</span>
             </span>
-            <span className="relative -top-2 text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">
+            <span className="relative -top-2 text-[11px] font-black uppercase tracking-[0.25em] text-slate-600">
               Banca
             </span>
           </div>
@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
                   Email *
                 </label>
                 <div className="relative">
-                  <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
                   <input
                     id="reset-email"
                     name="email"

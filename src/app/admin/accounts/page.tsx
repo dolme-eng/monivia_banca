@@ -296,7 +296,7 @@ export default function AccountsPage() {
       <div className="bg-white rounded-xl border border-slate-200/80 p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
             <input
               id="admin-accounts-search"
               type="search"
@@ -334,7 +334,7 @@ export default function AccountsPage() {
       ) : accounts.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200/80 p-12 text-center" style={{ boxShadow: 'var(--shadow-card)' }}>
           <User size={32} className="text-slate-300 mx-auto mb-3" />
-          <p className="text-sm text-slate-400">Nessun conto trovato</p>
+          <p className="text-sm text-slate-600">Nessun conto trovato</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -358,7 +358,7 @@ export default function AccountsPage() {
                         <p className="text-sm font-black text-primary truncate">
                           {acc.user.nome} {acc.user.cognome}
                         </p>
-                        <p className="text-[11px] text-slate-400 truncate">{acc.user.email}</p>
+                        <p className="text-[11px] text-slate-600 truncate">{acc.user.email}</p>
                       </div>
                       <div className="ml-auto flex items-center gap-2 shrink-0">
                         {loginLocked && (
@@ -374,7 +374,7 @@ export default function AccountsPage() {
                     </div>
                     <div className="flex flex-wrap gap-x-6 gap-y-1 ml-14">
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase">IBAN</span>
+                        <span className="text-[10px] text-slate-600 uppercase">IBAN</span>
                         {editingIban && editingIban.id === acc.id ? (
                           <div className="mt-1">
                             <div className="flex items-center gap-2">
@@ -402,7 +402,7 @@ export default function AccountsPage() {
                                 Annulla
                               </button>
                             </div>
-                            <p className="text-[11px] text-slate-400 mt-1">
+                            <p className="text-[11px] text-slate-600 mt-1">
                               Formato: IT + 2 cifre di controllo + 23 caratteri
                               (<span className={editingIban.value.replace(/[\s-]/g, '').length === 27 ? 'text-emerald-600 font-black' : ''}>
                                 {editingIban.value.replace(/[\s-]/g, '').length}/27
@@ -417,11 +417,11 @@ export default function AccountsPage() {
                         )}
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase">Saldo</span>
+                        <span className="text-[10px] text-slate-600 uppercase">Saldo</span>
                         <p className="text-sm font-black text-primary">{formatAmount(acc.balance)} €</p>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase">Carta</span>
+                        <span className="text-[10px] text-slate-600 uppercase">Carta</span>
                         <p className="text-xs text-slate-600">{acc.cards[0]?.number ?? '—'}</p>
                       </div>
                       {acc.blockedAt && (
@@ -552,7 +552,7 @@ export default function AccountsPage() {
               onClick={closePasswordModal}
               disabled={pwSaving}
               aria-label="Chiudi"
-              className="absolute right-3 top-3 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400"
+              className="absolute right-3 top-3 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-600"
             >
               <XCircle size={16} />
             </button>
@@ -584,7 +584,7 @@ export default function AccountsPage() {
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="admin-pw" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">
+                  <label htmlFor="admin-pw" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">
                     Nuova password *
                   </label>
                   <input
@@ -599,7 +599,7 @@ export default function AccountsPage() {
                   />
                   <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
                     {pwChecks.map((c) => (
-                      <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-600' : 'text-slate-400'}`}>
+                      <span key={c.label} className={`text-[11px] font-semibold ${c.ok ? 'text-emerald-600' : 'text-slate-600'}`}>
                         {c.ok ? '✓' : '○'} {c.label}
                       </span>
                     ))}

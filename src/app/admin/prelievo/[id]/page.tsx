@@ -166,7 +166,7 @@ export default function AdminPrelievoDetailPage() {
         </button>
         <div>
           <h1 className="text-xl font-black text-primary">Dettaglio Transazione</h1>
-          <p className="text-xs text-slate-400 mt-0.5">Rivedi e gestisci la richiesta di prelievo.</p>
+          <p className="text-xs text-slate-600 mt-0.5">Rivedi e gestisci la richiesta di prelievo.</p>
         </div>
       </div>
 
@@ -201,7 +201,7 @@ export default function AdminPrelievoDetailPage() {
                     : tx.status === 'REJECTED' && i === 2
                     ? 'bg-red-100 text-red-500'
                     : 'bg-secondary/10 text-secondary'
-                  : 'bg-slate-100 text-slate-400'
+                  : 'bg-slate-100 text-slate-600'
               }`}>
                 <step.icon size={18} />
               </div>
@@ -219,19 +219,19 @@ export default function AdminPrelievoDetailPage() {
           </h3>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-xs text-slate-400">Nome</span>
+              <span className="text-xs text-slate-600">Nome</span>
               <span className="text-sm font-black text-primary">{tx.account.user.nome} {tx.account.user.cognome}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-xs text-slate-400">Email</span>
+              <span className="text-xs text-slate-600">Email</span>
               <span className="text-xs text-slate-600">{tx.account.user.email}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-xs text-slate-400">IBAN</span>
+              <span className="text-xs text-slate-600">IBAN</span>
               <span className="text-xs text-slate-600 font-mono truncate min-w-0">{tx.account.iban}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-xs text-slate-400">Saldo Attuale</span>
+              <span className="text-xs text-slate-600">Saldo Attuale</span>
               <span className="text-sm font-black text-primary">{formatAmount(tx.account.balance)} €</span>
             </div>
           </div>
@@ -244,17 +244,17 @@ export default function AdminPrelievoDetailPage() {
           </h3>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-xs text-slate-400">Importo</span>
+              <span className="text-xs text-slate-600">Importo</span>
               <span className="text-lg font-black text-primary">{formatAmount(tx.amount)} €</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-xs text-slate-400">Tipo</span>
+              <span className="text-xs text-slate-600">Tipo</span>
               <span className="text-sm font-black text-primary">
                 {tx.type === 'DEBIT' ? 'Prelievo' : tx.type === 'TRANSFER_OUT' ? 'Trasferimento' : tx.type}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-xs text-slate-400">Stato</span>
+              <span className="text-xs text-slate-600">Stato</span>
               <span className={`text-xs font-black px-2 py-0.5 rounded ${
                 tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
                 tx.status === 'REJECTED' ? 'bg-red-50 text-red-500' :
@@ -265,7 +265,7 @@ export default function AdminPrelievoDetailPage() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-xs text-slate-400">Data</span>
+              <span className="text-xs text-slate-600">Data</span>
               <span className="text-xs text-slate-600">{formatDate(tx.createdAt)}</span>
             </div>
           </div>
@@ -333,7 +333,7 @@ export default function AdminPrelievoDetailPage() {
               Metti in pausa
             </button>
           </div>
-          <p className="text-[11px] text-slate-400 mt-3 text-center">
+          <p className="text-[11px] text-slate-600 mt-3 text-center">
             L&apos;approvazione debiterà automaticamente il saldo del conto.
           </p>
         </div>

@@ -95,7 +95,7 @@ export default function NotificationBell() {
         }
         aria-expanded={open}
         aria-haspopup="true"
-        className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-secondary transition-colors"
+        className="relative p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-secondary transition-colors"
       >
         <Bell size={18} />
         {count > 0 && (
@@ -116,16 +116,16 @@ export default function NotificationBell() {
             <button
               onClick={() => setOpen(false)}
               aria-label="Chiudi notifiche"
-              className="p-2 -mr-2 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-400 hover:text-slate-600"
+              className="p-2 -mr-2 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-600 hover:text-slate-600"
             >
               <X size={16} />
             </button>
           </div>
 
           {loading ? (
-            <p className="px-4 py-6 text-sm text-slate-400 text-center">Caricamento…</p>
+            <p className="px-4 py-6 text-sm text-slate-600 text-center">Caricamento…</p>
           ) : unread.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-slate-400 text-center">
+            <p className="px-4 py-6 text-sm text-slate-600 text-center">
               Nessuna notifica.
             </p>
           ) : (

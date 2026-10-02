@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
             <span className="text-2xl font-black tracking-tight text-primary">
               MO<span className="text-secondary">NIVIA</span>
             </span>
-            <span className="relative -top-2 text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">
+            <span className="relative -top-2 text-[11px] font-black uppercase tracking-[0.25em] text-slate-600">
               Banca
             </span>
           </div>
@@ -105,7 +105,7 @@ export default function ResetPasswordPage() {
                   Nuova password *
                 </label>
                 <div className="relative">
-                  <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
                   <input
                     id="new-password"
                     name="new-password"
@@ -122,7 +122,7 @@ export default function ResetPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-slate-600"
                     aria-label={showPassword ? 'Nascondi la password' : 'Mostra la password'}
                   >
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}

@@ -96,7 +96,7 @@ export default function DashboardDemo() {
             <Wallet size={16} className="text-secondary" />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Il mio conto</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">Il mio conto</p>
             <p className="text-sm font-black text-primary">Conto Personale</p>
           </div>
         </div>
@@ -108,9 +108,9 @@ export default function DashboardDemo() {
 
       {/* Balance */}
       <div className="mb-3 shrink-0">
-        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">Saldo disponibile</p>
+        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300 mb-0.5">Saldo disponibile</p>
         <p className="text-3xl sm:text-4xl font-black text-primary tracking-tight">
-          {s.balance}<span className="text-xl text-slate-400"> €</span>
+          {s.balance}<span className="text-xl text-slate-300"> €</span>
         </p>
       </div>
 
@@ -126,7 +126,7 @@ export default function DashboardDemo() {
             style={{ width: `${s.loanPct}%` }}
           />
         </div>
-        <p className="text-[11px] text-slate-400 mt-1">{s.loanDetail}</p>
+        <p className="text-[11px] text-slate-300 mt-1">{s.loanDetail}</p>
       </div>
 
       {/* Transactions — fixed height area */}
@@ -149,7 +149,7 @@ export default function DashboardDemo() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-black text-primary truncate">{tx.title}</p>
-                    <p className="text-[11px] text-slate-400">{tx.time}</p>
+                    <p className="text-[11px] text-slate-300">{tx.time}</p>
                   </div>
                 </div>
                 {tx.badge ? (

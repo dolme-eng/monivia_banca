@@ -160,7 +160,7 @@ export default function CardsPage() {
 
       {cards.length === 0 ? (
         <div className="bg-white rounded-xl p-16 text-center border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-600">
             <CreditCard size={32} />
           </div>
           <h3 className="mb-2 text-xl font-black text-primary">Nessuna carta associata</h3>
@@ -241,7 +241,7 @@ export default function CardsPage() {
                   <span className={`h-1.5 w-1.5 rounded-full ${card.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-red-500'}`} />
                   {card.status === 'ACTIVE' ? 'Attiva' : card.status === 'FROZEN' ? 'Congelata' : 'Scaduta'}
                 </span>
-                <span className="text-xs text-slate-400 italic">
+                <span className="text-xs text-slate-600 italic">
                   Carta Monivia
                 </span>
               </div>
@@ -259,7 +259,7 @@ export default function CardsPage() {
                     <div className="h-full bg-secondary rounded-full" style={{ width: `${spentPercent}%` }} />
                   </div>
                   <div className="flex justify-between mt-1">
-                    <span className="text-[11px] text-slate-400">{spentPercent.toFixed(1)}% utilizzato</span>
+                    <span className="text-[11px] text-slate-600">{spentPercent.toFixed(1)}% utilizzato</span>
                     <span className="text-[11px] text-primary font-black">{formatAmount(balance)} € disponibili</span>
                   </div>
                 </div>
@@ -275,7 +275,7 @@ export default function CardsPage() {
             <div className="divide-y divide-slate-100">
               {transactions.length === 0 ? (
                 <div className="px-6 py-8 text-center">
-                  <p className="text-xs text-slate-400">Nessuna attività recente</p>
+                  <p className="text-xs text-slate-600">Nessuna attività recente</p>
                 </div>
               ) : (
                 transactions.map((tx) => {
@@ -291,7 +291,7 @@ export default function CardsPage() {
                         </div>
                         <div>
                           <p className="text-sm font-black text-primary">{tx.description}</p>
-                          <p className="text-[11px] text-slate-400">{formatDateTime(tx.createdAt)}</p>
+                          <p className="text-[11px] text-slate-600">{formatDateTime(tx.createdAt)}</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -348,7 +348,7 @@ export default function CardsPage() {
                       <p className="text-xs font-black text-primary truncate">
                         {i === 0 ? 'Fisica' : 'Virtuale'} •• {c.number.slice(-4)}
                       </p>
-                      <p className="text-[11px] text-slate-400">{c.holder}</p>
+                      <p className="text-[11px] text-slate-600">{c.holder}</p>
                     </div>
                     {i === selectedCard && <CheckCircle2 size={14} className="text-secondary shrink-0" />}
                   </button>

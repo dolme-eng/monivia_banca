@@ -136,8 +136,8 @@ export default function TransactionsPage() {
       <div className="bg-white rounded-xl border border-slate-200 p-4">
         <div className="flex flex-wrap gap-3">
           <div className="flex items-center gap-2">
-            <Filter size={14} className="text-slate-400" />
-            <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Tipo:</span>
+            <Filter size={14} className="text-slate-600" />
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-600">Tipo:</span>
           </div>
           {['ALL', 'CREDIT', 'DEBIT', 'TRANSFER_IN', 'TRANSFER_OUT'].map((t) => (
             <button
@@ -155,8 +155,8 @@ export default function TransactionsPage() {
         </div>
         <div className="flex flex-wrap gap-3 mt-3">
           <div className="flex items-center gap-2">
-            <Filter size={14} className="text-slate-400" />
-            <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Stato:</span>
+            <Filter size={14} className="text-slate-600" />
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-600">Stato:</span>
           </div>
           {['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'].map((s) => (
             <button
@@ -211,7 +211,7 @@ export default function TransactionsPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-black text-primary truncate">{tx.description}</p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[11px] text-slate-400">{formatDate(tx.createdAt)}</span>
+                        <span className="text-[11px] text-slate-600">{formatDate(tx.createdAt)}</span>
                         <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black border ${statusConf.bg} ${statusConf.color}`}>
                           <StatusIcon size={10} />
                           {statusConf.label}
@@ -223,7 +223,7 @@ export default function TransactionsPage() {
                         {formatAmount(tx.amount, tx.type)}
                       </p>
                       {tx.reference && (
-                        <p className="text-[10px] text-slate-400 font-mono mt-0.5">{tx.reference}</p>
+                        <p className="text-[10px] text-slate-600 font-mono mt-0.5">{tx.reference}</p>
                       )}
                     </div>
                   </div>
@@ -234,7 +234,7 @@ export default function TransactionsPage() {
             {/* Pagination */}
             {pagination.pages > 1 && (
               <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   {pagination.total} movimenti — pagina {pagination.page} di {pagination.pages}
                 </p>
                 <div className="flex gap-2">

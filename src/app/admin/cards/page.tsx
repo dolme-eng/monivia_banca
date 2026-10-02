@@ -209,7 +209,7 @@ export default function CardsPage() {
       <div className="bg-white rounded-xl border border-slate-200/80 p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
             <input
               id="admin-cards-search"
               type="search"
@@ -246,7 +246,7 @@ export default function CardsPage() {
       ) : cards.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200/80 p-12 text-center" style={{ boxShadow: 'var(--shadow-card)' }}>
           <CreditCard size={32} className="text-slate-300 mx-auto mb-3" />
-          <p className="text-sm text-slate-400">Nessuna carta trovata</p>
+          <p className="text-sm text-slate-600">Nessuna carta trovata</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -267,7 +267,7 @@ export default function CardsPage() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-black text-primary truncate">{card.holder}</p>
-                        <p className="text-[11px] text-slate-400 truncate font-mono">
+                        <p className="text-[11px] text-slate-600 truncate font-mono">
                           {revealed[card.id] ?? card.number}
                         </p>
                       </div>
@@ -277,27 +277,27 @@ export default function CardsPage() {
                     </div>
                     <div className="flex flex-wrap gap-x-6 gap-y-1 ml-14">
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase">Scadenza</span>
+                        <span className="text-[10px] text-slate-600 uppercase">Scadenza</span>
                         <p className="text-xs text-slate-600">{card.expiry}</p>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase">Intestatario</span>
+                        <span className="text-[10px] text-slate-600 uppercase">Intestatario</span>
                         <p className="text-xs text-slate-600">{card.account.user.nome} {card.account.user.cognome}</p>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase">Email</span>
+                        <span className="text-[10px] text-slate-600 uppercase">Email</span>
                         <p className="text-xs text-slate-600">{card.account.user.email}</p>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase">IBAN</span>
+                        <span className="text-[10px] text-slate-600 uppercase">IBAN</span>
                         <p className="text-xs font-mono text-slate-600">{card.account.iban}</p>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase">Saldo</span>
+                        <span className="text-[10px] text-slate-600 uppercase">Saldo</span>
                         <p className="text-sm font-black text-primary">{card.account.balance.toLocaleString('it-IT', { minimumFractionDigits: 2 })} €</p>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase">Stato conto</span>
+                        <span className="text-[10px] text-slate-600 uppercase">Stato conto</span>
                         <p className={`text-[11px] font-black ${accSt.cls} inline-block px-2 py-0.5 rounded-full`}>{accSt.text}</p>
                       </div>
                     </div>
@@ -322,7 +322,7 @@ export default function CardsPage() {
                     ) : (
                       <span
                         title="Numero completo non disponibile: carta emessa prima dell'archiviazione cifrata"
-                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-50 text-slate-400 border border-dashed border-slate-200 rounded-lg text-xs font-black cursor-not-allowed"
+                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-50 text-slate-600 border border-dashed border-slate-200 rounded-lg text-xs font-black cursor-not-allowed"
                       >
                         <EyeOff size={14} />
                         N° non disponibile

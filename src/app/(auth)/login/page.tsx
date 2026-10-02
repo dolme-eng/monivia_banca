@@ -53,9 +53,9 @@ export default function LoginPage() {
           <div className="mb-8">
             <Link href="/" className="inline-block">
               <span className="text-2xl font-black tracking-tight text-primary">
-                MO<span className="text-secondary">NIVIA</span>
+                MO<span className="text-secondary-text">NIVIA</span>
               </span>
-              <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">
+              <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-slate-600">
                 Banca
               </span>
             </Link>
@@ -75,11 +75,11 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 ml-1">
+              <label htmlFor="email" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 ml-1">
                 Email
               </label>
               <div className="relative">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
                 <input
                   id="email"
                   name="email"
@@ -93,11 +93,11 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 ml-1">
+              <label htmlFor="password" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 ml-1">
                 Password
               </label>
               <div className="relative">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
                 <input
                   id="password"
                   name="password"
@@ -110,14 +110,14 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-primary transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-primary transition-colors"
                   aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               <div className="text-right">
-                <Link href="/forgot-password" className="text-[11px] font-black text-secondary hover:underline">
+                <Link href="/forgot-password" className="text-[11px] font-black text-secondary-text hover:underline">
                   Password dimenticata?
                 </Link>
               </div>
@@ -150,7 +150,7 @@ export default function LoginPage() {
               href="https://www.monivia.it"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block mt-2 text-sm text-primary font-black hover:text-secondary transition-colors underline underline-offset-4"
+              className="inline-block mt-2 text-sm text-primary font-black hover:text-secondary-text transition-colors underline underline-offset-4"
             >
               Richiedi un prestito su Monivia
             </Link>
@@ -158,7 +158,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <footer className="mt-16 pt-6 border-t border-slate-100 text-center">
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-600">
               © 2026 Monivia S.r.l. — P.IVA 10984760583 — OAM n. A23741
             </p>
           </footer>

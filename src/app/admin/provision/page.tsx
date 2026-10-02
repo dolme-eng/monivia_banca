@@ -243,11 +243,11 @@ export default function ProvisionPage() {
                   <div className="text-center py-8">
                     <User size={32} className="text-slate-300 mx-auto mb-3" />
                     <p className="text-sm text-slate-500">Nessun conto trovato per &ldquo;{searchQuery}&rdquo;</p>
-                    <p className="text-xs text-slate-400 mt-1">Prova con un&apos;altra ricerca o crea un nuovo conto.</p>
+                    <p className="text-xs text-slate-600 mt-1">Prova con un&apos;altra ricerca o crea un nuovo conto.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-xs text-slate-400">{searchResults.length} conto{searchResults.length !== 1 ? 'i' : ''} trovato{searchResults.length !== 1 ? 'i' : ''}</p>
+                    <p className="text-xs text-slate-600">{searchResults.length} conto{searchResults.length !== 1 ? 'i' : ''} trovato{searchResults.length !== 1 ? 'i' : ''}</p>
                     {searchResults.map((account) => (
                       <div
                         key={account.id}
@@ -283,14 +283,14 @@ export default function ProvisionPage() {
                               <p className="text-sm font-black text-primary">
                                 {account.user.nome} {account.user.cognome}
                               </p>
-                              <p className="text-xs text-slate-400">{account.user.email}</p>
+                              <p className="text-xs text-slate-600">{account.user.email}</p>
                             </div>
                           </div>
                           <div className="text-right sm:text-right">
                             <p className="text-lg font-black text-primary">
                               {account.balance.toLocaleString('it-IT')} €
                             </p>
-                            <p className="text-[11px] font-mono text-slate-400">{account.iban}</p>
+                            <p className="text-[11px] font-mono text-slate-600">{account.iban}</p>
                           </div>
                         </div>
 
@@ -409,7 +409,7 @@ export default function ProvisionPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-slate-600"
                       aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -449,7 +449,7 @@ export default function ProvisionPage() {
                 </div>
                 <div className="space-y-3">
                   <div className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Email</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-600">Email</p>
                     <div className="mt-1 flex items-center gap-2">
                       <p className="text-sm font-bold text-primary">{submittedData?.email || createResult.account?.email}</p>
                       <button
@@ -457,18 +457,18 @@ export default function ProvisionPage() {
                         className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
                         aria-label="Copia email"
                       >
-                        {copied === 'email' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
+                        {copied === 'email' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-600" />}
                       </button>
                     </div>
                   </div>
                   {/* L'API non restituisce mai la password: la mostra qui sarebbe un falso.
                       Il cliente la riceve dall'admin tramite canale separato. */}
                   <div className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Password</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-600">Password</p>
                     <p className="mt-1 text-sm font-bold text-primary">Impostata dall&apos;admin, comunicata al cliente separatamente</p>
                   </div>
                   <div className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">IBAN</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-600">IBAN</p>
                     <div className="mt-1 flex items-center gap-2">
                       <p className="font-mono text-sm font-bold text-primary">{createResult.account.iban}</p>
                       <button
@@ -476,17 +476,17 @@ export default function ProvisionPage() {
                         className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
                         aria-label="Copia IBAN"
                       >
-                        {copied === 'iban' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
+                        {copied === 'iban' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-600" />}
                       </button>
                     </div>
                   </div>
                   <div className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Saldo attuale</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-600">Saldo attuale</p>
                     <p className="mt-1 text-lg font-black text-primary">{Number(createResult.account.balance).toLocaleString('it-IT')} €</p>
                   </div>
                   {createResult.card && (
                     <div className="rounded-lg bg-slate-50 p-3">
-                      <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Carta bancaria</p>
+                      <p className="text-[11px] font-black uppercase tracking-widest text-slate-600">Carta bancaria</p>
                       <div className="mt-1 flex items-center gap-2">
                         <p className="font-mono text-sm font-bold text-primary">{createResult.card.number}</p>
                         <button
@@ -494,7 +494,7 @@ export default function ProvisionPage() {
                           className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
                           aria-label="Copia numero carta"
                         >
-                          {copied === 'card' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
+                          {copied === 'card' ? <CheckCircle2 size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-600" />}
                         </button>
                       </div>
                       <p className="text-xs text-slate-500">{createResult.card.holder}</p>
@@ -527,7 +527,7 @@ export default function ProvisionPage() {
                         <ExternalLink size={14} className="text-secondary" />
                       </a>
                     </div>
-                    <p className="mt-2 text-[11px] text-slate-400">
+                    <p className="mt-2 text-[11px] text-slate-600">
                       Inoltra questa email al cliente con credenziali e link, oppure copia tutto qui sotto.
                     </p>
                   </div>

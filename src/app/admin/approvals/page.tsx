@@ -113,7 +113,7 @@ export default function ApprovalsPage() {
             <Clock size={14} />
           </div>
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">In Attesa</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">In Attesa</p>
             <p className="text-lg font-black text-primary">{loading ? '—' : transactions.length}</p>
           </div>
         </div>

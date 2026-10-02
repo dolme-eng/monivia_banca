@@ -206,7 +206,7 @@ export default function DashboardPage() {
             {!user || user.recentTransactions.length === 0 ? (
               <div className="px-6 py-8 text-center">
                 <Receipt size={24} className="text-slate-300 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">Nessuna transazione recente</p>
+                <p className="text-xs text-slate-600">Nessuna transazione recente</p>
               </div>
             ) : (
               user.recentTransactions.map((tx) => {
@@ -222,7 +222,7 @@ export default function DashboardPage() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-black text-primary truncate">{tx.description}</p>
-                        <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
+                        <p className="text-[11px] text-slate-600">{formatTime(tx.createdAt)}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -275,9 +275,9 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-left">
                   <p className="text-sm font-black text-primary">Prelievo</p>
-                  <p className="text-[11px] text-slate-400">Richiedi prelievo</p>
+                  <p className="text-[11px] text-slate-600">Richiedi prelievo</p>
                 </div>
-                <ArrowRight size={14} className="ml-auto text-slate-400 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} className="ml-auto text-slate-600 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link href="/dashboard/cards" className="flex items-center gap-3 w-full p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all group">
                 <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
@@ -285,9 +285,9 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-left">
                   <p className="text-sm font-black text-primary">Le mie Carte</p>
-                  <p className="text-[11px] text-slate-400">Gestisci la carta</p>
+                  <p className="text-[11px] text-slate-600">Gestisci la carta</p>
                 </div>
-                <ArrowRight size={14} className="ml-auto text-slate-400 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} className="ml-auto text-slate-600 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>

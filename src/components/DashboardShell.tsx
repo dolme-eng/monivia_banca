@@ -350,7 +350,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 className={`flex flex-col items-center gap-1 py-2 px-2 min-w-[48px] text-[11px] rounded-lg transition-colors ${
-                  active ? 'text-secondary font-black bg-secondary/10' : 'text-slate-400'
+                  active ? 'text-secondary font-black bg-secondary/10' : 'text-slate-300'
                 }`}
               >
                 <Icon size={20} />

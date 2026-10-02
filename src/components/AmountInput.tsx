@@ -134,7 +134,7 @@ export default function AmountInput({
         onClick={() => !disabled && inputRef.current?.focus()}
       >
         <span className={`text-xl sm:text-2xl font-black mr-2 transition-colors ${
-          isFocused ? 'text-secondary' : 'text-slate-400'
+          isFocused ? 'text-secondary' : 'text-slate-600'
         }`}>
           {currency}
         </span>
@@ -151,7 +151,7 @@ export default function AmountInput({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full bg-transparent text-2xl sm:text-3xl md:text-4xl font-black text-primary text-center outline-none py-4 sm:py-6 placeholder:text-slate-400"
+          className="w-full bg-transparent text-2xl sm:text-3xl md:text-4xl font-black text-primary text-center outline-none py-4 sm:py-6 placeholder:text-slate-600"
           aria-label={id ? undefined : 'Importo'}
           aria-invalid={!!error}
           aria-describedby={error ? 'amount-error' : undefined}
@@ -163,7 +163,7 @@ export default function AmountInput({
         </p>
       )}
       {isFocused && !error && (
-        <p className="mt-2 text-xs text-slate-400 text-center">
+        <p className="mt-2 text-xs text-slate-600 text-center">
           Usa ↑↓ per regolare di €10
         </p>
       )}

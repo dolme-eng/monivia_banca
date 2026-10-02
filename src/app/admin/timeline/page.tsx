@@ -111,7 +111,7 @@ export default function AdminTimelinePage() {
           { label: 'Annullate', value: stats.cancelled, color: 'text-slate-500' },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-xl p-4 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">{stat.label}</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">{stat.label}</p>
             <p className={`text-xl font-black ${stat.color}`}>{loading ? '—' : stat.value}</p>
           </div>
         ))}
@@ -125,7 +125,7 @@ export default function AdminTimelinePage() {
             className={`px-4 py-3 min-h-[44px] rounded-lg text-xs font-black transition-all ${
               filter === f
                 ? 'bg-primary text-white'
-                : 'text-slate-400 hover:text-primary hover:bg-slate-50'
+                : 'text-slate-600 hover:text-primary hover:bg-slate-50'
             }`}
           >
             {f === 'ALL' ? 'Tutte' : f === 'PENDING' ? 'In Attesa' : f === 'APPROVED' ? 'Approvate' : f === 'REJECTED' ? 'Rifiutate' : 'Annullate'}
@@ -140,7 +140,7 @@ export default function AdminTimelinePage() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-16">
           <AlertTriangle size={32} className="text-slate-300 mx-auto mb-3" />
-          <p className="text-sm text-slate-400">Nessuna transazione trovata.</p>
+          <p className="text-sm text-slate-600">Nessuna transazione trovata.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -171,14 +171,14 @@ export default function AdminTimelinePage() {
                       <p className="text-sm font-black text-primary">
                         {tx.account.user.nome} {tx.account.user.cognome}
                       </p>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="text-[11px] text-slate-600">
                         {tx.type === 'DEBIT' ? 'Prelievo' : tx.type === 'TRANSFER_OUT' ? 'Trasferimento' : tx.type} — {tx.description}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-black text-primary">{formatAmount(tx.amount)} €</p>
-                    <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
+                    <p className="text-[11px] text-slate-600">{formatTime(tx.createdAt)}</p>
                   </div>
                 </div>
 

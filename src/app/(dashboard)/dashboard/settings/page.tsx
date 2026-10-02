@@ -225,7 +225,7 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => setShowCurrent(!showCurrent)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-slate-600"
                     aria-label={showCurrent ? 'Nascondi la password attuale' : 'Mostra la password attuale'}
                   >
                     {showCurrent ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -253,7 +253,7 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => setShowNew(!showNew)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-slate-600"
                     aria-label={showNew ? 'Nascondi la nuova password' : 'Mostra la nuova password'}
                   >
                     {showNew ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -308,7 +308,7 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <p className="text-xs font-black text-primary">{title}</p>
-                      <p className="text-[11px] text-slate-400">{desc}</p>
+                      <p className="text-[11px] text-slate-600">{desc}</p>
                     </div>
                   </div>
                   <span className={`px-2 py-0.5 text-[11px] font-black rounded uppercase ${statusColor}`}>

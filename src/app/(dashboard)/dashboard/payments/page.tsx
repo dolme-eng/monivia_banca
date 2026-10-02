@@ -261,7 +261,7 @@ export default function PaymentsPage() {
 
               {/* Reference */}
               <div className="space-y-1.5">
-                <label htmlFor="payment-desc" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Causale *</label>
+                <label htmlFor="payment-desc" className="block text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">Causale *</label>
                 <input
                   id="payment-desc"
                   type="text"
@@ -275,7 +275,7 @@ export default function PaymentsPage() {
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-600">
                   Il trasferimento sarà in attesa di approvazione amministrativa.
                 </p>
                 <button
@@ -312,7 +312,7 @@ export default function PaymentsPage() {
             <div className="divide-y divide-slate-100">
               {transactions.length === 0 ? (
                 <div className="px-6 py-8 text-center">
-                  <p className="text-xs text-slate-400">Nessuna transazione recente</p>
+                  <p className="text-xs text-slate-600">Nessuna transazione recente</p>
                 </div>
               ) : (
                 transactions.slice(0, 5).map((tx) => {
@@ -327,7 +327,7 @@ export default function PaymentsPage() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-xs font-black text-primary truncate">{tx.description}</p>
-                          <p className="text-[11px] text-slate-400">{formatTime(tx.createdAt)}</p>
+                          <p className="text-[11px] text-slate-600">{formatTime(tx.createdAt)}</p>
                         </div>
                       </div>
                       <div className="text-right">

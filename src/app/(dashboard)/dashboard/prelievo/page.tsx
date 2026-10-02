@@ -248,7 +248,7 @@ export default function PrelievoPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Es: Prelievo per spese personali"
-                  className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-4 text-sm font-medium text-primary focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-all outline-none placeholder:text-slate-400"
+                  className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-4 text-sm font-medium text-primary focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-all outline-none placeholder:text-slate-600"
                 />
               </div>
 
@@ -315,7 +315,7 @@ export default function PrelievoPage() {
             {recentPrelievi.length === 0 ? (
               <div className="text-center py-6">
                 <Clock size={24} className="text-slate-300 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">Nessuna richiesta recente</p>
+                <p className="text-xs text-slate-600">Nessuna richiesta recente</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -325,7 +325,7 @@ export default function PrelievoPage() {
                       <ArrowDownToLine size={14} className="text-secondary" />
                       <div>
                         <p className="text-xs font-black text-primary">{p.description}</p>
-                        <p className="text-[11px] text-slate-400">
+                        <p className="text-[11px] text-slate-600">
                           {new Date(p.createdAt).toLocaleDateString('it-IT')}
                         </p>
                       </div>

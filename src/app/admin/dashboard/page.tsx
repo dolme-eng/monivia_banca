@@ -188,7 +188,7 @@ export default function AdminDashboardPage() {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Conti Totali</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Conti Totali</p>
               <p className="text-xl font-black text-primary">{loading ? '—' : stats.totalAccounts}</p>
               <div className="flex items-center gap-1 mt-2 text-emerald-600">
                 <TrendingUp size={12} />
@@ -196,7 +196,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Conti In Attesa</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Conti In Attesa</p>
               <p className="text-xl font-black text-amber-600">{loading ? '—' : stats.pendingAccounts}</p>
               {stats.pendingAccounts > 0 && (
                 <div className="flex items-center gap-1 mt-2 text-amber-600">
@@ -206,7 +206,7 @@ export default function AdminDashboardPage() {
               )}
             </div>
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Transazioni In Attesa</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Transazioni In Attesa</p>
               <p className="text-xl font-black text-primary">{loading ? '—' : stats.pendingTransactions}</p>
               {stats.pendingTransactions > 0 && (
                 <div className="flex items-center gap-1 mt-2 text-amber-600">
@@ -216,14 +216,14 @@ export default function AdminDashboardPage() {
               )}
             </div>
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Clienti Attivi</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Clienti Attivi</p>
               <p className="text-xl font-black text-primary">{loading ? '—' : stats.activeClients}</p>
-              <div className="flex items-center gap-1 mt-2 text-slate-400">
+              <div className="flex items-center gap-1 mt-2 text-slate-600">
                 <span className="text-[11px] font-black">Su {stats.totalAccounts} conti</span>
               </div>
             </div>
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-1">Carte Congelate</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Carte Congelate</p>
               <p className="text-xl font-black text-blue-600">{loading ? '—' : stats.frozenCards}</p>
               {stats.frozenCards > 0 && (
                 <div className="flex items-center gap-1 mt-2 text-blue-600">
@@ -250,7 +250,7 @@ export default function AdminDashboardPage() {
           ) : stats.pendingList.length === 0 ? (
             <div className="text-center py-6">
               <CheckCircle2 size={24} className="text-emerald-400 mx-auto mb-2" />
-              <p className="text-xs text-slate-400">Nessuna transazione in sospeso</p>
+              <p className="text-xs text-slate-600">Nessuna transazione in sospeso</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -272,7 +272,7 @@ export default function AdminDashboardPage() {
                       <p className="text-[11px] font-black text-primary">
                         {item.type === 'DEBIT' ? 'Prelievo' : item.type === 'TRANSFER_OUT' ? 'Trasferimento' : item.type}
                       </p>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="text-[11px] text-slate-600">
                         {item.account?.user?.nome} {item.account?.user?.cognome}
                       </p>
                     </div>
@@ -301,7 +301,7 @@ export default function AdminDashboardPage() {
           ) : stats.recentTransactions.length === 0 ? (
             <div className="text-center py-8">
               <Activity size={24} className="text-slate-300 mx-auto mb-2" />
-              <p className="text-xs text-slate-400">Nessuna attività recente</p>
+              <p className="text-xs text-slate-600">Nessuna attività recente</p>
             </div>
           ) : (
             <div className="overflow-x-auto flex-1 -mx-5 px-5">
@@ -373,9 +373,9 @@ export default function AdminDashboardPage() {
               </div>
               <div className="text-left">
                 <p className="text-xs font-black text-primary">Approva Transazioni</p>
-                <p className="text-[11px] text-slate-400">{stats.pendingTransactions} in sospeso</p>
+                <p className="text-[11px] text-slate-600">{stats.pendingTransactions} in sospeso</p>
               </div>
-              <ArrowRight size={12} className="ml-auto text-slate-400 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={12} className="ml-auto text-slate-600 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link href="/admin/timeline" className="flex items-center gap-3 w-full p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all group">
               <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
@@ -383,9 +383,9 @@ export default function AdminDashboardPage() {
               </div>
               <div className="text-left">
                 <p className="text-xs font-black text-primary">Timeline</p>
-                <p className="text-[11px] text-slate-400">Stato transazioni</p>
+                <p className="text-[11px] text-slate-600">Stato transazioni</p>
               </div>
-              <ArrowRight size={12} className="ml-auto text-slate-400 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={12} className="ml-auto text-slate-600 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </section>

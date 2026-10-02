@@ -99,7 +99,7 @@ export default function InvitePage() {
             <span className="text-2xl font-black tracking-tight text-primary">
               MO<span className="text-secondary">NIVIA</span>
             </span>
-            <span className="relative -top-2 text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">
+            <span className="relative -top-2 text-[11px] font-black uppercase tracking-[0.25em] text-slate-600">
               Banca
             </span>
           </div>
@@ -120,7 +120,7 @@ export default function InvitePage() {
           <div className="p-6 space-y-4">
             {/* Email */}
             <div>
-              <label className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-1">Email</label>
+              <label className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 block mb-1">Email</label>
               <div className="flex items-center gap-2">
                 <div className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm font-mono text-primary">
                   {invite?.email}
@@ -130,7 +130,7 @@ export default function InvitePage() {
                   className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
                   aria-label="Copia email"
                 >
-                  {copied === 'email' ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Copy size={16} className="text-slate-400" />}
+                  {copied === 'email' ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Copy size={16} className="text-slate-600" />}
                 </button>
               </div>
             </div>
@@ -160,7 +160,7 @@ export default function InvitePage() {
         </Link>
 
         {/* Expiry notice */}
-        <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400">
+        <div className="flex items-center justify-center gap-2 text-[11px] text-slate-600">
           <Clock size={12} />
           Questo link scade tra 24 ore
         </div>

@@ -118,7 +118,7 @@ export default function ConfirmModal({
           onClick={onCancel}
           disabled={loading}
           aria-label="Chiudi finestra di dialogo"
-          className="absolute right-3 top-3 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors text-slate-400 hover:text-slate-600"
+          className="absolute right-3 top-3 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-600"
         >
           <X size={16} />
         </button>
