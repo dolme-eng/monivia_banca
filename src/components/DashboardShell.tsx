@@ -329,7 +329,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           </div>
           <div className="flex items-center gap-1">
             <NotificationBell />
-            <div className="w-9 h-9 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-xs font-black ml-1">
+            <div className="w-9 h-9 rounded-full bg-secondary/10 flex items-center justify-center text-secondary-text text-xs font-black ml-1">
               {initials}
             </div>
           </div>
@@ -350,7 +350,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 className={`flex flex-col items-center gap-1 py-2 px-2 min-w-[48px] text-[11px] rounded-lg transition-colors ${
-                  active ? 'text-secondary font-black bg-secondary/10' : 'text-slate-300'
+                  active ? 'text-secondary-text font-black bg-secondary/10' : 'text-slate-600'
                 }`}
               >
                 <Icon size={20} />
