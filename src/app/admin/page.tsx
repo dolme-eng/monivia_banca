@@ -11,7 +11,7 @@ export default function AdminHub() {
             <Settings size={12} />
             Amministrazione
           </div>
-          <h2 className="section-heading">Console di Amministrazione</h2>
+          <h1 className="section-heading">Console di Amministrazione</h1>
           <p className="section-copy mt-5">
             Gestione centralizzata degli asset finanziari, provisionamento dei prestiti e controllo dei flussi di cassa.
           </p>

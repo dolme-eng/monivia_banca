@@ -175,7 +175,7 @@ export default function ProvisionPage() {
   return (
     <div>
       <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
-        <h2 className="section-heading">Gestione <span className="text-gradient-cyan">Prestiti</span></h2>
+        <h1 className="section-heading">Gestione <span className="text-gradient-cyan">Prestiti</span></h1>
         <p className="section-copy mt-5">
           Cerca un conto esistente per accreditare un nuovo prestito, oppure crea un nuovo conto.
         </p>

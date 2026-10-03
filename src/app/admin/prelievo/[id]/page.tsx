@@ -199,7 +199,7 @@ export default function AdminPrelievoDetailPage() {
                   ? tx.status === 'APPROVED'
                     ? 'bg-emerald-100 text-emerald-700'
                     : tx.status === 'REJECTED' && i === 2
-                    ? 'bg-red-100 text-red-600'
+                    ? 'bg-red-100 text-red-700'
                     : 'bg-secondary/10 text-secondary-text'
                   : 'bg-slate-100 text-slate-600'
               }`}>

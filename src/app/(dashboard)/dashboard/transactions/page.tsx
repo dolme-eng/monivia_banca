@@ -45,9 +45,9 @@ const TYPE_CONFIG: Record<string, { icon: typeof ArrowUpRight; color: string; la
 };
 
 const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; color: string; bg: string; label: string }> = {
-  PENDING: { icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', label: 'In attesa' },
+  PENDING: { icon: Clock, color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', label: 'In attesa' },
   APPROVED: { icon: CheckCircle2, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', label: 'Approvata' },
-  REJECTED: { icon: XCircle, color: 'text-red-600', bg: 'bg-red-50 border-red-200', label: 'Rifiutata' },
+  REJECTED: { icon: XCircle, color: 'text-red-700', bg: 'bg-red-50 border-red-200', label: 'Rifiutata' },
   CANCELLED: { icon: AlertCircle, color: 'text-slate-600', bg: 'bg-slate-50 border-slate-200', label: 'Annullata' },
 };
 

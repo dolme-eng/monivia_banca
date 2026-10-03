@@ -59,9 +59,9 @@ export default function LoginPage() {
                 Banca
               </span>
             </Link>
-            <p className="text-sm text-slate-600 mt-3">
+            <h1 className="text-sm text-slate-600 mt-3">
               Accedi al tuo conto bancario personale in sicurezza.
-            </p>
+            </h1>
           </div>
 
           {/* Error */}

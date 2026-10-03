@@ -213,7 +213,7 @@ export default function CardsPage() {
                     <p className="text-xs font-black uppercase">{card.holder}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[11px] opacity-50 uppercase">Scade</p>
+                    <p className="text-[11px] opacity-60 uppercase">Scade</p>
                     <p className="text-xs font-black">{card.expiry}</p>
                   </div>
                 </div>

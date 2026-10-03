@@ -135,7 +135,7 @@ export default function DashboardPage() {
           <div className="absolute -right-8 -top-8 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" aria-hidden />
           <div className="relative z-10">
             <div className="flex justify-between items-start">
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-secondary-text">Saldo Totale</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-secondary">Saldo Totale</span>
               <Wallet size={18} className="text-secondary-text" />
             </div>
             <div className="mt-4">
