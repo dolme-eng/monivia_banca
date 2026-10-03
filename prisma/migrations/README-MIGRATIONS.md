@@ -65,6 +65,24 @@ et ce qui est délibérément conservé.
   détectée avant de les poser (l'application supprimait les tokens
   explicitement), donc l'ajout n'a rien invalidé.
 
+### Corrigé par `20261003150000_drop_duplicate_balance_check`
+
+- `account_balance_non_negative` (minuscule) et
+  `Account_balance_non_negative` (majuscule) étaient deux contraintes CHECK
+  **strictement identiques** sur `Account.balance`. La variante minuscule,
+  créée à la main, a été supprimée ; celle portée par la migration
+  `add_money_guards` est conservée pour que le nom restant corresponde à
+  l'historique de migrations. Comportement inchangé.
+
+### Contraintes presentes en base mais absentes de l'historique
+
+- `transaction_description_length` (`CHECK (length(description) <= 255)`) et
+  `Transaction_amount_nonzero` existent en base mais ne sont decrites ni dans
+  `schema.prisma` ni dans un fichier de migration. Les deux sont pourtant
+  actives et appliquees par PostgreSQL. Pour les faire entrer dans
+  l'historique, il faudrait reecrire le fichier de baseline, ce qui changerait
+  son checksum et invaliderait l'alignement decrit plus haut. A traiter dans
+  une operation dediee, avec `migrate resolve`.
 ### Conservé volontairement — ne pas « corriger » sans mesure
 
 Ces écarts font échouer `migrate diff`, mais les corriger serait introduire un

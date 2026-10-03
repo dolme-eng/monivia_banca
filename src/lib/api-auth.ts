@@ -17,7 +17,11 @@ export async function verifySession(req: NextRequest): Promise<SessionPayload | 
     || req.cookies.get('__Secure-authjs.session-token')?.value;
   if (!token || !AUTH_SECRET) return null;
   try {
-    const { payload } = await jwtVerify(token, new TextEncoder().encode(AUTH_SECRET));
+    // algorithms est epingle : sans lui, jose se fie a l'en-tete "alg" du
+    // jeton, ce qui rouvre la famille de attaques de confusion d'algorithme.
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(AUTH_SECRET), {
+      algorithms: ['HS256'],
+    });
     if (!payload.userId || !payload.role) return null;
     return payload as SessionPayload;
   } catch {

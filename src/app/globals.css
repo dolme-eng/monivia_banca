@@ -102,7 +102,7 @@
   }
 
   .badge {
-    @apply inline-flex items-center gap-2 rounded-full border border-secondary/25 bg-secondary/8 px-4 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-secondary;
+    @apply inline-flex items-center gap-2 rounded-full border border-secondary/25 bg-secondary/8 px-4 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-secondary-text;
   }
 
   .badge-dark {

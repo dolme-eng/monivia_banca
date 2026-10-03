@@ -197,7 +197,7 @@ export default function DashboardPage() {
         {/* Recent Transactions */}
         <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200/80 rounded-xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-            <h3 className="text-sm font-black text-primary">Transazioni Recenti</h3>
+            <h2 className="text-sm font-black text-primary">Transazioni Recenti</h2>
             <Link href="/dashboard/payments" className="text-secondary-text text-xs font-black hover:underline py-2 px-1 min-h-[44px] flex items-center shrink-0">
               Vedi tutte
             </Link>
@@ -257,7 +257,7 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div className="col-span-12 lg:col-span-4 space-y-4">
           <div className="bg-white border border-slate-200/80 p-6 rounded-xl" style={{ boxShadow: 'var(--shadow-card)' }}>
-            <h3 className="text-sm font-black text-primary mb-5">Azioni Rapide</h3>
+            <h2 className="text-sm font-black text-primary mb-5">Azioni Rapide</h2>
             <div className="flex flex-col gap-3">
               <Link href="/dashboard/payments" className="flex items-center gap-3 w-full p-3 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all group">
                 <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center text-primary shrink-0">

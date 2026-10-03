@@ -182,10 +182,10 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
         {/* Metrics */}
         <section className="md:col-span-3 lg:col-span-2 bg-white rounded-xl p-5 border border-slate-200/80 flex flex-col justify-between" style={{ boxShadow: 'var(--shadow-card)' }}>
-          <h3 className="text-sm font-black text-primary mb-4 flex items-center gap-2">
+          <h2 className="text-sm font-black text-primary mb-4 flex items-center gap-2">
             <Activity size={16} className="text-secondary-text" />
             Panoramica Generale
-          </h3>
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 mb-1">Conti Totali</p>
@@ -238,7 +238,7 @@ export default function AdminDashboardPage() {
         {/* Pending Approvals */}
         <section className="md:col-span-3 lg:col-span-1 bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-black text-primary">Da Approvare</h3>
+            <h2 className="text-sm font-black text-primary">Da Approvare</h2>
             <Link href="/admin/approvals" className="text-secondary-text text-[11px] font-black hover:underline py-2 px-1 min-h-[44px] flex items-center">
               Vedi tutte
             </Link>
@@ -257,7 +257,7 @@ export default function AdminDashboardPage() {
               {stats.pendingList.map((item: any) => (
                 <Link
                   key={item.id}
-                  href={`/admin/prelievo/${item.id}`}
+                  href={`/admin/prelievo/${item.id}`} prefetch={false}
                   className="p-3 bg-slate-50 rounded-lg flex items-center justify-between hover:bg-slate-100 transition-colors cursor-pointer block"
                 >
                   <div className="flex items-center gap-2">
@@ -289,7 +289,7 @@ export default function AdminDashboardPage() {
         {/* Recent Activity */}
         <section className="md:col-span-3 lg:col-span-2 bg-white rounded-xl p-5 border border-slate-200/80 flex flex-col" style={{ boxShadow: 'var(--shadow-card)' }}>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-black text-primary">Attività Recenti</h3>
+            <h2 className="text-sm font-black text-primary">Attività Recenti</h2>
             <Link href="/admin/timeline" className="text-secondary-text text-xs font-black hover:underline py-2 px-1 min-h-[44px] flex items-center">
               Vedi tutto
             </Link>
@@ -355,7 +355,7 @@ export default function AdminDashboardPage() {
 
         {/* Quick Actions */}
         <section className="md:col-span-3 lg:col-span-1 bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
-          <h3 className="text-sm font-black text-primary mb-4">Azioni Rapide</h3>
+          <h2 className="text-sm font-black text-primary mb-4">Azioni Rapide</h2>
           <div className="flex flex-col gap-2">
             <Link href="/admin/provision" className="flex items-center gap-3 w-full p-3 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all group">
               <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center text-primary shrink-0">

@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
   if (accessToken && secret) {
     try {
-      const { payload } = await jwtVerify(accessToken, secret);
+      const { payload } = await jwtVerify(accessToken, secret, { algorithms: ['HS256'] });
       const userId = payload.userId as string | undefined;
       if (userId) {
         await prisma.refreshToken.deleteMany({ where: { userId } }).catch(() => {});

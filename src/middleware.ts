@@ -11,7 +11,9 @@ async function getSession(req: NextRequest) {
     || req.cookies.get('__Secure-authjs.session-token')?.value;
   if (!token || !AUTH_SECRET) return null;
   try {
-    const { payload } = await jwtVerify(token, new TextEncoder().encode(AUTH_SECRET));
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(AUTH_SECRET), {
+    algorithms: ['HS256'],
+  });
     return payload as { role?: string; userId?: string };
   } catch {
     return null;

@@ -213,7 +213,7 @@ export default function ProvisionPage() {
           <div className="space-y-6">
             {/* Search bar */}
             <div className="surface-card p-6">
-              <h3 className="mb-4 font-black text-primary">Cerca un cliente</h3>
+              <h2 className="mb-4 font-black text-primary text-lg">Cerca un cliente</h2>
               <p className="mb-4 text-sm text-slate-600">
                 Cerca per email, nome, cognome o IBAN.
               </p>
@@ -363,7 +363,7 @@ export default function ProvisionPage() {
           >
             <div className="surface-card p-6 sm:p-8">
               <div className="mb-6">
-                <h3 className="text-xl font-black text-primary">Informazioni del cliente</h3>
+                <h2 className="text-xl font-black text-primary">Informazioni del cliente</h2>
                 <p className="mt-1 text-sm text-slate-600">
                   Inserisci i dati ricevuti via email o WhatsApp.
                 </p>
@@ -443,9 +443,9 @@ export default function ProvisionPage() {
               <div className="surface-card p-6" role="status">
                 <div className="mb-4 flex items-center gap-2">
                   <CheckCircle2 size={20} className="text-emerald-500" />
-                  <h3 className="font-black text-primary">
+                  <h2 className="font-black text-primary text-lg">
                     {createResult.isNew ? 'Conto creato e accreditato' : 'Conto accreditato'}
-                  </h3>
+                  </h2>
                 </div>
                 <div className="space-y-3">
                   <div className="rounded-lg bg-slate-50 p-3">

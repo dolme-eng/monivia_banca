@@ -150,6 +150,7 @@ export default function AdminTimelinePage() {
               <Link
                 key={tx.id}
                 href={`/admin/prelievo/${tx.id}`}
+                prefetch={false}
                 className="block bg-white rounded-xl p-5 border border-slate-200/80 hover:border-secondary/30 transition-all group"
                 style={{ boxShadow: 'var(--shadow-card)' }}
               >

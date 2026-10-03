@@ -163,7 +163,7 @@ export default function CardsPage() {
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-600">
             <CreditCard size={32} />
           </div>
-          <h3 className="mb-2 text-xl font-black text-primary">Nessuna carta associata</h3>
+          <h2 className="mb-2 text-xl font-black text-primary">Nessuna carta associata</h2>
           <p className="text-sm text-slate-600">Contatta l&apos;amministrazione per richiedere una carta.</p>
         </div>
       ) : (
@@ -270,7 +270,7 @@ export default function CardsPage() {
           {/* Recent Activity */}
           <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200/80 rounded-xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-              <h3 className="text-sm font-black text-primary">Attività Recente</h3>
+              <h2 className="text-sm font-black text-primary">Attività Recente</h2>
             </div>
             <div className="divide-y divide-slate-100">
               {transactions.length === 0 ? (
@@ -327,7 +327,7 @@ export default function CardsPage() {
           <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
             {/* Card List */}
             <div className="bg-white border border-slate-200/80 rounded-xl p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
-              <h3 className="text-xs font-black text-primary mb-3 px-2">Le mie Carte</h3>
+              <h2 className="text-xs font-black text-primary mb-3 px-2">Le mie Carte</h2>
               <div className="space-y-2">
                 {cards.map((c, i) => (
                   <button

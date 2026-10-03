@@ -128,7 +128,7 @@ export default function ApprovalsPage() {
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
             <CheckCircle2 size={32} />
           </div>
-          <h3 className="mb-2 text-xl font-black text-primary">Nessuna transazione in sospeso</h3>
+          <h2 className="mb-2 text-xl font-black text-primary">Nessuna transazione in sospeso</h2>
           <p className="text-sm text-slate-600">Tutte le richieste sono state elaborate.</p>
         </div>
       ) : (
@@ -168,7 +168,7 @@ export default function ApprovalsPage() {
                   </span>
                   <div className="flex gap-2">
                     <Link
-                      href={`/admin/prelievo/${tx.id}`}
+                      href={`/admin/prelievo/${tx.id}`} prefetch={false}
                       className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-secondary/40 hover:text-secondary-text transition-colors text-slate-600"
                       aria-label={`Vedi il dettaglio della transazione di ${formatAmount(Math.abs(Number(tx.amount)))} €`}
                     >

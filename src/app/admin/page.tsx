@@ -26,9 +26,9 @@ export default function AdminHub() {
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text transition-colors group-hover:bg-secondary group-hover:text-primary">
               <LayoutDashboard size={28} />
             </div>
-            <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
+            <h2 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Dashboard
-            </h3>
+            </h2>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Panoramica generale dei conti, statistiche e stato del sistema.
             </p>
@@ -44,9 +44,9 @@ export default function AdminHub() {
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text transition-colors group-hover:bg-secondary group-hover:text-primary">
               <Users size={28} />
             </div>
-            <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
+            <h2 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Gestione Conti
-            </h3>
+            </h2>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Valida, congela, blocca ed elimina i conti clienti. Controllo totale sul ciclo di vita.
             </p>
@@ -62,9 +62,9 @@ export default function AdminHub() {
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text transition-colors group-hover:bg-secondary group-hover:text-primary">
               <CreditCard size={28} />
             </div>
-            <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
+            <h2 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Gestione Carte
-            </h3>
+            </h2>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Congela, attiva, segna scadute ed elimina le carte dei clienti. Controllo totale sullo stato delle carte.
             </p>
@@ -80,9 +80,9 @@ export default function AdminHub() {
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text transition-colors group-hover:bg-secondary group-hover:text-primary">
               <Wallet size={28} />
             </div>
-            <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
+            <h2 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Provisionamento
-            </h3>
+            </h2>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Inserimento dei dati del cliente e creazione istantanea di account accreditati per i prestiti approvati.
             </p>
@@ -98,9 +98,9 @@ export default function AdminHub() {
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text transition-colors group-hover:bg-secondary group-hover:text-primary">
               <ShieldCheck size={28} />
             </div>
-            <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
+            <h2 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Validazioni
-            </h3>
+            </h2>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Centro di controllo delle transazioni. Approva o rifiuta le richieste di prelievo e trasferimento.
             </p>
@@ -116,9 +116,9 @@ export default function AdminHub() {
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text transition-colors group-hover:bg-secondary group-hover:text-primary">
               <Clock size={28} />
             </div>
-            <h3 className="mb-3 text-xl font-black text-primary sm:text-2xl">
+            <h2 className="mb-3 text-xl font-black text-primary sm:text-2xl">
               Timeline
-            </h3>
+            </h2>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Storico completo delle transazioni con filtri per stato e dettaglio operazioni.
             </p>

@@ -311,7 +311,7 @@ export default function PrelievoPage() {
 
           {/* Recent prelievi */}
           <div className="bg-white border border-slate-200/80 rounded-xl p-5" style={{ boxShadow: 'var(--shadow-card)' }}>
-            <h3 className="text-xs font-black text-primary uppercase tracking-wider mb-4">Richieste Recenti</h3>
+            <h2 className="text-xs font-black text-primary uppercase tracking-wider mb-4">Richieste Recenti</h2>
             {recentPrelievi.length === 0 ? (
               <div className="text-center py-6">
                 <Clock size={24} className="text-slate-300 mx-auto mb-2" />
@@ -341,7 +341,7 @@ export default function PrelievoPage() {
 
           {/* How it works */}
           <div className="bg-white border border-slate-200/80 rounded-xl p-5" style={{ boxShadow: 'var(--shadow-card)' }}>
-            <h3 className="text-xs font-black text-primary uppercase tracking-wider mb-4">Come funziona</h3>
+            <h2 className="text-xs font-black text-primary uppercase tracking-wider mb-4">Come funziona</h2>
             <div className="space-y-3">
               {[
                 { step: '1', text: 'Inserisci l\'importo e la descrizione' },
