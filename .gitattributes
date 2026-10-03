@@ -1,0 +1,29 @@
+# Normalisation des fins de ligne.
+#
+# Prisma calcule le checksum d'une migration sur les OCTETS de migration.sql.
+# Sans cette regle, core.autocrlf=true produit du CRLF sur Windows et du LF sur
+# Linux/Vercel : le meme fichier gives deux SHA-256 differents, et
+# `prisma migrate status` signale alors les migrations comme "modified" sur
+# tout poste autre que celui qui les a posees. On force donc LF pour tout ce
+# qui touche a la base.
+* text=auto
+
+*.sql   text eol=lf
+*.prisma text eol=lf
+*.ts    text eol=lf
+*.tsx   text eol=lf
+*.mjs   text eol=lf
+*.js    text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+
+# Fichiers binaires : aucune conversion.
+*.ico    binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.woff   binary
+*.woff2  binary
+*.pdf    binary
