@@ -43,3 +43,6 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 tsconfig.tsbuildinfo
+
+# Rapports d'audit generes (reproductibles via scripts/audit/)
+audit/
