@@ -45,21 +45,44 @@ npx prisma migrate resolve --applied 20260930000000_baseline_current_schema
 
 `npx prisma migrate status` → **Database schema is up to date!**
 
-## Écarts assumés restants
+## Dérive restante — état au 2026-10-03
 
-`migrate diff` signale encore des différences sur :
+`migrate diff` n'est **pas** vide, et c'est voulu. Voici ce qui a été corrigé,
+et ce qui est délibérément conservé.
 
-- **Actions des clés étrangères** : la base est en `NO ACTION`, le schéma déclare
-  `Cascade` (ou `Restrict` par défaut). Sémantiquement équivalent pour notre
-  usage, mais `migrate dev` voudrait les réécrire. Corriger = recréer des FK sur
-  des tables en production : à planifier.
-- **Types temporels** : la base mélange `timestamptz` (`createdAt`) et
-  `timestamp without time zone` (`updatedAt` sur plusieurs tables). Uniformiser
-  = `ALTER TABLE ... TYPE` sur des colonnes vivantes.
-- `Account.status` a `DEFAULT 'ACTIVE'` en base et `PENDING` dans le schéma.
+### Corrigé par `20261003120000_align_defaults_and_token_fks`
 
-Ces trois points sont documentés, pas corrigés : chacun demande une migration
-DDL sur des tables qui contiennent de vraies données.
+- **`Account.status`** : `DEFAULT 'ACTIVE'` → `'PENDING'`. Le provisioning
+  passait déjà le statut explicitement, donc l'écart n'était visible que sur une
+  insertion SQL brute — et le projet en fait déjà (`rate-limit.ts`). Avec ce
+  défaut, un `INSERT` direct créait un compte `ACTIVE` en contournant le
+  contrôle `PENDING`.
+- **`RateLimitEntry.count`** : `DEFAULT 1` → `0`. Sans effet (le code insère
+  toujours `count`), mais `0` est le seul défaut cohérent avec un compteur.
+- **`InviteToken.userId` et `PasswordResetToken.userId`** : ces deux tables
+  n'avaient **aucune clé étrangère** vers `User`, contrairement au schéma. La
+  suppression d'un utilisateur y laissait des orphelins. 0 orpheline n'a été
+  détectée avant de les poser (l'application supprimait les tokens
+  explicitement), donc l'ajout n'a rien invalidé.
+
+### Conservé volontairement — ne pas « corriger » sans mesure
+
+Ces écarts font échouer `migrate diff`, mais les corriger serait introduire un
+risque sur des données réelles pour un gain nul :
+
+| Écart | Pourquoi on le garde |
+|---|---|
+| `timestamptz` → `timestamp(3)` sur 9 tables | Convertir réécrit toutes les lignes vivantes et décale les valeurs si le `TimeZone` de session n'est pas UTC. Aucun bénéfice fonctionnel : l'application fonctionne ainsi depuis toujours. |
+| FK en `NO ACTION` (Account, Card, Transaction) au lieu de `Restrict` | Les deux bloquent la suppression d'un parent : sémantique identique. Le seul écart réel est `ON UPDATE`, sans effet puisque les UUID ne changent pas. Recréer ces FK sur de la production pour un gain nul n'est pas justifié. |
+| `ON UPDATE` manquant sur les FK `CASCADE` | Même raison : aucune clé primaire n'est jamais mise à jour. |
+| `DROP DEFAULT` sur les `id` (PK) | La base a `DEFAULT gen_random_uuid()`, le schéma non. Ce défaut est une protection utile contre un `INSERT` SQL forgetant l'id — or le projet écrit déjà du SQL brut. |
+| `DROP TABLE "_prisma_migrations_lock"` | C'est **la table de verrou de Prisma**. `migrate diff` veut la supprimer parce qu'elle n'est pas modélisée ; la faire tomber pendant qu'une migration court serait une catastrophe. Ne jamais appliquer ce `DROP`. |
+| `AuditLog.id` sans default SQL | L'uuid est généré par le code. |
+
+> **En cas de `migrate diff` non vide :** lire cette table avant d'écrire une
+> migration. Un diff vide n'est pas l'objectif ; l'absence de régression l'est.
+> Pour récupérer un historique de modifications, `migrate diff` reste
+> l'outil adapté — mais filtrer les écarts ci-dessus avant de générer du SQL.
 
 ## Les dossiers historiques non reconnus
 
