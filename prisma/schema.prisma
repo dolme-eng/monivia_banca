@@ -70,6 +70,9 @@ model Transaction {
   status      TransactionStatus @default(PENDING)
   reference   String?           @unique
   category    String?
+  // IBAN du beneficiaire pour les virements sortants : valide a la saisie
+  // mais sans trace en base, donc invendable en cas de litige.
+  toIban      String?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 

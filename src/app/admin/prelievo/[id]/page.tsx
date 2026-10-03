@@ -12,6 +12,7 @@ import {
   User,
   CreditCard,
   FileText,
+  Landmark,
   AlertTriangle,
   Send,
   Loader2,
@@ -25,6 +26,7 @@ interface TransactionDetail {
   type: string;
   amount: number;
   description: string;
+  toIban?: string | null;
   status: string;
   reference: string | null;
   createdAt: string;
@@ -279,6 +281,19 @@ export default function AdminPrelievoDetailPage() {
         </h3>
         <p className="text-sm text-slate-600 leading-relaxed">{tx.description}</p>
       </div>
+
+      {tx.toIban && (
+        <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>
+          <h3 className="text-sm font-black text-primary mb-3 flex items-center gap-2">
+            <Landmark size={14} className="text-secondary-text" />
+            IBAN destinatario
+          </h3>
+          <p className="text-sm font-black text-primary font-mono tracking-wider break-all">{tx.toIban}</p>
+          <p className="text-[11px] text-slate-600 mt-2">
+            Registrato alla creazione del trasferimento: e&apos; la prova della destinazione in caso di contestazione.
+          </p>
+        </div>
+      )}
 
       {isPending && (
         <div className="bg-white rounded-xl p-5 border border-slate-200/80" style={{ boxShadow: 'var(--shadow-card)' }}>

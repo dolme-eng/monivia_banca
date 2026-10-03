@@ -9,6 +9,22 @@ import { checkOrigin } from '@/lib/origin';
 
 const IBAN_REGEX = /^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/;
 
+/**
+ * Cle de controle IBAN (ISO 7064 mod 97-10). La regex ci-dessus ne verifie que
+ * la forme : sans ce controle, une faute de frappe qui respecte la forme passe
+ * et l'argent part vers un compte qui n'existe pas.
+ */
+function isValidIbanCheckDigits(iban: string): boolean {
+  const rearranged = iban.slice(4) + iban.slice(0, 4);
+  let remainder = 0;
+  for (const ch of rearranged) {
+    const value = /[0-9]/.test(ch) ? ch : String(ch.charCodeAt(0) - 55);
+    if (!/^\d+$/.test(value)) return false;
+    for (const d of value) remainder = (remainder * 10 + Number(d)) % 97;
+  }
+  return remainder === 1;
+}
+
 const transactionSchema = z.object({
   accountId: z.string().uuid(),
   type: z.enum(['DEBIT', 'TRANSFER_OUT']),
@@ -60,6 +76,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'IBAN destinatario obbligatorio per i trasferimenti' }, { status: 400 });
     }
 
+    // Verifie la cle de controle, pas seulement la forme : catches les fautes de
+    // frappe avant qu'un virement irreversible parte vers un IBAN inexistant.
+    if (toIban && !isValidIbanCheckDigits(toIban)) {
+      return NextResponse.json({ success: false, error: 'IBAN destinatario non valido (cifre di controllo non corrette)' }, { status: 400 });
+    }
+
     const account = await prisma.account.findUnique({ where: { id: accountId } });
 
     if (!account || account.userId !== auth.session.userId) {
@@ -108,6 +130,7 @@ export async function POST(req: NextRequest) {
           type: type === 'TRANSFER_OUT' ? 'TRANSFER_OUT' : 'DEBIT',
           amount: -(Math.round(amount * 100) / 100),
           description,
+          toIban: toIban ?? null,
           status: 'PENDING',
           reference,
         },
