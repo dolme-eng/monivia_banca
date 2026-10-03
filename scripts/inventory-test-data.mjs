@@ -36,7 +36,7 @@ for (const u of users) {
   console.log(
     `${u.is_test ? "TEST " : "REAL "} ${String(u.email).padEnd(34)} ${String(u.role).padEnd(6)} ` +
     `comptes=${u.accounts} cartes=${u.cards} tx=${String(u.tx).padStart(4)} ` +
-    `solde=${(Number(u.balance) / 100).toFixed(2).padStart(12)} EUR  [${u.astatus ?? "-"}]`
+    `solde=${Number(u.balance).toFixed(2).padStart(12)} EUR  [${u.astatus ?? "-"}]`
   );
 }
 const t = users.filter((u) => u.is_test).length;
@@ -50,7 +50,7 @@ const accts = await prisma.$queryRawUnsafe(`
 `);
 console.log("\n=== Comptes ===");
 for (const a of accts) {
-  console.log(`  ${a.is_test ? "TEST" : "REAL"}  ${String(a.iban).padEnd(34)} ${(Number(a.balance) / 100).toFixed(2).padStart(12)} EUR  ${String(a.status).padEnd(8)} ${a.email}`);
+  console.log(`  ${a.is_test ? "TEST" : "REAL"}  ${String(a.iban).padEnd(34)} ${Number(a.balance).toFixed(2).padStart(12)} EUR  ${String(a.status).padEnd(8)} ${a.email}`);
 }
 
 const pending = await prisma.$queryRawUnsafe(`
@@ -63,7 +63,7 @@ const pending = await prisma.$queryRawUnsafe(`
 `);
 console.log(`\n=== Transactions PENDING (${pending.length}) — NE PAS TOUCHER ===`);
 for (const p of pending) {
-  console.log(`  ${p.id}  ${String(p.type).padEnd(14)} ${(Number(p.amount) / 100).toFixed(2).padStart(10)}  ${p.email}  "${p.description}"`);
+  console.log(`  ${p.id}  ${String(p.type).padEnd(14)} ${Number(p.amount).toFixed(2).padStart(10)}  ${p.email}  "${p.description}"`);
 }
 
 await prisma.$disconnect();

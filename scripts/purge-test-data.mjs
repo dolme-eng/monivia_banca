@@ -72,9 +72,9 @@ let total = 0;
 for (const a of accounts) {
   const u = victims.find((v) => v.id === accounts.find(() => true) ? true : true);
   total += Number(a.balance);
-  console.log(`  - ${a.iban}  ${(Number(a.balance) / 100).toFixed(2).padStart(8)} EUR  [${a.status}]`);
+  console.log(`  - ${a.iban}  ${Number(a.balance).toFixed(2).padStart(8)} EUR  [${a.status}]`);
 }
-console.log(`  Solde total ecrit : ${(total / 100).toFixed(2)} EUR`);
+console.log(`  Solde total ecrit : ${total.toFixed(2)} EUR`);
 console.log(`\nLignes associees :`);
 console.log(`  Transaction        ${c.tx}  (dont PENDING : ${c.tx_pending})`);
 console.log(`  Card               ${c.cards}`);
