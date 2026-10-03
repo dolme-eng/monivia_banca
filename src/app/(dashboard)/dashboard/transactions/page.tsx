@@ -241,7 +241,8 @@ export default function TransactionsPage() {
                   <button
                     onClick={() => fetchTransactions(pagination.page - 1)}
                     disabled={pagination.page <= 1}
-                    className="p-2 min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    aria-label="Pagina precedente"
+                    className="p-2 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronLeft size={14} />
                   </button>
@@ -253,7 +254,9 @@ export default function TransactionsPage() {
                       <button
                         key={pageNum}
                         onClick={() => fetchTransactions(pageNum)}
-                        className={`p-2 min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg text-xs font-black transition-colors ${
+                        aria-label={`Pagina ${pageNum}`}
+                        aria-current={pageNum === pagination.page ? "page" : undefined}
+                        className={`p-2 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg text-xs font-black transition-colors ${
                           pageNum === pagination.page
                             ? 'bg-secondary text-primary'
                             : 'border border-slate-200 hover:bg-slate-50'
@@ -266,7 +269,8 @@ export default function TransactionsPage() {
                   <button
                     onClick={() => fetchTransactions(pagination.page + 1)}
                     disabled={pagination.page >= pagination.pages}
-                    className="p-2 min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    aria-label="Pagina successiva"
+                    className="p-2 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronRight size={14} />
                   </button>

@@ -255,10 +255,10 @@ export default function AccountsPage() {
 
   const statusLabel = (s: string) => {
     switch (s) {
-      case 'PENDING': return { text: 'In attesa', cls: 'bg-amber-50 text-amber-600' };
+      case 'PENDING': return { text: 'In attesa', cls: 'bg-amber-50 text-amber-700' };
       case 'ACTIVE': return { text: 'Attivo', cls: 'bg-emerald-50 text-emerald-700' };
       case 'FROZEN': return { text: 'Congelato', cls: 'bg-blue-50 text-blue-600' };
-      case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-600' };
+      case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-700' };
       default: return { text: s, cls: 'bg-slate-100 text-slate-600' };
     }
   };
@@ -275,7 +275,7 @@ export default function AccountsPage() {
           </p>
         </div>
         {pendingCount > 0 && (
-          <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-600 px-3 py-1.5 rounded-lg text-xs font-black">
+          <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-lg text-xs font-black">
             <Clock size={14} />
             {pendingCount} in attesa di validazione
           </span>
@@ -362,7 +362,7 @@ export default function AccountsPage() {
                       </div>
                       <div className="ml-auto flex items-center gap-2 shrink-0">
                         {loginLocked && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-red-50 text-red-600">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-red-50 text-red-700">
                             <Lock size={10} />
                             Accesso bloccato
                           </span>
@@ -439,7 +439,7 @@ export default function AccountsPage() {
                       <button
                         onClick={() => setConfirm({ type: 'unlockLogin', account: acc })}
                         disabled={actionLoading !== null}
-                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-black hover:bg-red-100 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-black hover:bg-red-100 transition-colors"
                       >
                         <Unlock size={14} />
                         Sblocca accesso
@@ -497,7 +497,7 @@ export default function AccountsPage() {
                           <button
                             onClick={() => setConfirm({ type: 'block', account: acc })}
                             disabled={actionLoading !== null}
-                            className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-amber-50 text-amber-600 border border-amber-200 rounded-lg text-xs font-black hover:bg-amber-100 transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-xs font-black hover:bg-amber-100 transition-colors"
                           >
                             <Shield size={14} />
                             Blocca trasferimenti
@@ -523,7 +523,7 @@ export default function AccountsPage() {
                         <button
                           onClick={() => { setPurgeIban(''); setConfirm({ type: 'purge', account: acc }); }}
                           disabled={actionLoading !== null}
-                          className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-black hover:bg-red-100 transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-black hover:bg-red-100 transition-colors"
                         >
                           <Trash2 size={14} />
                           Elimina

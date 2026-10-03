@@ -257,9 +257,9 @@ export default function AdminPrelievoDetailPage() {
               <span className="text-xs text-slate-600">Stato</span>
               <span className={`text-xs font-black px-2 py-0.5 rounded ${
                 tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700' :
-                tx.status === 'REJECTED' ? 'bg-red-50 text-red-600' :
+                tx.status === 'REJECTED' ? 'bg-red-50 text-red-700' :
                 tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-600' :
-                'bg-amber-50 text-amber-600'
+                'bg-amber-50 text-amber-700'
               }`}>
                 {tx.status === 'APPROVED' ? 'Approvata' : tx.status === 'REJECTED' ? 'Rifiutata' : tx.status === 'CANCELLED' ? 'Annullata' : 'In Attesa'}
               </span>
@@ -299,7 +299,7 @@ export default function AdminPrelievoDetailPage() {
             <button
               onClick={() => openConfirm('REJECT')}
               disabled={actionLoading !== null}
-              className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-black hover:bg-red-100 transition-colors disabled:opacity-50"
+              className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-sm font-black hover:bg-red-100 transition-colors disabled:opacity-50"
             >
               {actionLoading === 'REJECT' ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -323,7 +323,7 @@ export default function AdminPrelievoDetailPage() {
             <button
               onClick={() => openConfirm('PAUSE')}
               disabled={actionLoading !== null}
-              className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-3 bg-amber-50 text-amber-600 border border-amber-200 rounded-xl text-sm font-black hover:bg-amber-100 transition-colors disabled:opacity-50"
+              className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-3 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl text-sm font-black hover:bg-amber-100 transition-colors disabled:opacity-50"
             >
               {actionLoading === 'PAUSE' ? (
                 <Loader2 size={16} className="animate-spin" />

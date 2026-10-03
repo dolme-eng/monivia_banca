@@ -40,7 +40,7 @@ const SCENES = [
     loanDetail: '22.160 € disponibili su 25.000 €',
     txs: [
       { icon: ArrowDownToLine, color: 'text-emerald-700', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-700' },
-      { icon: ArrowUpFromLine, color: 'text-secondary-text', bg: 'bg-secondary/10', title: 'Prelievo', time: 'In attesa di approvazione', amount: '', amountColor: '', badge: 'In Attesa', badgeColor: 'bg-amber-50 text-amber-600' },
+      { icon: ArrowUpFromLine, color: 'text-secondary-text', bg: 'bg-secondary/10', title: 'Prelievo', time: 'In attesa di approvazione', amount: '', amountColor: '', badge: 'In Attesa', badgeColor: 'bg-amber-50 text-amber-700' },
       { icon: CreditCard, color: 'text-slate-600', bg: 'bg-slate-100', title: 'Pagamento carta', time: '10 Giu 2026', amount: '-340 €', amountColor: 'text-red-600' },
     ],
   },
@@ -50,7 +50,7 @@ const SCENES = [
     loanDetail: '15.200 € disponibili su 25.000 €',
     txs: [
       { icon: ArrowDownToLine, color: 'text-emerald-700', bg: 'bg-emerald-50', title: 'Accredito prestito', time: '12 Giu 2026', amount: '+25.000 €', amountColor: 'text-emerald-700' },
-      { icon: ArrowUpFromLine, color: 'text-secondary-text', bg: 'bg-secondary/10', title: 'Prelievo', time: 'In attesa di approvazione', amount: '', amountColor: '', badge: 'In Attesa', badgeColor: 'bg-amber-50 text-amber-600' },
+      { icon: ArrowUpFromLine, color: 'text-secondary-text', bg: 'bg-secondary/10', title: 'Prelievo', time: 'In attesa di approvazione', amount: '', amountColor: '', badge: 'In Attesa', badgeColor: 'bg-amber-50 text-amber-700' },
       { icon: CreditCard, color: 'text-slate-600', bg: 'bg-slate-100', title: 'Pagamento carta', time: '10 Giu 2026', amount: '-340 €', amountColor: 'text-red-600' },
       { icon: Send, color: 'text-accent', bg: 'bg-accent/10', title: 'Trasferimento', time: '8 Giu 2026', amount: '-6.500 €', amountColor: 'text-red-600' },
     ],

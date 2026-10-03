@@ -157,9 +157,9 @@ export default function AdminTimelinePage() {
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                       tx.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700' :
-                      tx.status === 'REJECTED' ? 'bg-red-50 text-red-600' :
+                      tx.status === 'REJECTED' ? 'bg-red-50 text-red-700' :
                       tx.status === 'CANCELLED' ? 'bg-slate-100 text-slate-600' :
-                      'bg-amber-50 text-amber-600'
+                      'bg-amber-50 text-amber-700'
                     }`}>
                       {tx.type === 'DEBIT' || tx.type === 'TRANSFER_OUT' ? (
                         <Send size={16} />

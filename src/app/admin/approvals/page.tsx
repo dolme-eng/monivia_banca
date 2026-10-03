@@ -143,7 +143,7 @@ export default function ApprovalsPage() {
                 <div className="flex items-start gap-4">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
                     tx.type === 'DEBIT' || tx.type === 'TRANSFER_OUT'
-                      ? 'bg-amber-50 text-amber-600'
+                      ? 'bg-amber-50 text-amber-700'
                       : 'bg-emerald-50 text-emerald-700'
                   }`}>
                     {tx.type === 'DEBIT' || tx.type === 'TRANSFER_OUT' ? <Send size={16} /> : <CreditCard size={16} />}

@@ -162,17 +162,17 @@ export default function CardsPage() {
     switch (s) {
       case 'ACTIVE': return { text: 'Attiva', cls: 'bg-emerald-50 text-emerald-700' };
       case 'FROZEN': return { text: 'Congelata', cls: 'bg-blue-50 text-blue-600' };
-      case 'EXPIRED': return { text: 'Scaduta', cls: 'bg-red-50 text-red-600' };
+      case 'EXPIRED': return { text: 'Scaduta', cls: 'bg-red-50 text-red-700' };
       default: return { text: s, cls: 'bg-slate-100 text-slate-600' };
     }
   };
 
   const accountStatusLabel = (s: string) => {
     switch (s) {
-      case 'PENDING': return { text: 'In attesa', cls: 'bg-amber-50 text-amber-600' };
+      case 'PENDING': return { text: 'In attesa', cls: 'bg-amber-50 text-amber-700' };
       case 'ACTIVE': return { text: 'Attivo', cls: 'bg-emerald-50 text-emerald-700' };
       case 'FROZEN': return { text: 'Congelato', cls: 'bg-blue-50 text-blue-600' };
-      case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-600' };
+      case 'CLOSED': return { text: 'Chiuso', cls: 'bg-red-50 text-red-700' };
       default: return { text: s, cls: 'bg-slate-100 text-slate-600' };
     }
   };
@@ -352,7 +352,7 @@ export default function CardsPage() {
                       <button
                         onClick={() => setConfirm({ type: 'expire', card })}
                         disabled={actionLoading !== null}
-                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-amber-50 text-amber-600 border border-amber-200 rounded-lg text-xs font-black hover:bg-amber-100 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-xs font-black hover:bg-amber-100 transition-colors"
                       >
                         <Clock size={14} />
                         Segna scaduta
@@ -371,7 +371,7 @@ export default function CardsPage() {
                     <button
                       onClick={() => setConfirm({ type: 'delete', card })}
                       disabled={actionLoading !== null}
-                      className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-black hover:bg-red-100 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-black hover:bg-red-100 transition-colors"
                     >
                       <Trash2 size={14} />
                       Elimina
