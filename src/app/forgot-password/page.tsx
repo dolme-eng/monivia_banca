@@ -36,7 +36,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-6">
         {/* Header */}
         <div className="text-center">
@@ -125,6 +125,6 @@ export default function ForgotPasswordPage() {
           </Link>
         )}
       </div>
-    </div>
+    </main>
   );
 }

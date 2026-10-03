@@ -304,7 +304,7 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-slate-600">Nessuna attività recente</p>
             </div>
           ) : (
-            <div className="overflow-x-auto flex-1 -mx-5 px-5">
+            <div role="region" aria-label="Tabella statistiche" tabIndex={0} className="overflow-x-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 rounded flex-1 -mx-5 px-5">
               <div className="min-w-[600px]">
               <table className="w-full text-left border-collapse">
                 <thead>

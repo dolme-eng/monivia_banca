@@ -89,7 +89,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
         Vai al contenuto principale
       </a>
       {/* ===== Sidebar (desktop) ===== */}
-      <aside className="hidden md:flex flex-col h-screen w-64 bg-primary p-4 gap-3 shadow-md fixed left-0 top-0 z-40">
+      <aside aria-label="Navigazione amministrazione" className="hidden md:flex flex-col h-screen w-64 bg-primary p-4 gap-3 shadow-md fixed left-0 top-0 z-40">
         <div className="mb-6 px-3">
           <Link href="/admin/dashboard" className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center">
@@ -109,7 +109,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
           </Link>
         </div>
 
-        <nav className="flex flex-col gap-1 flex-grow">
+        <nav aria-label="Sezioni amministrazione" className="flex flex-col gap-1 flex-grow">
           {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(href + '/');
             return (
@@ -160,7 +160,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-primary p-4 gap-3 flex flex-col shadow-xl">
+          <aside aria-label="Menu amministrazione" className="absolute left-0 top-0 bottom-0 w-64 bg-primary p-4 gap-3 flex flex-col shadow-xl">
             <div className="flex items-center justify-between mb-6 px-1">
               <span className="flex items-center gap-1">
                 <span className="text-xl font-black tracking-tight text-white">
@@ -174,7 +174,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
                 <X size={20} />
               </button>
             </div>
-            <nav className="flex flex-col gap-1 flex-grow">
+            <nav aria-label="Sezioni del menu" className="flex flex-col gap-1 flex-grow">
               {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
                 const active = pathname === href || pathname.startsWith(href + '/');
                 return (
@@ -245,7 +245,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
         </main>
 
         {/* Mobile bottom nav */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1.5 flex justify-around items-center z-40">
+        <nav aria-label="Navigazione rapida" className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1.5 flex justify-around items-center z-40">
           {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(href + '/');
             return (

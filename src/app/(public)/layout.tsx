@@ -11,7 +11,7 @@ export default function PublicLayout({
         Vai al contenuto principale
       </a>
       <header className="fixed left-0 top-0 z-50 w-full border-b border-slate-200/70 bg-white text-primary shadow-sm">
-        <div className="hidden border-b border-slate-100 text-[11px] font-black uppercase tracking-[0.18em] text-slate-300 md:block">
+        <div className="hidden border-b border-slate-100 text-[11px] font-black uppercase tracking-[0.18em] text-slate-600 md:block">
           <div className="site-container flex h-9 items-center justify-between">
             <div className="flex items-center gap-6">
               <span className="flex items-center gap-1.5">Monivia S.r.l.</span>
@@ -28,7 +28,7 @@ export default function PublicLayout({
             <span className="text-2xl font-black tracking-tight text-primary">
               MO<span className="text-secondary">NIVIA</span>
             </span>
-            <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-slate-300">
+            <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-slate-600">
               Banca
             </span>
           </Link>

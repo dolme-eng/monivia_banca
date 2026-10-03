@@ -105,7 +105,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         Vai al contenuto principale
       </a>
       {/* ===== Sidebar (desktop) ===== */}
-      <aside className="hidden md:flex flex-col h-screen w-64 bg-primary p-4 gap-3 shadow-md fixed left-0 top-0 z-40">
+      <aside aria-label="Navigazione laterale" className="hidden md:flex flex-col h-screen w-64 bg-primary p-4 gap-3 shadow-md fixed left-0 top-0 z-40">
         <div className="mb-6 px-3">
           <Link href="/" className="flex items-center gap-2.5">
             <span className="text-xl font-black tracking-tight text-white">
@@ -163,7 +163,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           </div>
         )}
 
-        <nav className="flex flex-col gap-1 flex-grow">
+        <nav aria-label="Sezioni del conto" className="flex flex-col gap-1 flex-grow">
           {(isRestricted ? NAV_ITEMS.slice(0, 1) : NAV_ITEMS).map(({ href, label, icon: Icon }) => {
             const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
             return (
@@ -217,7 +217,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-primary p-4 gap-3 flex flex-col shadow-xl">
+          <aside aria-label="Menu di navigazione" className="absolute left-0 top-0 bottom-0 w-64 bg-primary p-4 gap-3 flex flex-col shadow-xl">
             <div className="flex items-center justify-between mb-6 px-1">
               <span className="flex items-center gap-1">
                 <span className="text-xl font-black tracking-tight text-white">
@@ -281,7 +281,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               </div>
             )}
 
-            <nav className="flex flex-col gap-1 flex-grow">
+            <nav aria-label="Sezioni del menu" className="flex flex-col gap-1 flex-grow">
               {(isRestricted ? NAV_ITEMS.slice(0, 1) : NAV_ITEMS).map(({ href, label, icon: Icon }) => {
                 const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
                 return (
@@ -341,7 +341,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         </main>
 
         {/* Mobile bottom nav */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1.5 flex justify-around items-center z-40">
+        <nav aria-label="Navigazione rapida" className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1.5 flex justify-around items-center z-40">
           {(isRestricted ? NAV_ITEMS.slice(0, 1) : NAV_ITEMS).map(({ href, label, icon: Icon }) => {
             const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
             return (
