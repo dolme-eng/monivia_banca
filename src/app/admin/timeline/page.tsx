@@ -190,8 +190,7 @@ export default function AdminTimelinePage() {
                       style={{ width: `${progress}%` }}
                     />
                   </div>
-                  <div className="flex justify-between mt-1.5">
-                    <span className="text-[11px] text-slate-600">Richiesta</span>
+                  <div className="flex justify-end mt-1.5">
                     <span className={`text-[11px] font-black ${
                       tx.status === 'APPROVED' ? 'text-emerald-700' :
                       tx.status === 'REJECTED' ? 'text-red-600' :

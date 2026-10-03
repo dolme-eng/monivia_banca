@@ -355,10 +355,10 @@ export default function AccountsPage() {
                         <User size={16} className="text-primary" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-black text-primary truncate">
+                        <p className="text-sm font-black text-primary break-words">
                           {acc.user.nome} {acc.user.cognome}
                         </p>
-                        <p className="text-[11px] text-slate-600 truncate">{acc.user.email}</p>
+                        <p className="text-[11px] text-slate-600 break-all">{acc.user.email}</p>
                       </div>
                       <div className="ml-auto flex items-center gap-2 shrink-0">
                         {loginLocked && (
@@ -434,7 +434,7 @@ export default function AccountsPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex flex-wrap gap-2 shrink-0">
+                  <div className="flex flex-wrap gap-2 lg:max-w-[46%]">
                     {loginLocked && (
                       <button
                         onClick={() => setConfirm({ type: 'unlockLogin', account: acc })}
@@ -512,6 +512,7 @@ export default function AccountsPage() {
                             Sblocca trasferimenti
                           </button>
                         )}
+                        <span aria-hidden="true" className="hidden lg:block w-px self-stretch bg-slate-200 mx-1" />
                         <button
                           onClick={() => setConfirm({ type: 'close', account: acc })}
                           disabled={actionLoading !== null}
