@@ -154,7 +154,12 @@ export async function GET(req: NextRequest) {
       ? { status: status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' }
       : {};
 
-    const [transactions, total] = await Promise.all([
+    // Les compteurs par statut doivent porter sur l'ensemble du jeu filtre,
+    // pas sur la page courante : sinon les compteurs de la timeline sont
+    // faux des que le total depasse limit (20 par defaut).
+    const statusFilters = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'] as const;
+
+    const [transactions, total, statusGroups] = await Promise.all([
       prisma.transaction.findMany({
         where,
         include: {
@@ -170,9 +175,25 @@ export async function GET(req: NextRequest) {
         take: limit,
       }),
       prisma.transaction.count({ where }),
+      prisma.transaction.groupBy({ by: ['status'], where, _count: { _all: true } }),
     ]);
 
-    return NextResponse.json({ transactions, total, page, limit });
+    const counts = Object.fromEntries(statusFilters.map((s) => [s, 0])) as Record<
+      (typeof statusFilters)[number],
+      number
+    >;
+    for (const g of statusGroups) {
+      if (g.status in counts) counts[g.status] = g._count._all;
+    }
+
+    return NextResponse.json({
+      transactions,
+      total,
+      page,
+      limit,
+      counts,
+      pageCount: Math.max(1, Math.ceil(total / limit)),
+    });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Impossibile recuperare le transazioni' }, { status: 500 });
   }

@@ -33,6 +33,7 @@ interface Transaction {
 
 export default function AdminTimelinePage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [serverStats, setServerStats] = useState<{ total: number; counts: Record<string, number> } | null>(null);
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED'>('ALL');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +44,7 @@ export default function AdminTimelinePage() {
       if (!res.ok) throw new Error('Errore del server');
       const data = await res.json();
       setTransactions(data.transactions || []);
+      setServerStats({ total: data.total ?? 0, counts: data.counts ?? {} });
       setError(null);
     } catch {
       setError('Impossibile caricare la timeline. Riprovo automaticamente...');
@@ -61,13 +63,24 @@ export default function AdminTimelinePage() {
     ? transactions
     : transactions.filter((t) => t.status === filter);
 
-  const stats = {
-    total: transactions.length,
-    pending: transactions.filter((t) => t.status === 'PENDING').length,
-    approved: transactions.filter((t) => t.status === 'APPROVED').length,
-    rejected: transactions.filter((t) => t.status === 'REJECTED').length,
-    cancelled: transactions.filter((t) => t.status === 'CANCELLED').length,
-  };
+  // Les compteurs viennent du serveur : ils portent sur l'ensemble du jeu de
+  // donnees, pas sur les 20 elements de la page courante. Sans cela, la timeline
+  // affichait « Totale 20 » alors que la base en compte 67.
+  const stats = serverStats
+    ? {
+        total: serverStats.total,
+        pending: serverStats.counts.PENDING ?? 0,
+        approved: serverStats.counts.APPROVED ?? 0,
+        rejected: serverStats.counts.REJECTED ?? 0,
+        cancelled: serverStats.counts.CANCELLED ?? 0,
+      }
+    : {
+        total: transactions.length,
+        pending: transactions.filter((t) => t.status === 'PENDING').length,
+        approved: transactions.filter((t) => t.status === 'APPROVED').length,
+        rejected: transactions.filter((t) => t.status === 'REJECTED').length,
+        cancelled: transactions.filter((t) => t.status === 'CANCELLED').length,
+      };
 
   const getProgressPercent = (tx: Transaction) => {
     if (tx.status === 'APPROVED') return 100;
