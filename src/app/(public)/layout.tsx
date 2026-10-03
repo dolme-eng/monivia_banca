@@ -26,7 +26,7 @@ export default function PublicLayout({
             className="relative z-50 flex items-center gap-2 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-secondary/50"
           >
             <span className="text-2xl font-black tracking-tight text-primary">
-              MO<span className="text-secondary">NIVIA</span>
+              MO<span className="text-secondary-text">NIVIA</span>
             </span>
             <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-slate-600">
               Banca
@@ -54,7 +54,7 @@ export default function PublicLayout({
               <div>
                 <div className="mb-5 flex items-baseline">
                   <span className="text-2xl font-black tracking-tight text-white">
-                    MO<span className="text-secondary">NIVIA</span>
+                    MO<span className="text-secondary-text">NIVIA</span>
                   </span>
                   <span className="relative -top-2.5 ml-0.5 text-[11px] font-black uppercase tracking-[0.25em] text-white/60">
                     Banca
