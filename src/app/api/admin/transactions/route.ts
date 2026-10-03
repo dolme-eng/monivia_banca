@@ -159,7 +159,7 @@ export async function GET(req: NextRequest) {
     // faux des que le total depasse limit (20 par defaut).
     const statusFilters = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'] as const;
 
-    const [transactions, total, statusGroups] = await Promise.all([
+    const [transactions, filteredTotal, globalTotal, statusGroups] = await Promise.all([
       prisma.transaction.findMany({
         where,
         include: {
@@ -175,7 +175,10 @@ export async function GET(req: NextRequest) {
         take: limit,
       }),
       prisma.transaction.count({ where }),
-      prisma.transaction.groupBy({ by: ['status'], where, _count: { _all: true } }),
+      // Volumetrie globale : le bandeau de synthese doit rester un instantane
+      // complet meme quand un filtre de statut est actif.
+      prisma.transaction.count(),
+      prisma.transaction.groupBy({ by: ['status'], _count: { _all: true } }),
     ]);
 
     const counts = Object.fromEntries(statusFilters.map((s) => [s, 0])) as Record<
@@ -188,11 +191,12 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       transactions,
-      total,
+      total: filteredTotal,
+      globalTotal,
       page,
       limit,
       counts,
-      pageCount: Math.max(1, Math.ceil(total / limit)),
+      pageCount: Math.max(1, Math.ceil(filteredTotal / limit)),
     });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Impossibile recuperare le transazioni' }, { status: 500 });

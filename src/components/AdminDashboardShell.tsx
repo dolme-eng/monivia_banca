@@ -140,7 +140,7 @@ export default function AdminDashboardShell({ children }: { children: React.Reac
         </nav>
 
         <Link
-          href="/admin/provision"
+          href="/admin/provision?tab=create"
           className="mt-auto w-full py-3 bg-secondary text-primary font-black rounded-xl flex items-center justify-center gap-2 text-sm hover:bg-cyan-300 transition-colors"
         >
           <Plus size={16} />

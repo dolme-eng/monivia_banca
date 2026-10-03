@@ -17,7 +17,14 @@ interface FoundAccount {
 }
 
 export default function ProvisionPage() {
-  const [tab, setTab] = useState<'search' | 'create'>('search');
+  // Le raccourci « Nuovo Provisioning » de la barre laterale pointe vers
+  // ?tab=create : sans cela il debarrait sur l'onglet « Cerca Conto » alors
+  // qu'il promet un nouveau compte.
+  const [tab, setTab] = useState<'search' | 'create'>(
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('tab') === 'create'
+      ? 'create'
+      : 'search'
+  );
 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<FoundAccount[]>([]);
@@ -174,9 +181,9 @@ export default function ProvisionPage() {
 
   return (
     <div>
-      <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
+      <div className="mx-auto mb-8 max-w-5xl text-left">
         <h1 className="section-heading">Gestione <span className="text-gradient-cyan">Prestiti</span></h1>
-        <p className="section-copy mt-5">
+        <p className="section-copy mt-3">
           Cerca un conto esistente per accreditare un nuovo prestito, oppure crea un nuovo conto.
         </p>
       </div>

@@ -13,6 +13,8 @@ import {
   ArrowRight,
   AlertTriangle,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 interface Transaction {
@@ -35,23 +37,30 @@ export default function AdminTimelinePage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [serverStats, setServerStats] = useState<{ total: number; counts: Record<string, number> } | null>(null);
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED'>('ALL');
+  const [page, setPage] = useState(1);
+  const [pageCount, setPageCount] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTransactions = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/transactions');
+      const params = new URLSearchParams();
+      if (filter !== 'ALL') params.set('status', filter);
+      if (page > 1) params.set('page', String(page));
+      const qs = params.toString();
+      const res = await fetch(`/api/admin/transactions${qs ? `?${qs}` : ''}`);
       if (!res.ok) throw new Error('Errore del server');
       const data = await res.json();
       setTransactions(data.transactions || []);
-      setServerStats({ total: data.total ?? 0, counts: data.counts ?? {} });
+      setServerStats({ total: data.globalTotal ?? data.total ?? 0, counts: data.counts ?? {} });
+      setPageCount(data.pageCount ?? 1);
       setError(null);
     } catch {
       setError('Impossibile caricare la timeline. Riprovo automaticamente...');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [filter, page]);
 
   useEffect(() => {
     fetchTransactions();
@@ -59,9 +68,7 @@ export default function AdminTimelinePage() {
     return () => clearInterval(interval);
   }, [fetchTransactions]);
 
-  const filtered = filter === 'ALL'
-    ? transactions
-    : transactions.filter((t) => t.status === filter);
+  const filtered = transactions;
 
   // Les compteurs viennent du serveur : ils portent sur l'ensemble du jeu de
   // donnees, pas sur les 20 elements de la page courante. Sans cela, la timeline
@@ -134,7 +141,7 @@ export default function AdminTimelinePage() {
         {(['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'] as const).map((f) => (
           <button
             key={f}
-            onClick={() => setFilter(f)}
+            onClick={() => { setFilter(f); setPage(1); }}
             className={`px-4 py-3 min-h-[44px] rounded-lg text-xs font-black transition-all ${
               filter === f
                 ? 'bg-primary text-white'
@@ -223,6 +230,38 @@ export default function AdminTimelinePage() {
               </Link>
             );
           })}
+
+          {pageCount > 1 && (
+            <nav
+              aria-label="Paginazione timeline"
+              className="flex items-center justify-between gap-3 mt-4 bg-white rounded-xl p-2 border border-slate-200/80"
+              style={{ boxShadow: 'var(--shadow-card)' }}
+            >
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1 || loading}
+                aria-label="Pagina precedente"
+                className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg border border-slate-200 text-xs font-black text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft size={14} />
+                Prec.
+              </button>
+
+              <span className="text-xs font-black text-slate-600">
+                Pagina {page} di {pageCount}
+              </span>
+
+              <button
+                onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+                disabled={page >= pageCount || loading}
+                aria-label="Pagina successiva"
+                className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg border border-slate-200 text-xs font-black text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Succ.
+                <ChevronRight size={14} />
+              </button>
+            </nav>
+          )}
         </div>
       )}
     </div>
