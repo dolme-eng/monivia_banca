@@ -112,7 +112,7 @@ export default function Home() {
             {/* Feature 1 — Conto & Carta (large) */}
             <FadeIn className="col-span-12 md:col-span-8 rounded-2xl border border-slate-200/80 bg-white p-8 flex flex-col md:flex-row items-center gap-8" style={{ boxShadow: 'var(--shadow-card)' }}>
               <div className="flex-1">
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text">
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text-text">
                   <CreditCard size={28} />
                 </div>
                 <h3 className="text-xl font-black text-primary sm:text-2xl mb-3">Conto & Carta Monivia</h3>
@@ -137,7 +137,7 @@ export default function Home() {
 
             {/* Feature 2 — Sicurezza (dark) */}
             <FadeIn delay={100} className="col-span-12 md:col-span-4 bg-primary p-8 rounded-2xl text-white">
-              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text-text">
                 <ShieldCheck size={28} />
               </div>
               <h3 className="text-xl font-black sm:text-2xl mb-3">Sicurezza Bancaria</h3>
@@ -152,7 +152,7 @@ export default function Home() {
 
             {/* Feature 3 — Prelievi & Trasferimenti */}
             <FadeIn delay={150} className="col-span-12 md:col-span-6 rounded-2xl border border-slate-200/80 bg-white p-8" style={{ boxShadow: 'var(--shadow-card)' }}>
-              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text-text">
                 <Banknote size={28} />
               </div>
               <h3 className="text-xl font-black text-primary sm:text-2xl mb-3">Prelievi & Trasferimenti</h3>
@@ -164,7 +164,7 @@ export default function Home() {
 
             {/* Feature 4 — Controllo Amministrativo */}
             <FadeIn delay={200} className="col-span-12 md:col-span-6 rounded-2xl border border-slate-200/80 bg-white p-8 overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
-              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary-text-text">
                 <Clock size={28} />
               </div>
               <h3 className="text-xl font-black text-primary sm:text-2xl mb-3">Controllo Amministrativo</h3>
@@ -194,7 +194,7 @@ export default function Home() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <FadeIn delay={0}>
               <div className="surface-card p-8 text-center h-full">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary-text">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary-text-text">
                   <span className="text-2xl font-black">1</span>
                 </div>
                 <h3 className="text-lg font-black text-primary mb-3">Richiedi su Monivia</h3>
@@ -207,7 +207,7 @@ export default function Home() {
 
             <FadeIn delay={150}>
               <div className="surface-card p-8 text-center h-full">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary-text">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary-text-text">
                   <span className="text-2xl font-black">2</span>
                 </div>
                 <h3 className="text-lg font-black text-primary mb-3">Ricevi le credenziali</h3>
@@ -220,7 +220,7 @@ export default function Home() {
 
             <FadeIn delay={300}>
               <div className="surface-card p-8 text-center h-full">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary-text">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary-text-text">
                   <span className="text-2xl font-black">3</span>
                 </div>
                 <h3 className="text-lg font-black text-primary mb-3">Gestisci i tuoi fondi</h3>

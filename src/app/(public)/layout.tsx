@@ -60,32 +60,32 @@ export default function PublicLayout({
                     Banca
                   </span>
                 </div>
-                <p className="text-sm leading-relaxed text-slate-600">
+                <p className="text-sm leading-relaxed text-slate-400">
                   Piattaforma bancaria sicura per la gestione dei prestiti Monivia.
                 </p>
               </div>
               <div>
                 <h3 className="mb-5 text-[11px] font-black uppercase tracking-[0.2em] text-white">Navigazione</h3>
                 <ul className="space-y-1">
-                  <li><Link href="/" className="group flex items-center gap-2 text-sm text-slate-600 transition-colors hover:text-secondary py-2 px-1 rounded focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:outline-none"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Home</Link></li>
-                  <li><Link href="/login" className="group flex items-center gap-2 text-sm text-slate-600 transition-colors hover:text-secondary py-2 px-1 rounded focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:outline-none"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Accesso Riservato</Link></li>
+                  <li><Link href="/" className="group flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-secondary py-2 px-1 rounded focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:outline-none"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Home</Link></li>
+                  <li><Link href="/login" className="group flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-secondary py-2 px-1 rounded focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:outline-none"><span className="h-px w-0 bg-secondary transition-all duration-300 group-hover:w-3" />Accesso Riservato</Link></li>
                 </ul>
               </div>
               <div>
                 <h3 className="mb-5 text-[11px] font-black uppercase tracking-[0.2em] text-white">Contatto</h3>
                 <ul className="space-y-3">
-                  <li><span className="text-sm text-slate-600">contatto@monivia.it</span></li>
-                  <li><span className="text-sm text-slate-600">Via Savona, 15 — Milano</span></li>
+                  <li><span className="text-sm text-slate-400">contatto@monivia.it</span></li>
+                  <li><span className="text-sm text-slate-400">Via Savona, 15 — Milano</span></li>
                 </ul>
               </div>
             </div>
           </div>
           <div className="border-t border-white/6 pt-8 pb-8">
             <div className="flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-slate-400">
                 © 2026 Monivia S.r.l. — P.IVA / C.F. 10984760583 — OAM n. A23741
               </p>
-              <p className="text-[11px] text-slate-700">
+              <p className="text-[11px] text-slate-400">
                 Sistemi di Gestione Bancaria Sicura
               </p>
             </div>
